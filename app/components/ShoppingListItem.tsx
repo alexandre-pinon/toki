@@ -3,18 +3,13 @@ import Checkbox from "expo-checkbox";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { colors, typography } from "../theme";
+import type { ShoppingItem } from "../types/shopping/shopping-item";
+import { mapUnitTypeToName } from "../types/unit-type";
 
-export type ShoppingListItemType = {
-  id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  checked: boolean;
-};
-
-type ShoppingListItemProps = ShoppingListItemType & {
+type ShoppingItemProps = ShoppingItem & {
   setChecked: (id: string, checked: boolean) => void;
   onDelete?: (id: string) => void;
+  isLastItem?: boolean;
 };
 
 export function ShoppingListItem({
@@ -25,7 +20,8 @@ export function ShoppingListItem({
   checked,
   setChecked,
   onDelete,
-}: ShoppingListItemProps) {
+  isLastItem,
+}: ShoppingItemProps) {
   const handleDelete = () => {
     Alert.alert(
       "Supprimer l'article",
@@ -65,12 +61,12 @@ export function ShoppingListItem({
           onValueChange={() => setChecked(id, !checked)}
           color={colors.primary}
         />
-        <View style={styles.itemContent}>
+        <View style={[styles.itemContent, !isLastItem && styles.itemContentWithBorder]}>
           <Text style={[typography.body, checked && styles.itemTitleChecked]}>{name}</Text>
           <Text
             style={[typography.subtext, checked && styles.itemSubtitleChecked, styles.itemSubtitle]}
           >
-            {quantity} {unit}
+            {quantity} {mapUnitTypeToName(unit)}
           </Text>
         </View>
       </View>
@@ -90,6 +86,8 @@ const styles = StyleSheet.create({
   itemContent: {
     flex: 1,
     gap: 4,
+  },
+  itemContentWithBorder: {
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGrey,
   },

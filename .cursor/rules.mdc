@@ -7,6 +7,10 @@ You are an expert in TypeScript, React Native, Expo, and Mobile UI development.
 
 At all point, follow apple's HIG (Human Interface Guidelines), this project is mainly meant for IOS, Android should still work decently but forget about material design guidelines.
 
+Commands
+
+- If possible, prefer installing package using `pnpx expo install x`
+
 Code Style and Structure
 
 - Write concise, technical TypeScript code with accurate examples.

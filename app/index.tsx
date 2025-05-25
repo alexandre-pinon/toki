@@ -1,40 +1,127 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import { useState } from "react";
-import { FlatList, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ShoppingListItem, type ShoppingListItemType } from "./components/ShoppingListItem";
+import { ShoppingList } from "./components/ShoppingList";
 import { colors, typography } from "./theme";
+import type { ShoppingListSection } from "./types/shopping/shopping-list";
 
-const dummyData: ShoppingListItemType[] = [
+const dummyData: ShoppingListSection[] = [
   {
-    id: "1",
-    name: "Banane",
-    quantity: 1,
-    unit: "kg",
-    checked: false,
+    title: "Fruits & Légumes",
+    data: [
+      {
+        id: "1",
+        name: "Banane",
+        quantity: 1,
+        unit: "kg",
+        checked: false,
+        category: "Fruits & Légumes",
+      },
+      {
+        id: "2",
+        name: "Pomme",
+        quantity: 2,
+        checked: true,
+        category: "Fruits & Légumes",
+      },
+      {
+        id: "3",
+        name: "Orange",
+        quantity: 3,
+        unit: "kg",
+        checked: false,
+        category: "Fruits & Légumes",
+      },
+      {
+        id: "6",
+        name: "Oignon",
+        quantity: 4,
+        checked: false,
+        category: "Fruits & Légumes",
+      },
+      {
+        id: "7",
+        name: "Ail",
+        quantity: 2,
+        unit: "clove",
+        checked: false,
+        category: "Fruits & Légumes",
+      },
+    ],
   },
   {
-    id: "2",
-    name: "Pomme",
-    quantity: 2,
-    unit: "",
-    checked: true,
+    title: "Viande",
+    data: [
+      {
+        id: "4",
+        name: "Poulet",
+        quantity: 1,
+        unit: "kg",
+        checked: false,
+        category: "Viande",
+      },
+    ],
   },
   {
-    id: "3",
-    name: "Orange",
-    quantity: 3,
-    unit: "kg",
-    checked: false,
+    title: "Poisson",
+    data: [
+      {
+        id: "5",
+        name: "Saumon",
+        quantity: 2,
+        unit: "piece",
+        checked: false,
+        category: "Poisson",
+      },
+    ],
+  },
+  {
+    title: "Produits laitiers",
+    data: [
+      {
+        id: "8",
+        name: "Œufs",
+        quantity: 6,
+        checked: false,
+        category: "Produits laitiers",
+      },
+    ],
+  },
+  {
+    title: "Épices & Condiments",
+    data: [
+      {
+        id: "9",
+        name: "Sel",
+        quantity: 1,
+        unit: "pinch",
+        checked: false,
+        category: "Épices & Condiments",
+      },
+      {
+        id: "10",
+        name: "Poivre",
+        quantity: 1,
+        unit: "pinch",
+        checked: false,
+        category: "Épices & Condiments",
+      },
+    ],
   },
 ];
 
 export default function ShoppingListScreen() {
-  const [items, setItems] = useState(dummyData);
+  const [sections, setSections] = useState(dummyData);
 
   const setChecked = (id: string, checked: boolean) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, checked } : item)));
+    setSections(
+      sections.map((section) => ({
+        ...section,
+        data: section.data.map((item) => (item.id === id ? { ...item, checked } : item)),
+      }))
+    );
   };
 
   const handleDelete = (id: string) => {
@@ -67,14 +154,7 @@ export default function ShoppingListScreen() {
         }}
       />
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <FlatList
-          data={items}
-          renderItem={({ item }) => (
-            <ShoppingListItem setChecked={setChecked} onDelete={handleDelete} {...item} />
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-        />
+        <ShoppingList sections={sections} setChecked={setChecked} onDelete={handleDelete} />
       </SafeAreaView>
     </View>
   );
@@ -88,12 +168,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  listContent: {
-    paddingTop: 8,
-  },
   addButton: {
     padding: 8,
-    marginRight: -8,
   },
   addButtonPressed: {
     opacity: 0.7,
