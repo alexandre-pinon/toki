@@ -6,9 +6,10 @@ import type { ShoppingListSection } from "../types/shopping/shopping-list";
 interface ShoppingListContextType {
   sections: ShoppingListSection[];
   loadShoppingList: () => Promise<void>;
-  setChecked: (id: string, checked: boolean) => Promise<void>;
-  handleDelete: (id: string) => Promise<void>;
+  setChecked: (id: number, checked: boolean) => Promise<void>;
+  handleDelete: (id: number) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
+  editItem: (id: number, item: Omit<ShoppingItem, "id">) => Promise<void>;
 }
 
 const ShoppingListContext = createContext<ShoppingListContextType | undefined>(undefined);
@@ -32,19 +33,28 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     await loadShoppingList();
   };
 
-  const setChecked = async (id: string, checked: boolean) => {
-    await updateShoppingListItem(id, checked);
+  const setChecked = async (id: number, checked: boolean) => {
+    const section = sections.find((s) => s.data.some((item) => item.id === id));
+    const item = section?.data.find((item) => item.id === id);
+    if (!item) return;
+
+    await updateShoppingListItem(id, { ...item, checked });
     await loadShoppingList();
   };
 
-  const handleDelete = async (id: string) => {
+  const editItem = async (id: number, item: Omit<ShoppingItem, "id">) => {
+    await updateShoppingListItem(id, item);
+    await loadShoppingList();
+  };
+
+  const handleDelete = async (id: number) => {
     await deleteShoppingListItem(id);
     await loadShoppingList();
   };
 
   return (
     <ShoppingListContext.Provider
-      value={{ sections, loadShoppingList, setChecked, handleDelete, addItem }}
+      value={{ sections, loadShoppingList, setChecked, handleDelete, addItem, editItem }}
     >
       {children}
     </ShoppingListContext.Provider>

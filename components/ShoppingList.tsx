@@ -5,8 +5,8 @@ import { ShoppingListItem } from "./ShoppingListItem";
 
 type ShoppingListProps = {
   sections: ShoppingListSection[];
-  setChecked: (id: string, checked: boolean) => void;
-  onDelete: (id: string) => void;
+  setChecked: (id: number, checked: boolean) => void;
+  onDelete: (id: number) => void;
 };
 
 export function ShoppingList({ sections, setChecked, onDelete }: ShoppingListProps) {
@@ -26,7 +26,7 @@ export function ShoppingList({ sections, setChecked, onDelete }: ShoppingListPro
           <Text style={[typography.subtitle, styles.sectionTitle]}>{title}</Text>
         </View>
       )}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={styles.listContent}
       stickySectionHeadersEnabled
     />

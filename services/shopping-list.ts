@@ -7,7 +7,7 @@ export function useShoppingListService() {
 
 	const getShoppingListItems = async (): Promise<ShoppingListSection[]> => {
 		type DbItem = {
-			id: string;
+			id: number;
 			name: string;
 			quantity: number;
 			unit: ShoppingItem["unit"];
@@ -50,7 +50,7 @@ export function useShoppingListService() {
     `,
 			[
 				item.name,
-				item.quantity,
+				item.quantity ?? null,
 				item.unit ?? null,
 				item.checked,
 				item.category,
@@ -58,18 +58,28 @@ export function useShoppingListService() {
 		);
 	};
 
-	const updateShoppingListItem = async (id: string, checked: boolean) => {
+	const updateShoppingListItem = async (
+		id: number,
+		item: Omit<ShoppingItem, "id">,
+	) => {
 		await db.runAsync(
 			`
       UPDATE shopping_list_items
-      SET checked = ?, updated_at = CURRENT_TIMESTAMP
+      SET name = ?, quantity = ?, unit = ?, checked = ?, category = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `,
-			[checked, id],
+			[
+				item.name,
+				item.quantity ?? null,
+				item.unit ?? null,
+				item.checked,
+				item.category,
+				id,
+			],
 		);
 	};
 
-	const deleteShoppingListItem = async (id: string) => {
+	const deleteShoppingListItem = async (id: number) => {
 		await db.runAsync(
 			`
       DELETE FROM shopping_list_items

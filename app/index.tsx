@@ -21,12 +21,9 @@ export default function ShoppingListScreen() {
           title: "Liste de courses",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Platform.OS === "ios" ? "transparent" : colors.background,
-          },
           headerRight: () => (
             <Pressable
-              onPress={() => router.push("/add-item")}
+              onPress={() => router.push("/(shopping)/add-item")}
               style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
             >
               <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />

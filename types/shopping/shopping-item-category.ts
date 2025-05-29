@@ -1,4 +1,5 @@
 export const shoppingItemCategories = [
+	"Autre",
 	"Fruits & Légumes",
 	"Viande",
 	"Poisson",
@@ -7,7 +8,6 @@ export const shoppingItemCategories = [
 	"Produits laitiers",
 	"Dessert",
 	"Œufs & Produits frais",
-	"Autre",
 ] as const;
 
 export const isShoppingItemCategory = (

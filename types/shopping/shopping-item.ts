@@ -2,9 +2,9 @@ import type { UnitType } from "../unit-type";
 import type { ShoppingItemCategory } from "./shopping-item-category";
 
 export type ShoppingItem = {
-	id: string;
+	id: number;
 	name: string;
-	quantity: number;
+	quantity?: number;
 	unit?: UnitType;
 	checked: boolean;
 	category: ShoppingItemCategory;

@@ -7,6 +7,7 @@ export const colors = {
 	background: "#FFFFFF",
 	text: "#000000",
 	danger: "#FF3B30",
+	info: "#007AFF",
 	// Add more colors as needed
 } as const;
 
