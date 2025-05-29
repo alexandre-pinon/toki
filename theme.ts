@@ -32,5 +32,3 @@ export const typography = {
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 } as const;
-
-export default { colors, typography };

@@ -11,15 +11,17 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheetPicker } from "./components/BottomSheetPicker";
-import { colors, typography } from "./theme";
-import type { ShoppingItemCategory } from "./types/shopping/shopping-item-category";
+import { BottomSheetPicker } from "../components/BottomSheetPicker";
+import { useShoppingListService } from "../services/shopping-list";
+import { colors, typography } from "../theme";
+import type { ShoppingItemCategory } from "../types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
   shoppingItemCategories,
-} from "./types/shopping/shopping-item-category";
-import type { UnitType } from "./types/unit-type";
-import { isUnitType, mapUnitTypeToName, unitTypes } from "./types/unit-type";
+} from "../types/shopping/shopping-item-category";
+import type { UnitType } from "../types/unit-type";
+import { isUnitType, mapUnitTypeToName, unitTypes } from "../types/unit-type";
+import { useShoppingList } from "@/contexts/ShoppingListContext";
 
 type PickerType = "unit" | "category" | "hide";
 
@@ -31,10 +33,19 @@ export default function AddItemScreen() {
   const [showPicker, setShowPicker] = useState<PickerType>("hide");
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
   const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("Autre");
+  const { addItem } = useShoppingList();
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    console.log("save", name, quantity, unit, category);
+  const handleSave = async () => {
+    if (!name.trim()) return;
+
+    await addItem({
+      name: name.trim(),
+      quantity: quantity ? Number.parseFloat(quantity) : 1,
+      unit,
+      checked: false,
+      category,
+    });
+
     router.back();
   };
 
@@ -62,7 +73,10 @@ export default function AddItemScreen() {
 
   const getPickerOptions = () => {
     if (showPicker === "unit") {
-      return unitTypes.map((unit) => ({ label: mapUnitTypeToName(unit), value: unit }));
+      return unitTypes.map((unit) => ({
+        label: mapUnitTypeToName(unit),
+        value: unit,
+      }));
     }
     if (showPicker === "category") {
       return shoppingItemCategories.map((cat) => ({ label: cat, value: cat }));
