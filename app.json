@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "toki",
+    "name": "Toki",
     "slug": "toki",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "toki",
+    "scheme": "Toki",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -45,6 +45,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0405d06b-39b8-4e1b-9ecf-8d18b75fd7ef"
+      }
     }
   }
 }

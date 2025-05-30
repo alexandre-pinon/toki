@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import { useEffect } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ShoppingList } from "../components/ShoppingList";
-import { useShoppingList } from "../contexts/ShoppingListContext";
-import { colors, typography } from "../theme";
+import { ShoppingList } from "../../components/ShoppingList";
+import { useShoppingList } from "../../contexts/ShoppingListContext";
+import { colors, typography } from "../../theme";
 
 export default function ShoppingListScreen() {
   const { sections, loadShoppingList, setChecked, handleDelete } = useShoppingList();
@@ -23,7 +23,7 @@ export default function ShoppingListScreen() {
           headerShadowVisible: false,
           headerRight: () => (
             <Pressable
-              onPress={() => router.push("/(shopping)/add-item")}
+              onPress={() => router.push("/add-item")}
               style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
             >
               <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />

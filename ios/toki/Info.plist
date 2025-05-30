@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>toki</string>
+    <string>Toki</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,8 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>toki</string>
+          <string>Toki</string>
           <string>com.alexandrepinon.toki</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+toki</string>
         </array>
       </dict>
     </array>

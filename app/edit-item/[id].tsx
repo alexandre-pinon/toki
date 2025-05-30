@@ -1,6 +1,5 @@
-import { useShoppingList } from "@/contexts/ShoppingListContext";
-import { Stack, router } from "expo-router";
-import { useState } from "react";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetPicker } from "../../components/BottomSheetPicker";
+import { useShoppingList } from "../../contexts/ShoppingListContext";
 import { colors, typography } from "../../theme";
 import type { ShoppingItemCategory } from "../../types/shopping/shopping-item-category";
 import {
@@ -24,24 +24,39 @@ import { isUnitType, mapUnitTypeToName, unitTypes } from "../../types/unit-type"
 
 type PickerType = "unit" | "category" | "hide";
 
-export default function AddItemScreen() {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState<string | undefined>();
-  const [unit, setUnit] = useState<UnitType | undefined>();
-  const [category, setCategory] = useState<ShoppingItemCategory>("Autre");
+export default function EditItemScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const itemId = Number(id);
+
+  const { sections, editItem } = useShoppingList();
+  const section = sections.find((s) => s.data.some((item) => item.id === itemId));
+  const item = section?.data.find((item) => item.id === itemId);
+
+  const [name, setName] = useState(item?.name ?? "");
+  const [quantity, setQuantity] = useState<string | undefined>(item?.quantity?.toString());
+  const [unit, setUnit] = useState<UnitType | undefined>(item?.unit);
+  const [category, setCategory] = useState<ShoppingItemCategory>(item?.category ?? "Autre");
   const [showPicker, setShowPicker] = useState<PickerType>("hide");
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
   const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("Autre");
-  const { addItem } = useShoppingList();
+
+  useEffect(() => {
+    if (item) {
+      setName(item.name);
+      setQuantity(item.quantity?.toString());
+      setUnit(item.unit);
+      setCategory(item.category);
+    }
+  }, [item]);
 
   const handleSave = async () => {
-    if (!name.trim()) return;
+    if (!name.trim() || !itemId) return;
 
-    await addItem({
+    await editItem(itemId, {
       name: name.trim(),
-      quantity: quantity ? Number.parseFloat(quantity) : 1,
+      quantity: quantity ? Number.parseFloat(quantity) : undefined,
       unit,
-      checked: false,
+      checked: item?.checked ?? false,
       category,
     });
 
@@ -87,11 +102,16 @@ export default function AddItemScreen() {
     return [];
   };
 
+  //FIXME: display error screen with a button to go back to the list
+  if (!item) {
+    return null;
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Stack.Screen
         options={{
-          title: "Nouvel article",
+          title: "Modifier l'article",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
           headerStyle: {
@@ -115,7 +135,7 @@ export default function AddItemScreen() {
                   !name.trim() && styles.saveButtonTextDisabled,
                 ]}
               >
-                Ajouter
+                Enregistrer
               </Text>
             </TouchableOpacity>
           ),
@@ -246,9 +266,6 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     paddingHorizontal: 8,
-  },
-  saveButtonPressed: {
-    opacity: 0.7,
   },
   saveButtonDisabled: {
     opacity: 0.5,

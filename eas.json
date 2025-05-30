@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 16.7.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "buildConfiguration": "Debug",
+        "simulator": false
+      }
+    },
+    "production": {
+      "ios": {
+        "buildConfiguration": "Release",
+        "simulator": false
+      }
+    },
+    "sidestore": {
+      "developmentClient": false,
+      "distribution": "internal",
+      "ios": {
+        "buildConfiguration": "Release",
+        "simulator": false
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

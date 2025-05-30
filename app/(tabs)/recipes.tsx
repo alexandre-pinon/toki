@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, typography } from "../theme";
+import { colors, typography } from "../../theme";
 
-export default function RecipeScreen() {
+export default function RecipesScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Stack.Screen

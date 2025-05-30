@@ -1,12 +1,10 @@
 import { runMigrations } from "@/db/run-migrations";
-import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
 import type { SQLiteDatabase, SQLiteOpenOptions } from "expo-sqlite";
 import { SQLiteProvider } from "expo-sqlite";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ShoppingListProvider } from "../contexts/ShoppingListContext";
-import { colors } from "../theme";
 
 const options: SQLiteOpenOptions = {
   libSQLOptions: {
@@ -40,35 +38,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.container}>
       <SQLiteProvider databaseName="toki-dev" options={options} onInit={onInit}>
         <ShoppingListProvider>
-          <Tabs
-            screenOptions={{
-              tabBarActiveTintColor: colors.primary,
-              tabBarInactiveTintColor: colors.grey,
-              tabBarStyle: {
-                backgroundColor: colors.background,
-                borderTopColor: colors.lightGrey,
-              },
-            }}
-          >
-            <Tabs.Screen
-              name="index"
-              options={{
-                title: "Course",
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="cart-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="recipe"
-              options={{
-                title: "Recette",
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="restaurant-outline" size={size} color={color} />
-                ),
-              }}
-            />
-          </Tabs>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
         </ShoppingListProvider>
       </SQLiteProvider>
     </GestureHandlerRootView>

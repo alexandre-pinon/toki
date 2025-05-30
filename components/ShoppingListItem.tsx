@@ -50,7 +50,7 @@ export function ShoppingListItem({
 
   const handleEdit = () => {
     swipeableRef.current?.close();
-    router.push(`/(shopping)/edit-item/${id}`);
+    router.push(`/edit-item/${id}`);
   };
 
   const renderRightActions = () => {
