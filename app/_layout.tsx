@@ -1,49 +1,42 @@
-import { runMigrations } from "@/db/run-migrations";
-import { Stack } from "expo-router";
-import type { SQLiteDatabase, SQLiteOpenOptions } from "expo-sqlite";
-import { SQLiteProvider } from "expo-sqlite";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { ShoppingListProvider } from "../contexts/ShoppingListContext";
 
-const options: SQLiteOpenOptions = {
-  libSQLOptions: {
-    url: process.env.EXPO_PUBLIC_TURSO_DATABASE_URL ?? "",
-    authToken: process.env.EXPO_PUBLIC_TURSO_AUTH_TOKEN ?? "",
-  },
-};
+function RootLayoutNav() {
+  const { session } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
 
-const onInit = async (db: SQLiteDatabase) => {
-  try {
-    const result = await db.getFirstAsync<{ user_version: number } | null>("PRAGMA user_version");
-    const currentDbVersion = result?.user_version ?? 0;
-    console.log("Current DB version:", currentDbVersion);
-    const newVersion = await runMigrations(db, currentDbVersion);
-    console.log("New DB version:", newVersion);
+  useEffect(() => {
+    const inAuthGroup = segments.includes("auth");
 
-    if (newVersion > currentDbVersion) {
-      await db.execAsync(`PRAGMA user_version = ${newVersion}`);
+    if (!session && !inAuthGroup) {
+      router.replace("/auth");
+    } else if (session && inAuthGroup) {
+      router.replace("/(tabs)");
     }
+  }, [session, segments]);
 
-    console.log("Syncing database...");
-    await db.syncLibSQL();
-    console.log("Database synced successfully");
-  } catch (e) {
-    console.error("Database initialization error:", e);
-  }
-};
+  return (
+    <GestureHandlerRootView style={styles.container}>
+      <ShoppingListProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+        </Stack>
+      </ShoppingListProvider>
+    </GestureHandlerRootView>
+  );
+}
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <SQLiteProvider databaseName="toki-dev" options={options} onInit={onInit}>
-        <ShoppingListProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </ShoppingListProvider>
-      </SQLiteProvider>
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }
 

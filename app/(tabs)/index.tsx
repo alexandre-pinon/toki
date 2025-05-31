@@ -24,7 +24,7 @@ export default function ShoppingListScreen() {
           headerRight: () => (
             <Pressable
               onPress={() => router.push("/add-item")}
-              style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+              style={({ pressed }) => [styles.addButton, pressed && styles.buttonPressed]}
             >
               <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />
             </Pressable>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   addButton: {
     padding: 8,
   },
-  addButtonPressed: {
+  buttonPressed: {
     opacity: 0.7,
   },
   addButtonIcon: {

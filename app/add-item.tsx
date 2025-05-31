@@ -17,6 +17,7 @@ import { colors, typography } from "../theme";
 import type { ShoppingItemCategory } from "../types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
+  mapShoppingItemCategoryToName,
   shoppingItemCategories,
 } from "../types/shopping/shopping-item-category";
 import type { UnitType } from "../types/unit-type";
@@ -28,10 +29,10 @@ export default function AddItemScreen() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState<string | undefined>();
   const [unit, setUnit] = useState<UnitType | undefined>();
-  const [category, setCategory] = useState<ShoppingItemCategory>("Autre");
+  const [category, setCategory] = useState<ShoppingItemCategory>("other");
   const [showPicker, setShowPicker] = useState<PickerType>("hide");
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
-  const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("Autre");
+  const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("other");
   const { addItem } = useShoppingList();
 
   const handleSave = async () => {
@@ -66,7 +67,7 @@ export default function AddItemScreen() {
     if (showPicker === "unit") {
       value ? setUnit(isUnitType(value) ? value : undefined) : setUnit(undefined);
     } else if (showPicker === "category") {
-      value ? setCategory(isShoppingItemCategory(value) ? value : "Autre") : setCategory("Autre");
+      value ? setCategory(isShoppingItemCategory(value) ? value : "other") : setCategory("other");
     }
   };
 
@@ -81,7 +82,10 @@ export default function AddItemScreen() {
       ];
     }
     if (showPicker === "category") {
-      return shoppingItemCategories.map((cat) => ({ label: cat, value: cat }));
+      return shoppingItemCategories.map((cat) => ({
+        label: mapShoppingItemCategoryToName(cat),
+        value: cat,
+      }));
     }
 
     return [];
@@ -235,7 +239,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   pickerButtonText: {
-    color: colors.text,
+    color: colors.text.primary,
   },
   pickerButtonPlaceholder: {
     color: colors.grey,

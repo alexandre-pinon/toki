@@ -5,8 +5,8 @@ import { ShoppingListItem } from "./ShoppingListItem";
 
 type ShoppingListProps = {
   sections: ShoppingListSection[];
-  setChecked: (id: number, checked: boolean) => void;
-  onDelete: (id: number) => void;
+  setChecked: (id: string, checked: boolean) => void;
+  onDelete: (id: string) => void;
 };
 
 export function ShoppingList({ sections, setChecked, onDelete }: ShoppingListProps) {

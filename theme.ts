@@ -5,7 +5,10 @@ export const colors = {
 	grey: "#6C7684",
 	lightGrey: "#F7F8F7",
 	background: "#FFFFFF",
-	text: "#000000",
+	text: {
+		primary: "#000000",
+		secondary: "#666666",
+	},
 	danger: "#FF3B30",
 	info: "#007AFF",
 	// Add more colors as needed
@@ -15,6 +18,15 @@ export const typography = {
 	header: {
 		fontSize: 20,
 		fontWeight: "600",
+	},
+	headlineMedium: {
+		fontSize: 28,
+		fontWeight: "600",
+		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
+	},
+	bodyLarge: {
+		fontSize: 16,
+		fontWeight: "400",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 	body: {

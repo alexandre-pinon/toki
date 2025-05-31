@@ -17,6 +17,7 @@ import { colors, typography } from "../../theme";
 import type { ShoppingItemCategory } from "../../types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
+  mapShoppingItemCategoryToName,
   shoppingItemCategories,
 } from "../../types/shopping/shopping-item-category";
 import type { UnitType } from "../../types/unit-type";
@@ -25,20 +26,22 @@ import { isUnitType, mapUnitTypeToName, unitTypes } from "../../types/unit-type"
 type PickerType = "unit" | "category" | "hide";
 
 export default function EditItemScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const itemId = Number(id);
-
   const { sections, editItem } = useShoppingList();
-  const section = sections.find((s) => s.data.some((item) => item.id === itemId));
-  const item = section?.data.find((item) => item.id === itemId);
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const item = sections.flatMap((s) => s.data).find((item) => item.id === id);
 
-  const [name, setName] = useState(item?.name ?? "");
-  const [quantity, setQuantity] = useState<string | undefined>(item?.quantity?.toString());
-  const [unit, setUnit] = useState<UnitType | undefined>(item?.unit);
-  const [category, setCategory] = useState<ShoppingItemCategory>(item?.category ?? "Autre");
+  //FIXME: display error screen with a button to go back to the list
+  if (!item) {
+    return null;
+  }
+
+  const [name, setName] = useState(item.name);
+  const [quantity, setQuantity] = useState<string | undefined>(item.quantity?.toString());
+  const [unit, setUnit] = useState<UnitType | undefined>(item.unit);
+  const [category, setCategory] = useState<ShoppingItemCategory>(item.category);
   const [showPicker, setShowPicker] = useState<PickerType>("hide");
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
-  const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("Autre");
+  const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("other");
 
   useEffect(() => {
     if (item) {
@@ -50,14 +53,15 @@ export default function EditItemScreen() {
   }, [item]);
 
   const handleSave = async () => {
-    if (!name.trim() || !itemId) return;
+    if (!name.trim() || !id) return;
 
-    await editItem(itemId, {
+    await editItem(id, {
       name: name.trim(),
       quantity: quantity ? Number.parseFloat(quantity) : undefined,
       unit,
-      checked: item?.checked ?? false,
+      checked: item.checked,
       category,
+      userId: item.userId,
     });
 
     router.back();
@@ -81,7 +85,7 @@ export default function EditItemScreen() {
     if (showPicker === "unit") {
       value ? setUnit(isUnitType(value) ? value : undefined) : setUnit(undefined);
     } else if (showPicker === "category") {
-      value ? setCategory(isShoppingItemCategory(value) ? value : "Autre") : setCategory("Autre");
+      value ? setCategory(isShoppingItemCategory(value) ? value : "other") : setCategory("other");
     }
   };
 
@@ -96,16 +100,14 @@ export default function EditItemScreen() {
       ];
     }
     if (showPicker === "category") {
-      return shoppingItemCategories.map((cat) => ({ label: cat, value: cat }));
+      return shoppingItemCategories.map((cat) => ({
+        label: mapShoppingItemCategoryToName(cat),
+        value: cat,
+      }));
     }
 
     return [];
   };
-
-  //FIXME: display error screen with a button to go back to the list
-  if (!item) {
-    return null;
-  }
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -255,7 +257,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   pickerButtonText: {
-    color: colors.text,
+    color: colors.text.primary,
   },
   pickerButtonPlaceholder: {
     color: colors.grey,

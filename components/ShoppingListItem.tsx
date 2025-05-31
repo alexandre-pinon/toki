@@ -9,8 +9,8 @@ import type { ShoppingItem } from "../types/shopping/shopping-item";
 import { mapUnitTypeToName } from "../types/unit-type";
 
 type ShoppingItemProps = ShoppingItem & {
-  setChecked: (id: number, checked: boolean) => void;
-  onDelete?: (id: number) => void;
+  setChecked: (id: string, checked: boolean) => void;
+  onDelete?: (id: string) => void;
   isLastItem?: boolean;
 };
 

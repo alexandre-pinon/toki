@@ -14,7 +14,7 @@ export const unitTypes = [
 	"can",
 	"package",
 	"slice",
-	"totaste",
+	"to_taste",
 ] as const;
 
 export const isUnitType = (value: string): value is UnitType => {
@@ -45,7 +45,7 @@ export const mapUnitTypeToName = (unitType?: UnitType): string => {
 			return "paquet";
 		case "slice":
 			return "tranche";
-		case "totaste":
+		case "to_taste":
 			return "au goût";
 		default:
 			return unitType ?? "";

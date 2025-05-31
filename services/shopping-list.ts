@@ -1,92 +1,93 @@
-import { useSQLiteContext } from "expo-sqlite";
+import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
+import type { Database } from "../lib/database.types";
+import { supabase } from "../lib/supabase";
 import type { ShoppingItem } from "../types/shopping/shopping-item";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
 
+type DbItem = Database["public"]["Tables"]["shopping_items"]["Row"];
+type DbCategory = ShoppingItem["category"];
+
 export function useShoppingListService() {
-	const db = useSQLiteContext();
-
 	const getShoppingListItems = async (): Promise<ShoppingListSection[]> => {
-		type DbItem = {
-			id: number;
-			name: string;
-			quantity: number;
-			unit: ShoppingItem["unit"];
-			checked: boolean;
-			category: ShoppingItem["category"];
-		};
+		const { data, error } = await supabase
+			.from("shopping_items")
+			.select("*")
+			.order("category")
+			.order("name");
 
-		const result = await db.getAllAsync<DbItem>(`
-      SELECT id, name, quantity, unit, checked, category
-      FROM shopping_list_items
-      ORDER BY category, name
-    `);
+		if (error) {
+			throw error;
+		}
 
 		// Group items by category
-		const itemsByCategory = result.reduce(
+		const itemsByCategory = (data as DbItem[]).reduce(
 			(acc, item) => {
 				if (!acc[item.category]) {
 					acc[item.category] = [];
 				}
 				acc[item.category].push({
 					...item,
-					checked: Boolean(item.checked), // stored as 0 or 1 in db
+					quantity: item.quantity ?? undefined,
+					unit: item.unit ?? undefined,
+					checked: Boolean(item.checked),
+					userId: item.user_id,
 				});
 				return acc;
 			},
-			{} as Record<ShoppingItem["category"], ShoppingItem[]>,
+			{} as Record<DbCategory, ShoppingItem[]>,
 		);
 
 		return Object.entries(itemsByCategory).map(([category, items]) => ({
-			title: category as ShoppingItem["category"],
+			title: category as ShoppingItemCategory,
 			data: items,
 		}));
 	};
 
 	const addShoppingListItem = async (item: Omit<ShoppingItem, "id">) => {
-		await db.runAsync(
-			`
-      INSERT INTO shopping_list_items (name, quantity, unit, checked, category)
-      VALUES (?, ?, ?, ?, ?)
-    `,
-			[
-				item.name,
-				item.quantity ?? null,
-				item.unit ?? null,
-				item.checked,
-				item.category,
-			],
-		);
+		const { error } = await supabase.from("shopping_items").insert({
+			name: item.name,
+			quantity: item.quantity,
+			unit: item.unit,
+			checked: item.checked,
+			category: item.category,
+			user_id: item.userId,
+		});
+
+		if (error) {
+			throw error;
+		}
 	};
 
 	const updateShoppingListItem = async (
-		id: number,
+		id: string,
 		item: Omit<ShoppingItem, "id">,
 	) => {
-		await db.runAsync(
-			`
-      UPDATE shopping_list_items
-      SET name = ?, quantity = ?, unit = ?, checked = ?, category = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `,
-			[
-				item.name,
-				item.quantity ?? null,
-				item.unit ?? null,
-				item.checked,
-				item.category,
-				id,
-			],
-		);
+		const { error } = await supabase
+			.from("shopping_items")
+			.update({
+				name: item.name,
+				quantity: item.quantity,
+				unit: item.unit,
+				checked: item.checked,
+				category: item.category,
+				updated_at: new Date().toISOString(),
+			})
+			.eq("id", id);
+
+		if (error) {
+			throw error;
+		}
 	};
 
-	const deleteShoppingListItem = async (id: number) => {
-		await db.runAsync(
-			`
-      DELETE FROM shopping_list_items
-      WHERE id = ?
-    `,
-			[id],
-		);
+	const deleteShoppingListItem = async (id: string) => {
+		const { error } = await supabase
+			.from("shopping_items")
+			.delete()
+			.eq("id", id);
+
+		if (error) {
+			throw error;
+		}
 	};
 
 	return {
