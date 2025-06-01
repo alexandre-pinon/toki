@@ -10,7 +10,6 @@ export default function ShoppingListScreen() {
     <View style={styles.root}>
       <Stack.Screen
         options={{
-          title: "Liste de courses",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
           headerRight: () => (

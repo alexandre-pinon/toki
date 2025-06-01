@@ -8,10 +8,13 @@ type DbItem = Database["public"]["Tables"]["shopping_items"]["Row"];
 type DbCategory = ShoppingItem["category"];
 
 export function useShoppingListService() {
-	const getShoppingListItems = async (): Promise<ShoppingListSection[]> => {
+	const getShoppingListItems = async (
+		userId: string,
+	): Promise<ShoppingListSection[]> => {
 		const { data, error } = await supabase
 			.from("shopping_items")
-			.select("*")
+			.select()
+			.eq("user_id", userId)
 			.order("category")
 			.order("name");
 

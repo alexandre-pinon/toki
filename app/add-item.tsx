@@ -40,7 +40,7 @@ export default function AddItemScreen() {
 
   const handleSave = async () => {
     if (!name.trim()) return;
-    if (!session?.user.id) return;
+    if (!session) return;
 
     await addItem({
       name: name.trim().toLowerCase(),

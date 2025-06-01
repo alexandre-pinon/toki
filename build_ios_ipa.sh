@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # CONFIGURATION
+SCHEME="Toki"
 EXPORT_METHOD="development"  # or 'ad-hoc', 'app-store', etc.
 EXPORT_PATH="./ios/build/$SCHEME.ipa"
 EXPORT_OPTIONS_PLIST="./ios/ExportOptions.plist"

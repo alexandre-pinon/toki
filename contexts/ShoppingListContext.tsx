@@ -3,14 +3,15 @@ import { type ReactNode, createContext, useContext, useEffect, useState } from "
 import { Alert } from "react-native";
 import { useShoppingListService } from "../services/shopping-list";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
+import { useAuth } from "./AuthContext";
 
 interface ShoppingListContextType {
   sections: ShoppingListSection[];
   error: Error | null;
   isLoading: boolean;
-  loadShoppingList: () => Promise<void>;
+  loadShoppingList: (userId: string) => Promise<void>;
   setChecked: (id: string, checked: boolean) => Promise<void>;
-  deleteItem: (id: string) => Promise<void>;
+  deleteItem: (id: string, userId: string) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
   editItem: (id: string, item: Omit<ShoppingItem, "id">) => Promise<void>;
 }
@@ -27,10 +28,12 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     updateShoppingListItem,
     deleteShoppingListItem,
   } = useShoppingListService();
+  const { session } = useAuth();
 
   useEffect(() => {
-    loadShoppingList();
-  }, []);
+    if (!session) return;
+    loadShoppingList(session.user.id);
+  }, [session]);
 
   const handleError = (err: unknown, message: string) => {
     const error = err instanceof Error ? err : new Error(message);
@@ -38,10 +41,10 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     Alert.alert("Error", message);
   };
 
-  const loadShoppingList = async () => {
+  const loadShoppingList = async (userId: string) => {
     try {
       setIsLoading(true);
-      const items = await getShoppingListItems();
+      const items = await getShoppingListItems(userId);
       setSections(items);
       setError(null);
     } catch (err) {
@@ -55,7 +58,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       await addShoppingListItem(item);
-      await loadShoppingList();
+      await loadShoppingList(item.userId);
       setError(null);
     } catch (err) {
       handleError(err, "Failed to add item");
@@ -72,7 +75,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
       if (!item) return;
 
       await updateShoppingListItem(id, { ...item, checked });
-      await loadShoppingList();
+      await loadShoppingList(item.userId);
       setError(null);
     } catch (err) {
       handleError(err, "Failed to update item");
@@ -85,7 +88,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       await updateShoppingListItem(id, item);
-      await loadShoppingList();
+      await loadShoppingList(item.userId);
       setError(null);
     } catch (err) {
       handleError(err, "Failed to edit item");
@@ -94,11 +97,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, userId: string) => {
     try {
       setIsLoading(true);
       await deleteShoppingListItem(id);
-      await loadShoppingList();
+      await loadShoppingList(userId);
       setError(null);
     } catch (err) {
       handleError(err, "Failed to delete item");

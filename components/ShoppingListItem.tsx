@@ -18,6 +18,7 @@ export function ShoppingListItem({
   unit,
   checked,
   isLastItem,
+  userId,
 }: ShoppingItemProps) {
   const swipeableRef = useRef<SwipeableMethods | null>(null);
   const { setChecked, deleteItem } = useShoppingList();
@@ -37,7 +38,7 @@ export function ShoppingListItem({
           style: "destructive",
           onPress: () => {
             swipeableRef.current?.close();
-            deleteItem(id);
+            deleteItem(id, userId);
           },
         },
       ],

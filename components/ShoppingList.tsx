@@ -10,7 +10,9 @@ export function ShoppingList() {
   if (sections.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={[typography.body, styles.emptyText]}>No items in your shopping list</Text>
+        <Text style={[typography.body, styles.emptyText]}>
+          Vous n'avez plus rien à acheter ! 🎉
+        </Text>
       </View>
     );
   }
