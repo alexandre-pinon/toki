@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
@@ -19,7 +19,7 @@ export default function AuthScreen() {
         }}
       />
       <View style={styles.content}>
-        <Ionicons name="cart" size={64} color={colors.primary} style={styles.icon} />
+        <ShoppingCartIcon color={colors.primary} size={64} />
         <Text style={[typography.headlineMedium, styles.title]}>Bienvenue sur Toki</Text>
         <Text style={[typography.bodyLarge, styles.subtitle]}>
           Connectez-vous pour commencer à gérer vos courses
