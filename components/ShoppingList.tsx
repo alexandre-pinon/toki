@@ -1,29 +1,31 @@
+import { useShoppingList } from "@/contexts/ShoppingListContext";
+import { mapShoppingItemCategoryToName } from "@/types/shopping/shopping-item-category";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import { colors, typography } from "../theme";
-import type { ShoppingListSection } from "../types/shopping/shopping-list";
 import { ShoppingListItem } from "./ShoppingListItem";
 
-type ShoppingListProps = {
-  sections: ShoppingListSection[];
-  setChecked: (id: string, checked: boolean) => void;
-  onDelete: (id: string) => void;
-};
+export function ShoppingList() {
+  const { sections } = useShoppingList();
 
-export function ShoppingList({ sections, setChecked, onDelete }: ShoppingListProps) {
+  if (sections.length === 0) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={[typography.body, styles.emptyText]}>No items in your shopping list</Text>
+      </View>
+    );
+  }
+
   return (
     <SectionList
       sections={sections}
       renderItem={({ item, section, index }) => (
-        <ShoppingListItem
-          setChecked={setChecked}
-          onDelete={onDelete}
-          {...item}
-          isLastItem={index === section.data.length - 1}
-        />
+        <ShoppingListItem {...item} isLastItem={index === section.data.length - 1} />
       )}
       renderSectionHeader={({ section: { title } }) => (
         <View style={styles.sectionHeader}>
-          <Text style={[typography.subtitle, styles.sectionTitle]}>{title}</Text>
+          <Text style={[typography.subtitle, styles.sectionTitle]}>
+            {mapShoppingItemCategoryToName(title)}
+          </Text>
         </View>
       )}
       keyExtractor={(item) => item.id.toString()}
@@ -42,5 +44,19 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.grey,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
+  errorText: {
+    color: colors.danger,
+    textAlign: "center",
+  },
+  emptyText: {
+    color: colors.grey,
+    textAlign: "center",
   },
 });

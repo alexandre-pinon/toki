@@ -1,5 +1,5 @@
 import { Stack, useRouter, useSegments } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
@@ -9,16 +9,23 @@ function RootLayoutNav() {
   const { session } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const inAuthGroup = segments.includes("auth");
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const inAuthGroup = segments[0] === "auth";
 
     if (!session && !inAuthGroup) {
       router.replace("/auth");
     } else if (session && inAuthGroup) {
       router.replace("/(tabs)");
     }
-  }, [session, segments]);
+  }, [session, segments, isMounted]);
 
   return (
     <GestureHandlerRootView style={styles.container}>

@@ -1,13 +1,16 @@
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
-import { type ReactNode, createContext, useContext, useState } from "react";
+import { type ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { Alert } from "react-native";
 import { useShoppingListService } from "../services/shopping-list";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
 
 interface ShoppingListContextType {
   sections: ShoppingListSection[];
+  error: Error | null;
+  isLoading: boolean;
   loadShoppingList: () => Promise<void>;
   setChecked: (id: string, checked: boolean) => Promise<void>;
-  handleDelete: (id: string) => Promise<void>;
+  deleteItem: (id: string) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
   editItem: (id: string, item: Omit<ShoppingItem, "id">) => Promise<void>;
 }
@@ -16,6 +19,8 @@ const ShoppingListContext = createContext<ShoppingListContextType | undefined>(u
 
 export function ShoppingListProvider({ children }: { children: ReactNode }) {
   const [sections, setSections] = useState<ShoppingListSection[]>([]);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     getShoppingListItems,
     addShoppingListItem,
@@ -23,38 +28,97 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     deleteShoppingListItem,
   } = useShoppingListService();
 
+  useEffect(() => {
+    loadShoppingList();
+  }, []);
+
+  const handleError = (err: unknown, message: string) => {
+    const error = err instanceof Error ? err : new Error(message);
+    setError(error);
+    Alert.alert("Error", message);
+  };
+
   const loadShoppingList = async () => {
-    const items = await getShoppingListItems();
-    setSections(items);
+    try {
+      setIsLoading(true);
+      const items = await getShoppingListItems();
+      setSections(items);
+      setError(null);
+    } catch (err) {
+      handleError(err, "Failed to load shopping list");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addItem = async (item: Omit<ShoppingItem, "id">) => {
-    await addShoppingListItem(item);
-    await loadShoppingList();
+    try {
+      setIsLoading(true);
+      await addShoppingListItem(item);
+      await loadShoppingList();
+      setError(null);
+    } catch (err) {
+      handleError(err, "Failed to add item");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const setChecked = async (id: string, checked: boolean) => {
-    const section = sections.find((s) => s.data.some((item) => item.id === id));
-    const item = section?.data.find((item) => item.id === id);
-    if (!item) return;
+    try {
+      setIsLoading(true);
+      const section = sections.find((s) => s.data.some((item) => item.id === id));
+      const item = section?.data.find((item) => item.id === id);
+      if (!item) return;
 
-    await updateShoppingListItem(id, { ...item, checked });
-    await loadShoppingList();
+      await updateShoppingListItem(id, { ...item, checked });
+      await loadShoppingList();
+      setError(null);
+    } catch (err) {
+      handleError(err, "Failed to update item");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const editItem = async (id: string, item: Omit<ShoppingItem, "id">) => {
-    await updateShoppingListItem(id, item);
-    await loadShoppingList();
+    try {
+      setIsLoading(true);
+      await updateShoppingListItem(id, item);
+      await loadShoppingList();
+      setError(null);
+    } catch (err) {
+      handleError(err, "Failed to edit item");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    await deleteShoppingListItem(id);
-    await loadShoppingList();
+  const deleteItem = async (id: string) => {
+    try {
+      setIsLoading(true);
+      await deleteShoppingListItem(id);
+      await loadShoppingList();
+      setError(null);
+    } catch (err) {
+      handleError(err, "Failed to delete item");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <ShoppingListContext.Provider
-      value={{ sections, loadShoppingList, setChecked, handleDelete, addItem, editItem }}
+      value={{
+        sections,
+        error,
+        isLoading,
+        loadShoppingList,
+        setChecked,
+        deleteItem,
+        addItem,
+        editItem,
+      }}
     >
       {children}
     </ShoppingListContext.Provider>

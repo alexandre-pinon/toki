@@ -27,8 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>Toki</string>
-          <string>com.alexandrepinon.toki</string>
+          <string>com.googleusercontent.apps.876817290985-28t9ssm2jeap87i6cirdjg22u9fnaur9</string>
         </array>
       </dict>
       <dict>
@@ -40,6 +39,8 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>

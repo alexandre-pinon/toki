@@ -1,19 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
-import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ShoppingList } from "../../components/ShoppingList";
-import { useShoppingList } from "../../contexts/ShoppingListContext";
 import { colors, typography } from "../../theme";
 
 export default function ShoppingListScreen() {
-  const { sections, loadShoppingList, setChecked, handleDelete } = useShoppingList();
-
-  useEffect(() => {
-    loadShoppingList();
-  }, []);
-
   return (
     <View style={styles.root}>
       <Stack.Screen
@@ -32,7 +24,7 @@ export default function ShoppingListScreen() {
         }}
       />
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <ShoppingList sections={sections} setChecked={setChecked} onDelete={handleDelete} />
+        <ShoppingList />
       </SafeAreaView>
     </View>
   );

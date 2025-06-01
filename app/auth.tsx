@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { Stack } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../contexts/AuthContext";
 import { colors, typography } from "../theme";
@@ -23,10 +24,12 @@ export default function AuthScreen() {
         <Text style={[typography.bodyLarge, styles.subtitle]}>
           Connectez-vous pour commencer à gérer vos courses
         </Text>
-        <TouchableOpacity style={styles.button} onPress={signInWithGoogle}>
-          <Ionicons name="logo-google" size={24} color={colors.primary} style={styles.buttonIcon} />
-          <Text style={[typography.bodyLarge, styles.buttonText]}>Se connecter avec Google</Text>
-        </TouchableOpacity>
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Light}
+          onPress={signInWithGoogle}
+          style={styles.button}
+        />
       </View>
     </SafeAreaView>
   );
@@ -56,20 +59,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 8,
-    padding: 16,
     width: "100%",
-  },
-  buttonIcon: {
-    marginRight: 8,
-  },
-  buttonText: {
-    color: colors.primary,
+    height: 48,
   },
 });

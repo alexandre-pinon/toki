@@ -1,18 +1,15 @@
+import { useShoppingList } from "@/contexts/ShoppingListContext";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
-import { useRef } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 import { colors, typography } from "../theme";
 import type { ShoppingItem } from "../types/shopping/shopping-item";
 import { mapUnitTypeToName } from "../types/unit-type";
 
-type ShoppingItemProps = ShoppingItem & {
-  setChecked: (id: string, checked: boolean) => void;
-  onDelete?: (id: string) => void;
-  isLastItem?: boolean;
-};
+type ShoppingItemProps = ShoppingItem & { isLastItem?: boolean };
 
 export function ShoppingListItem({
   id,
@@ -20,11 +17,11 @@ export function ShoppingListItem({
   quantity,
   unit,
   checked,
-  setChecked,
-  onDelete,
   isLastItem,
 }: ShoppingItemProps) {
   const swipeableRef = useRef<SwipeableMethods | null>(null);
+  const { setChecked, deleteItem } = useShoppingList();
+  const [isCheckLoading, setIsCheckLoading] = useState(false);
 
   const handleDelete = () => {
     Alert.alert(
@@ -40,7 +37,7 @@ export function ShoppingListItem({
           style: "destructive",
           onPress: () => {
             swipeableRef.current?.close();
-            onDelete?.(id);
+            deleteItem(id);
           },
         },
       ],
@@ -51,6 +48,12 @@ export function ShoppingListItem({
   const handleEdit = () => {
     swipeableRef.current?.close();
     router.push(`/edit-item/${id}`);
+  };
+
+  const handleCheck = async () => {
+    setIsCheckLoading(true);
+    await setChecked(id, !checked);
+    setIsCheckLoading(false);
   };
 
   const renderRightActions = () => {
@@ -80,14 +83,22 @@ export function ShoppingListItem({
       overshootRight={false}
     >
       <View style={styles.item}>
-        <Checkbox
-          style={styles.checkbox}
-          value={checked}
-          onValueChange={() => setChecked(id, !checked)}
-          color={colors.primary}
-        />
+        {isCheckLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="small" color={colors.primary} />
+          </View>
+        ) : (
+          <Checkbox
+            style={styles.checkbox}
+            value={checked}
+            onValueChange={handleCheck}
+            color={colors.primary}
+          />
+        )}
         <View style={[styles.itemContent, !isLastItem && styles.itemContentWithBorder]}>
-          <Text style={[typography.body, checked && styles.itemTitleChecked]}>{name}</Text>
+          <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>
+            {name}
+          </Text>
           <Text
             style={[typography.subtext, checked && styles.itemSubtitleChecked, styles.itemSubtitle]}
           >
@@ -115,6 +126,9 @@ const styles = StyleSheet.create({
   itemContentWithBorder: {
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGrey,
+  },
+  itemTitle: {
+    textTransform: "capitalize",
   },
   itemTitleChecked: {
     textDecorationLine: "line-through",
@@ -150,5 +164,10 @@ const styles = StyleSheet.create({
   },
   actionPressed: {
     opacity: 0.8,
+  },
+  loadingContainer: {
+    width: 22,
+    height: 22,
+    marginBottom: 16,
   },
 });

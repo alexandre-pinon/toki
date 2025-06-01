@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { useShoppingList } from "@/contexts/ShoppingListContext";
 import { Stack, router } from "expo-router";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetPicker } from "../components/BottomSheetPicker";
+import { LoadingOverlay } from "../components/LoadingOverlay";
 import { colors, typography } from "../theme";
 import type { ShoppingItemCategory } from "../types/shopping/shopping-item-category";
 import {
@@ -33,17 +35,20 @@ export default function AddItemScreen() {
   const [showPicker, setShowPicker] = useState<PickerType>("hide");
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
   const [previousCategory, setPreviousCategory] = useState<ShoppingItemCategory>("other");
-  const { addItem } = useShoppingList();
+  const { addItem, isLoading } = useShoppingList();
+  const { session } = useAuth();
 
   const handleSave = async () => {
     if (!name.trim()) return;
+    if (!session?.user.id) return;
 
     await addItem({
-      name: name.trim(),
+      name: name.trim().toLowerCase(),
       quantity: quantity ? Number.parseFloat(quantity) : 1,
       unit,
       checked: false,
       category,
+      userId: session.user.id,
     });
 
     router.back();
@@ -102,21 +107,25 @@ export default function AddItemScreen() {
             backgroundColor: Platform.OS === "ios" ? "transparent" : colors.background,
           },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={[typography.body, styles.cancelButton]}>Annuler</Text>
+            <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
+              <Text
+                style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}
+              >
+                Annuler
+              </Text>
             </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity
               onPress={handleSave}
-              disabled={!name.trim()}
-              style={[styles.saveButton, !name.trim() && styles.saveButtonDisabled]}
+              disabled={!name.trim() || isLoading}
+              style={[styles.saveButton, (!name.trim() || isLoading) && styles.saveButtonDisabled]}
             >
               <Text
                 style={[
                   typography.body,
                   styles.saveButtonText,
-                  !name.trim() && styles.saveButtonTextDisabled,
+                  (!name.trim() || isLoading) && styles.saveButtonTextDisabled,
                 ]}
               >
                 Ajouter
@@ -139,6 +148,7 @@ export default function AddItemScreen() {
               placeholder="Ex: Pommes"
               placeholderTextColor={colors.grey}
               autoFocus
+              editable={!isLoading}
             />
           </View>
 
@@ -152,16 +162,18 @@ export default function AddItemScreen() {
                 placeholder="1"
                 placeholderTextColor={colors.grey}
                 keyboardType="numeric"
+                editable={!isLoading}
               />
             </View>
 
             <View style={[styles.inputGroup, styles.unitInput]}>
               <Text style={[typography.body, styles.label]}>Unité</Text>
-              <Pressable onPress={showUnitPicker} style={styles.pickerButton}>
+              <Pressable onPress={showUnitPicker} style={styles.pickerButton} disabled={isLoading}>
                 <Text
                   style={[
                     typography.body,
                     unit ? styles.pickerButtonText : styles.pickerButtonPlaceholder,
+                    isLoading && styles.buttonDisabled,
                   ]}
                 >
                   {unit ? mapUnitTypeToName(unit) : "Sélectionner"}
@@ -172,8 +184,20 @@ export default function AddItemScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Catégorie</Text>
-            <Pressable onPress={showCategoryPicker} style={styles.pickerButton}>
-              <Text style={[typography.body, styles.pickerButtonText]}>{category}</Text>
+            <Pressable
+              onPress={showCategoryPicker}
+              style={styles.pickerButton}
+              disabled={isLoading}
+            >
+              <Text
+                style={[
+                  typography.body,
+                  styles.pickerButtonText,
+                  isLoading && styles.buttonDisabled,
+                ]}
+              >
+                {mapShoppingItemCategoryToName(category)}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -188,6 +212,8 @@ export default function AddItemScreen() {
         onSelect={handlePickerSelect}
         onClose={hidePicker}
       />
+
+      <LoadingOverlay visible={isLoading} />
     </SafeAreaView>
   );
 }
@@ -262,5 +288,8 @@ const styles = StyleSheet.create({
   },
   saveButtonTextDisabled: {
     color: colors.grey,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });
