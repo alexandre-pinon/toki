@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RecipeList } from "../../components/RecipeList";
 import { colors, typography } from "../../theme";
 
 export default function RecipesScreen() {
@@ -13,9 +14,7 @@ export default function RecipesScreen() {
           headerShadowVisible: false,
         }}
       />
-      <View style={styles.content}>
-        <Text style={[typography.body, styles.placeholder]}>Recettes à venir...</Text>
-      </View>
+      <RecipeList />
     </SafeAreaView>
   );
 }
@@ -24,13 +23,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  placeholder: {
-    color: colors.grey,
   },
 });

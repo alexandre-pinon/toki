@@ -9,32 +9,140 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ingredients: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          cooking_time: number | null
+          created_at: string
+          id: string
+          image_url: string | null
+          instructions: Json | null
+          name: string
+          preparation_time: number | null
+          servings: number
+          times_done: number
+          type: Database["public"]["Enums"]["recipe_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cooking_time?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          name: string
+          preparation_time?: number | null
+          servings: number
+          times_done?: number
+          type: Database["public"]["Enums"]["recipe_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cooking_time?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          name?: string
+          preparation_time?: number | null
+          servings?: number
+          times_done?: number
+          type?: Database["public"]["Enums"]["recipe_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      recipes_to_ingredients: {
+        Row: {
+          ingredient_id: string
+          quantity: number | null
+          recipe_id: string
+          unit: Database["public"]["Enums"]["unit_type"] | null
+        }
+        Insert: {
+          ingredient_id: string
+          quantity?: number | null
+          recipe_id: string
+          unit?: Database["public"]["Enums"]["unit_type"] | null
+        }
+        Update: {
+          ingredient_id?: string
+          quantity?: number | null
+          recipe_id?: string
+          unit?: Database["public"]["Enums"]["unit_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_to_ingredients_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_to_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shopping_items: {
         Row: {
           category: Database["public"]["Enums"]["shopping_item_category"]
           checked: boolean
+          created_at: string
           id: string
           name: string
           quantity: number | null
           unit: Database["public"]["Enums"]["unit_type"] | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           category: Database["public"]["Enums"]["shopping_item_category"]
           checked?: boolean
+          created_at?: string
           id?: string
           name: string
           quantity?: number | null
           unit?: Database["public"]["Enums"]["unit_type"] | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           category?: Database["public"]["Enums"]["shopping_item_category"]
           checked?: boolean
+          created_at?: string
           id?: string
           name?: string
           quantity?: number | null
           unit?: Database["public"]["Enums"]["unit_type"] | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -109,6 +217,7 @@ export type Database = {
         | "tanzanian"
         | "other"
       meal_type: "breakfast" | "lunch" | "dinner" | "snack"
+      recipe_type: "starter" | "main" | "side" | "dessert" | "sauce"
       shopping_item_category:
         | "fruits_vegetables"
         | "meat"
@@ -314,6 +423,7 @@ export const Constants = {
         "other",
       ],
       meal_type: ["breakfast", "lunch", "dinner", "snack"],
+      recipe_type: ["starter", "main", "side", "dessert", "sauce"],
       shopping_item_category: [
         "fruits_vegetables",
         "meat",
