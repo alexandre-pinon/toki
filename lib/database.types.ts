@@ -37,6 +37,7 @@ export type Database = {
           id: string
           image_url: string | null
           instructions: Json | null
+          last_time_done: string | null
           name: string
           preparation_time: number | null
           servings: number
@@ -51,6 +52,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructions?: Json | null
+          last_time_done?: string | null
           name: string
           preparation_time?: number | null
           servings: number
@@ -65,6 +67,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructions?: Json | null
+          last_time_done?: string | null
           name?: string
           preparation_time?: number | null
           servings?: number

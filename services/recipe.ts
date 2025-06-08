@@ -5,10 +5,7 @@ export function useRecipeService() {
 	const getRecipes = async (userId: string): Promise<Recipe[]> => {
 		const { data, error } = await supabase
 			.from("recipes")
-			.select(`
-        *,
-        ingredients:recipe_ingredients(*)
-      `)
+			.select("*")
 			.eq("user_id", userId)
 			.order("name");
 
@@ -24,15 +21,11 @@ export function useRecipeService() {
 			preparationTime: recipe.preparation_time ?? undefined,
 			cookingTime: recipe.cooking_time ?? undefined,
 			servings: recipe.servings,
-			ingredients: recipe.ingredients.map((ingredient: any) => ({
-				recipeId: ingredient.recipe_id,
-				ingredientId: ingredient.ingredient_id,
-				quantity: ingredient.quantity ?? undefined,
-				unit: ingredient.unit ?? undefined,
-			})),
-			instructions: recipe.instructions,
 			timesDone: recipe.times_done,
 			userId: recipe.user_id,
+			lastTimeDone: recipe.last_time_done
+				? Temporal.PlainDate.from(recipe.last_time_done)
+				: undefined,
 		}));
 	};
 

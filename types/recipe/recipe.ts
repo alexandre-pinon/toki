@@ -9,10 +9,15 @@ export type Recipe = {
 	preparationTime?: number;
 	cookingTime?: number;
 	servings: number;
+	timesDone: number;
+	lastTimeDone?: Temporal.PlainDate;
+	userId: string;
+};
+
+export type RecipeDetails = {
+	recipe: Recipe;
 	ingredients: RecipeIngredient[];
 	instructions: string[];
-	timesDone: number;
-	userId: string;
 };
 
 export type RecipeIngredient = {

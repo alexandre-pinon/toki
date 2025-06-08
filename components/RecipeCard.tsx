@@ -1,4 +1,6 @@
 import type { Recipe } from "@/types/recipe/recipe";
+import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { colors, typography } from "../theme";
@@ -12,11 +14,21 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
     <View style={styles.container}>
       <Image source={recipe.imageUrl} style={styles.image} contentFit="cover" transition={200} />
       <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
-          <Text style={[typography.subtext, styles.counter]}>{recipe.timesDone} fois</Text>
+        <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
+        <Text style={typography.subtext}>
+          {recipe.lastTimeDone ? recipe.lastTimeDone.toLocaleString() : "-"}
+        </Text>
+        <View style={styles.tagsContainer}>
+          <View style={styles.typeTag}>
+            <Text style={[typography.subtext, styles.typeText]}>
+              {mapRecipeTypeToName(recipe.type)}
+            </Text>
+          </View>
+          <View style={styles.counterContainer}>
+            <Ionicons name="checkmark-circle" size={16} />
+            <Text style={[typography.subtext, styles.counter]}>{recipe.timesDone}</Text>
+          </View>
         </View>
-        <Text style={[typography.subtext, styles.type]}>{recipe.type}</Text>
       </View>
     </View>
   );
@@ -26,32 +38,41 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     borderRadius: 12,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: colors.lightGrey,
+    flexDirection: "row",
+    boxShadow: "3px 4px 30px 0px rgba(47, 47, 47, 0.075)",
   },
   image: {
-    width: "100%",
-    height: 200,
+    width: 130,
+    height: "100%",
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
   },
   content: {
-    padding: 16,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
+    flex: 1,
+    margin: 16,
+    justifyContent: "center",
   },
   title: {
-    flex: 1,
-    marginRight: 8,
+    marginBottom: 6,
   },
-  counter: {
-    color: colors.grey,
+  tagsContainer: {
+    marginTop: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  type: {
-    color: colors.grey,
+  typeTag: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: colors.primary100,
+  },
+  typeText: {
     textTransform: "capitalize",
   },
+  counterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  counter: {},
 });

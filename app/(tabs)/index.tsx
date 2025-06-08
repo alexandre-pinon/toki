@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import "temporal-polyfill/global";
 import { ShoppingList } from "../../components/ShoppingList";
 import { colors, typography } from "../../theme";
 
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   container: {
+    marginTop: 24,
     flex: 1,
   },
   addButton: {

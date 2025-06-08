@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   itemContentWithBorder: {
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.lightGrey,
   },
   itemTitle: {

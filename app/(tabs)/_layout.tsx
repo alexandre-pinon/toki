@@ -12,6 +12,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopColor: colors.lightGrey,
+          paddingTop: 10,
+          opacity: 0.9,
+          backdropFilter: "blur(10px)",
         },
       }}
     >
