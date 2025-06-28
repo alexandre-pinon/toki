@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingLeft: 24,
     gap: 16,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   itemContent: {
     flex: 1,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   itemTitleChecked: {
     textDecorationLine: "line-through",
-    color: colors.grey,
+    color: colors.gray,
   },
   itemSubtitleChecked: {
     color: colors.lightGrey,

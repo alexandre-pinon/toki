@@ -63,7 +63,7 @@ export function BottomSheetPicker({
                   hideAnimation(onClose);
                 }}
               >
-                <Text style={[typography.body, { color: colors.grey }]}>Annuler</Text>
+                <Text style={[typography.body, { color: colors.gray }]}>Annuler</Text>
               </TouchableOpacity>
               <Text style={[typography.body, styles.pickerTitle]}>{title}</Text>
               <TouchableOpacity
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.lightGrey,
+    borderBottomColor: colors.gray300,
   },
   pickerTitle: {
     fontWeight: "600",

@@ -40,12 +40,12 @@ export function ShoppingList() {
 const styles = StyleSheet.create({
   listContent: {},
   sectionHeader: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   sectionTitle: {
-    color: colors.grey,
+    color: colors.gray,
   },
   centerContainer: {
     flex: 1,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   emptyText: {
-    color: colors.grey,
+    color: colors.gray,
     textAlign: "center",
   },
 });

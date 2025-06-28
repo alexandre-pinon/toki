@@ -1,4 +1,4 @@
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetPicker } from "../../components/BottomSheetPicker";
 import { LoadingOverlay } from "../../components/LoadingOverlay";
 import { useShoppingList } from "../../contexts/ShoppingListContext";
-import { colors, typography } from "../../theme";
+import { colors, commonStyles, typography } from "../../theme";
 import type { ShoppingItemCategory } from "../../types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
@@ -117,9 +117,7 @@ export default function EditItemScreen() {
           title: "Modifier l'article",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: Platform.OS === "ios" ? "transparent" : colors.background,
-          },
+          headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
               <Text
@@ -160,7 +158,7 @@ export default function EditItemScreen() {
               value={name}
               onChangeText={setName}
               placeholder="Ex: Pommes"
-              placeholderTextColor={colors.grey}
+              placeholderTextColor={colors.gray}
               autoFocus
               editable={!isLoading}
             />
@@ -174,7 +172,7 @@ export default function EditItemScreen() {
                 value={quantity}
                 onChangeText={setQuantity}
                 placeholder="1"
-                placeholderTextColor={colors.grey}
+                placeholderTextColor={colors.gray}
                 keyboardType="numeric"
                 editable={!isLoading}
               />
@@ -235,7 +233,7 @@ export default function EditItemScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   content: {
     flex: 1,
@@ -258,34 +256,34 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-    color: colors.grey,
+    color: colors.gray,
   },
   input: {
     ...typography.body,
     height: 44,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.lightGrey,
+    borderColor: colors.gray300,
     borderRadius: 10,
     paddingHorizontal: 12,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   pickerButton: {
     height: 44,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.lightGrey,
+    borderColor: colors.gray300,
     borderRadius: 10,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     justifyContent: "center",
     paddingHorizontal: 12,
   },
   pickerButtonText: {
-    color: colors.textPrimary,
+    color: colors.black,
   },
   pickerButtonPlaceholder: {
-    color: colors.grey,
+    color: colors.gray,
   },
   cancelButton: {
-    color: colors.grey,
+    color: colors.gray,
     paddingHorizontal: 8,
   },
   saveButton: {
@@ -298,7 +296,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   saveButtonTextDisabled: {
-    color: colors.grey,
+    color: colors.gray,
   },
   buttonDisabled: {
     opacity: 0.5,

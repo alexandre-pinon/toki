@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   dayDate: {
-    color: colors.grey,
+    color: colors.gray,
     marginBottom: 2,
   },
   addMeal: {

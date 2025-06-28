@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatisticsContent } from "../../components/StatisticsContent";
 import { colors, typography } from "../../theme";
 
 export default function ProfileStatisticsScreen() {
@@ -8,16 +9,15 @@ export default function ProfileStatisticsScreen() {
     <View style={styles.root}>
       <Stack.Screen
         options={{
-          title: "Statistique",
+          title: "Statistiques",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
         }}
       />
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <View style={styles.center}>
-          <Text style={typography.header}>Statistique</Text>
-          <Text style={typography.body}>Écran de statistiques utilisateur (placeholder)</Text>
-        </View>
+        <StatisticsContent />
       </SafeAreaView>
     </View>
   );
@@ -26,14 +26,9 @@ export default function ProfileStatisticsScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  center: {
-    alignItems: "center",
   },
 });

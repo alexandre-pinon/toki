@@ -1,9 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import type { MealWithRecipe } from "../services/meal";
-import { colors, typography } from "../theme";
+import { colors, commonStyles, typography } from "../theme";
 import { mapRecipeTypeToName } from "../types/recipe/recipe-type";
-import { Ionicons } from "@expo/vector-icons";
 
 type MealCardProps = {
   meal: MealWithRecipe;
@@ -26,7 +26,7 @@ export function MealCard({ meal }: MealCardProps) {
         </Text>
       </View>
       <View style={styles.mealMenuIcon}>
-        <Ionicons name="ellipsis-vertical" size={16} color={colors.grey} />
+        <Ionicons name="ellipsis-vertical" size={16} color={colors.gray} />
       </View>
     </View>
   );
@@ -36,9 +36,9 @@ const styles = StyleSheet.create({
   mealCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     borderRadius: 12,
-    boxShadow: "3px 4px 30px 0px rgba(47, 47, 47, 0.075)",
+    boxShadow: commonStyles.boxShadow,
   },
   mealImage: {
     width: 70,

@@ -115,16 +115,16 @@ const SearchBar = ({
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
-        <Ionicons name="search" size={20} color={colors.grey} style={styles.searchIcon} />
+        <Ionicons name="search" size={20} color={colors.gray} style={styles.searchIcon} />
         <TextInput
           style={[styles.searchInput, typography.body]}
           placeholder="Rechercher..."
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholderTextColor={colors.grey}
+          placeholderTextColor={colors.gray}
         />
         <TouchableOpacity style={styles.filterButton} onPress={() => setShowFilters(!showFilters)}>
-          <Ionicons name="filter" size={20} color={colors.grey} />
+          <Ionicons name="filter" size={20} color={colors.gray} />
         </TouchableOpacity>
       </View>
     </View>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    color: colors.grey,
+    color: colors.gray,
     textAlign: "center",
   },
   searchContainer: {
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.lightGrey,
+    borderColor: colors.gray300,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: colors.textPrimary,
+    color: colors.black,
     fontSize: 16,
   },
   filterButton: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   filterChip: {
-    backgroundColor: colors.lighterGrey,
+    backgroundColor: colors.gray100,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
@@ -219,11 +219,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary400,
   },
   filterChipText: {
-    color: colors.textPrimary,
+    color: colors.black,
     textTransform: "capitalize",
   },
   filterChipTextSelected: {
-    color: colors.background,
+    color: colors.white,
     fontWeight: "500",
   },
   listContent: {

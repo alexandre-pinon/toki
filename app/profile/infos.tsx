@@ -25,7 +25,7 @@ export default function ProfileInfosScreen() {
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
           headerBackButtonDisplayMode: "minimal",
-          headerTintColor: colors.textPrimary,
+          headerTintColor: colors.black,
         }}
       />
       <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -42,7 +42,7 @@ export default function ProfileInfosScreen() {
             <TextInput
               style={styles.input}
               placeholder="Entrez votre nom"
-              placeholderTextColor={colors.grey}
+              placeholderTextColor={colors.gray}
               autoCapitalize="words"
               value={lastName}
             />
@@ -53,7 +53,7 @@ export default function ProfileInfosScreen() {
             <TextInput
               style={styles.input}
               placeholder="Entrez votre prénom"
-              placeholderTextColor={colors.grey}
+              placeholderTextColor={colors.gray}
               autoCapitalize="words"
               value={firstName}
             />
@@ -64,7 +64,7 @@ export default function ProfileInfosScreen() {
             <TextInput
               style={[styles.input, styles.inputReadOnly]}
               placeholder="Entrez votre email"
-              placeholderTextColor={colors.grey}
+              placeholderTextColor={colors.gray}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -81,7 +81,7 @@ export default function ProfileInfosScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
@@ -104,19 +104,19 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-    color: colors.grey,
+    color: colors.gray,
   },
   input: {
     ...typography.body,
     height: 44,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.lightGrey,
+    borderColor: colors.gray300,
     borderRadius: 10,
     paddingHorizontal: 12,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   inputReadOnly: {
-    backgroundColor: colors.lighterGrey,
+    backgroundColor: colors.gray100,
     opacity: 0.7,
   },
 });

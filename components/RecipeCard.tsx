@@ -3,7 +3,7 @@ import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, typography } from "../theme";
+import { colors, commonStyles, typography } from "../theme";
 
 type RecipeCardProps = {
   recipe: Recipe;
@@ -42,10 +42,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     borderRadius: 12,
     flexDirection: "row",
-    boxShadow: "3px 4px 30px 0px rgba(47, 47, 47, 0.075)",
+    boxShadow: commonStyles.boxShadow,
   },
   image: {
     width: 130,

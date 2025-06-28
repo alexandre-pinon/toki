@@ -27,7 +27,7 @@ export function ProfileMenuItem({
         </View>
         <Text style={styles.text}>{title}</Text>
         {showChevron && (
-          <Ionicons name="chevron-forward" size={16} color={colors.grey} style={styles.chevron} />
+          <Ionicons name="chevron-forward" size={16} color={colors.gray} style={styles.chevron} />
         )}
       </View>
     </Pressable>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   itemWithBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.lightGrey,
+    borderBottomColor: colors.gray300,
   },
   itemPressed: {
     opacity: 0.7,
