@@ -30,7 +30,7 @@ export function ShoppingList() {
           </Text>
         </View>
       )}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item.ids[0]}
       contentContainerStyle={styles.listContent}
       stickySectionHeadersEnabled
     />

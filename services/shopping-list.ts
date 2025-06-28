@@ -1,43 +1,77 @@
 import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
-import type { Database } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
-import type { ShoppingItem } from "../types/shopping/shopping-item";
+import type {
+	AggregatedShoppingItem,
+	ShoppingItem,
+} from "../types/shopping/shopping-item";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
-
-type DbItem = Database["public"]["Tables"]["shopping_items"]["Row"];
-type DbCategory = ShoppingItem["category"];
 
 export function useShoppingListService() {
 	const getShoppingListItems = async (
 		userId: string,
 	): Promise<ShoppingListSection[]> => {
-		const { data, error } = await supabase
+		const getShoppingItemsQuery = supabase
 			.from("shopping_items")
 			.select()
 			.eq("user_id", userId)
-			.order("category")
-			.order("name");
+			.is("meal_id", null);
+		const getUpcomingMealsShoppingItemsQuery = supabase
+			.from("upcoming_meals_shopping_items")
+			.select()
+			.eq("user_id", userId);
 
-		if (error) {
-			throw error;
+		const [
+			{ data: items, error: itemsError },
+			{
+				data: upcomingMealsShoppingItems,
+				error: upcomingMealsShoppingItemsError,
+			},
+		] = await Promise.all([
+			getShoppingItemsQuery,
+			getUpcomingMealsShoppingItemsQuery,
+		]);
+
+		if (itemsError || upcomingMealsShoppingItemsError) {
+			throw itemsError ?? upcomingMealsShoppingItemsError;
 		}
 
+		const aggregatedItemsFromShoppingItems: AggregatedShoppingItem[] =
+			items.map((item) => ({
+				ids: [item.id],
+				category: item.category,
+				name: item.name,
+				quantity: item.quantity ?? undefined,
+				unit: item.unit ?? undefined,
+				checked: item.checked,
+				userId: item.user_id,
+			}));
+		const aggregatedItemsFromUpcomingMeals: AggregatedShoppingItem[] =
+			upcomingMealsShoppingItems.map((item) => ({
+				ids: item.ids ?? [],
+				category: item.category ?? "other",
+				name: item.name ?? "",
+				unit: item.unit ?? undefined,
+				quantity: item.quantity ?? undefined,
+				earliestMealDate: item.meal_date
+					? Temporal.PlainDate.from(item.meal_date)
+					: undefined,
+				checked: item.checked ?? false,
+				userId: item.user_id ?? "",
+			}));
+
 		// Group items by category
-		const itemsByCategory = (data as DbItem[]).reduce(
+		const itemsByCategory = [
+			...aggregatedItemsFromShoppingItems,
+			...aggregatedItemsFromUpcomingMeals,
+		].reduce(
 			(acc, item) => {
 				if (!acc[item.category]) {
 					acc[item.category] = [];
 				}
-				acc[item.category].push({
-					...item,
-					quantity: item.quantity ?? undefined,
-					unit: item.unit ?? undefined,
-					checked: Boolean(item.checked),
-					userId: item.user_id,
-				});
+				acc[item.category].push(item);
 				return acc;
 			},
-			{} as Record<DbCategory, ShoppingItem[]>,
+			{} as Record<ShoppingItemCategory, AggregatedShoppingItem[]>,
 		);
 
 		return Object.entries(itemsByCategory).map(([category, items]) => ({
@@ -82,6 +116,24 @@ export function useShoppingListService() {
 		}
 	};
 
+	const setCheckedShoppingListItems = async (
+		ids: string[],
+		checked: boolean,
+	) => {
+		if (ids.length === 0) {
+			return;
+		}
+
+		const { error } = await supabase
+			.from("shopping_items")
+			.update({ checked, updated_at: new Date().toISOString() })
+			.in("id", ids);
+
+		if (error) {
+			throw error;
+		}
+	};
+
 	const deleteShoppingListItem = async (id: string) => {
 		const { error } = await supabase
 			.from("shopping_items")
@@ -97,6 +149,7 @@ export function useShoppingListService() {
 		getShoppingListItems,
 		addShoppingListItem,
 		updateShoppingListItem,
+		setCheckedShoppingListItems,
 		deleteShoppingListItem,
 	};
 }

@@ -6,16 +6,17 @@ import { useRef, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 import { colors, typography } from "../theme";
-import type { ShoppingItem } from "../types/shopping/shopping-item";
+import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
 import { mapUnitTypeToName } from "../types/unit-type";
 
-type ShoppingItemProps = ShoppingItem & { isLastItem?: boolean };
+type ShoppingItemProps = AggregatedShoppingItem & { isLastItem?: boolean };
 
 export function ShoppingListItem({
-  id,
+  ids,
   name,
   quantity,
   unit,
+  earliestMealDate,
   checked,
   isLastItem,
   userId,
@@ -38,7 +39,7 @@ export function ShoppingListItem({
           style: "destructive",
           onPress: () => {
             swipeableRef.current?.close();
-            deleteItem(id, userId);
+            deleteItem(ids[0], userId);
           },
         },
       ],
@@ -48,12 +49,12 @@ export function ShoppingListItem({
 
   const handleEdit = () => {
     swipeableRef.current?.close();
-    router.push(`/edit-item/${id}`);
+    router.push(`/edit-item/${ids[0]}`);
   };
 
   const handleCheck = async () => {
     setIsCheckLoading(true);
-    await setChecked(id, !checked);
+    await setChecked(ids, !checked, userId);
     setIsCheckLoading(false);
   };
 
@@ -62,12 +63,14 @@ export function ShoppingListItem({
       <View style={styles.actions}>
         <Pressable
           onPress={handleEdit}
+          disabled={!!earliestMealDate}
           style={({ pressed }) => [styles.editAction, pressed && styles.actionPressed]}
         >
           <Ionicons name="pencil-outline" size={24} color="white" />
         </Pressable>
         <Pressable
           onPress={handleDelete}
+          disabled={!!earliestMealDate}
           style={({ pressed }) => [styles.deleteAction, pressed && styles.actionPressed]}
         >
           <Ionicons name="trash-outline" size={24} color="white" />

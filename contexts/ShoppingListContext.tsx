@@ -10,7 +10,7 @@ interface ShoppingListContextType {
   error: Error | null;
   isLoading: boolean;
   loadShoppingList: (userId: string) => Promise<void>;
-  setChecked: (id: string, checked: boolean) => Promise<void>;
+  setChecked: (ids: string[], checked: boolean, userId: string) => Promise<void>;
   deleteItem: (id: string, userId: string) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
   editItem: (id: string, item: Omit<ShoppingItem, "id">) => Promise<void>;
@@ -26,6 +26,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     getShoppingListItems,
     addShoppingListItem,
     updateShoppingListItem,
+    setCheckedShoppingListItems,
     deleteShoppingListItem,
   } = useShoppingListService();
   const { session } = useAuth();
@@ -67,15 +68,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const setChecked = async (id: string, checked: boolean) => {
+  const setChecked = async (ids: string[], checked: boolean, userId: string) => {
     try {
       setIsLoading(true);
-      const section = sections.find((s) => s.data.some((item) => item.id === id));
-      const item = section?.data.find((item) => item.id === id);
-      if (!item) return;
-
-      await updateShoppingListItem(id, { ...item, checked });
-      await loadShoppingList(item.userId);
+      await setCheckedShoppingListItems(ids, checked);
+      await loadShoppingList(userId);
       setError(null);
     } catch (err) {
       handleError(err, "Failed to update item");

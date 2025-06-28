@@ -11,18 +11,27 @@ export type Database = {
 		Tables: {
 			ingredients: {
 				Row: {
+					category:
+						| Database["public"]["Enums"]["shopping_item_category"]
+						| null;
 					created_at: string;
 					id: string;
 					name: string;
 					updated_at: string;
 				};
 				Insert: {
+					category?:
+						| Database["public"]["Enums"]["shopping_item_category"]
+						| null;
 					created_at?: string;
 					id?: string;
 					name: string;
 					updated_at?: string;
 				};
 				Update: {
+					category?:
+						| Database["public"]["Enums"]["shopping_item_category"]
+						| null;
 					created_at?: string;
 					id?: string;
 					name?: string;
@@ -158,6 +167,8 @@ export type Database = {
 					checked: boolean;
 					created_at: string;
 					id: string;
+					meal_date: string | null;
+					meal_id: string | null;
 					name: string;
 					quantity: number | null;
 					unit: Database["public"]["Enums"]["unit_type"] | null;
@@ -169,6 +180,8 @@ export type Database = {
 					checked?: boolean;
 					created_at?: string;
 					id?: string;
+					meal_date?: string | null;
+					meal_id?: string | null;
 					name: string;
 					quantity?: number | null;
 					unit?: Database["public"]["Enums"]["unit_type"] | null;
@@ -180,17 +193,42 @@ export type Database = {
 					checked?: boolean;
 					created_at?: string;
 					id?: string;
+					meal_date?: string | null;
+					meal_id?: string | null;
 					name?: string;
 					quantity?: number | null;
 					unit?: Database["public"]["Enums"]["unit_type"] | null;
 					updated_at?: string;
 					user_id?: string;
 				};
-				Relationships: [];
+				Relationships: [
+					{
+						foreignKeyName: "shopping_items_meal_id_fkey";
+						columns: ["meal_id"];
+						isOneToOne: false;
+						referencedRelation: "meals";
+						referencedColumns: ["id"];
+					},
+				];
 			};
 		};
 		Views: {
-			[_ in never]: never;
+			upcoming_meals_shopping_items: {
+				Row: {
+					category:
+						| Database["public"]["Enums"]["shopping_item_category"]
+						| null;
+					checked: boolean | null;
+					ids: string[] | null;
+					meal_date: string | null;
+					name: string | null;
+					quantity: number | null;
+					unit: Database["public"]["Enums"]["unit_type"] | null;
+					user_id: string | null;
+					week_day: number | null;
+				};
+				Relationships: [];
+			};
 		};
 		Functions: {
 			[_ in never]: never;
