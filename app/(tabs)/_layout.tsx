@@ -1,3 +1,4 @@
+import { MenuIcon } from "@/components/icons/MenuIcon";
 import { RecipeIcon } from "@/components/icons/RecipeIcon";
 import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
 import { Tabs } from "expo-router";
@@ -18,6 +19,14 @@ export default function TabsLayout() {
         },
       }}
     >
+      <Tabs.Screen
+        name="menu"
+        options={{
+          title: "Menu",
+          headerTitle: "Repas de la semaine",
+          tabBarIcon: ({ color, size }) => <MenuIcon color={color} size={size} />,
+        }}
+      />
       <Tabs.Screen
         name="recipes"
         options={{

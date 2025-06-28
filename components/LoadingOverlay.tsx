@@ -1,5 +1,5 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { colors } from "../theme";
+import { StyleSheet, View } from "react-native";
+import { Loader } from "./Loader";
 
 type LoadingOverlayProps = {
   visible: boolean;
@@ -10,7 +10,7 @@ export function LoadingOverlay({ visible }: LoadingOverlayProps) {
 
   return (
     <View style={styles.overlay}>
-      <ActivityIndicator size="large" color={colors.primary} />
+      <Loader />
     </View>
   );
 }

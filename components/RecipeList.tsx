@@ -5,16 +5,9 @@ import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { colors, typography } from "../theme";
+import { Loader } from "./Loader";
 import { RecipeCard } from "./RecipeCard";
 
 export function RecipeList() {
@@ -67,11 +60,7 @@ export function RecipeList() {
   };
 
   if (isLoading) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <Loader />;
   }
 
   if (recipes.length === 0) {
@@ -207,7 +196,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: colors.text.primary,
+    color: colors.textPrimary,
     fontSize: 16,
   },
   filterButton: {
@@ -230,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary400,
   },
   filterChipText: {
-    color: colors.text.primary,
+    color: colors.textPrimary,
     textTransform: "capitalize",
   },
   filterChipTextSelected: {

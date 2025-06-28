@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   pickerButtonText: {
-    color: colors.text.primary,
+    color: colors.textPrimary,
   },
   pickerButtonPlaceholder: {
     color: colors.grey,

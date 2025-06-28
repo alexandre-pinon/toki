@@ -8,43 +8,42 @@ export const colors = {
 	lightGrey: "#DBDDE8",
 	lighterGrey: "#F5F5F5",
 	background: "#FFFFFF",
-	text: {
-		primary: "#000000",
-		secondary: "#666666",
-	},
+	textPrimary: "#000000",
+	textSecondary: "#666666",
 	danger: "#FF3B30",
 	info: "#007AFF",
 	// Add more colors as needed
 } as const;
+export type ColorValue = (typeof colors)[keyof typeof colors];
 
 export const typography = {
 	header: {
 		fontSize: 20,
-		fontWeight: "600",
+		fontWeight: "500",
 	},
 	headlineMedium: {
 		fontSize: 28,
-		fontWeight: "600",
+		fontWeight: "500",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 	bodyLarge: {
 		fontSize: 16,
-		fontWeight: "400",
+		fontWeight: "300",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 	body: {
 		fontSize: 14,
-		fontWeight: "300",
+		fontWeight: "200",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 	subtitle: {
 		fontSize: 14,
-		fontWeight: "400",
+		fontWeight: "300",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 	subtext: {
 		fontSize: 12,
-		fontWeight: "200",
+		fontWeight: "100",
 		fontFamily: Platform.OS === "ios" ? "System" : "Inter",
 	},
 } as const;
