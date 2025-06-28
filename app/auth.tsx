@@ -19,7 +19,7 @@ export default function AuthScreen() {
         }}
       />
       <View style={styles.content}>
-        <ShoppingCartIcon color={colors.primary} size={64} />
+        <ShoppingCartIcon style={styles.icon} color={colors.primary} size={64} />
         <Text style={[typography.headlineMedium, styles.title]}>Bienvenue sur Toki</Text>
         <Text style={[typography.bodyLarge, styles.subtitle]}>
           Connectez-vous pour commencer à gérer vos courses

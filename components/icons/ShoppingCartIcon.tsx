@@ -1,10 +1,18 @@
-import { Tabs } from "expo-router";
+import type { StyleProp, ViewStyle } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
-import { colors } from "../../theme";
 
-export const ShoppingCartIcon = ({ color, size }: { color: string; size: number }) => {
+export const ShoppingCartIcon = ({
+  color,
+  size,
+  style,
+}: {
+  color: string;
+  size: number;
+  style?: StyleProp<ViewStyle>;
+}) => {
   return (
     <Svg
+      style={style}
       width={size}
       height={size}
       viewBox="0 0 512.000000 512.000000"
