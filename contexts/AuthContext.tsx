@@ -6,7 +6,10 @@ import { supabase } from "../lib/supabase";
 type AuthContextType = {
   session: Session | null;
   signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
+  /**
+   * Sign out from the app, returns true if successful, false otherwise
+   */
+  signOut: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -78,12 +81,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signOut = async () => {
+  const signOut = async (): Promise<boolean> => {
     try {
       await GoogleSignin.signOut();
       await supabase.auth.signOut();
+      return true;
     } catch (error) {
       console.error("Error signing out:", error);
+      return false;
     }
   };
 

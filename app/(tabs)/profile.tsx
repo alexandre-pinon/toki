@@ -5,9 +5,19 @@ import { InfoIcon } from "../../components/icons/InfoIcon";
 import { LogoutIcon } from "../../components/icons/LogoutIcon";
 import { StatisticIcon } from "../../components/icons/StatisticIcon";
 import { ProfileMenuItem } from "../../components/ProfileMenuItem";
+import { useAuth } from "../../contexts/AuthContext";
 import { colors, typography } from "../../theme";
 
 export default function ProfileScreen() {
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    const success = await signOut();
+    if (success) {
+      router.replace("/auth");
+    }
+  };
+
   return (
     <View style={styles.root}>
       <Stack.Screen
@@ -32,9 +42,7 @@ export default function ProfileScreen() {
         <ProfileMenuItem
           icon={LogoutIcon}
           title="Déconnexion"
-          onPress={() => {
-            /* TODO: implement logout */
-          }}
+          onPress={handleLogout}
           showChevron={false}
           showBorder={false}
         />

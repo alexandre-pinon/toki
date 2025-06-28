@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   errorText: {
-    color: colors.danger,
+    color: colors.alert,
     textAlign: "center",
   },
   emptyText: {

@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   itemContentWithBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.lightGrey,
+    borderBottomColor: colors.gray300,
   },
   itemTitle: {
     textTransform: "capitalize",
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
   itemSubtitleChecked: {
-    color: colors.lightGrey,
+    color: colors.gray300,
   },
   itemSubtitle: {
     marginBottom: 16,
@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   editAction: {
-    backgroundColor: colors.info,
+    backgroundColor: colors.contrast500,
     justifyContent: "center",
     alignItems: "center",
     width: 80,
   },
   deleteAction: {
-    backgroundColor: colors.danger,
+    backgroundColor: colors.alert,
     justifyContent: "center",
     alignItems: "center",
     width: 80,

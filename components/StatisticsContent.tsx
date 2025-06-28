@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   recipeCount: {
     ...typography.headlineMedium,
-    fontSize: 12,
+    fontSize: 14,
     color: colors.primary,
     marginTop: 4,
   },

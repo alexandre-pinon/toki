@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import type { MealWithRecipe } from "../services/meal";
@@ -24,9 +23,6 @@ export function MealCard({ meal }: MealCardProps) {
         <Text style={[typography.subtext, styles.mealType]}>
           {mapRecipeTypeToName(meal.recipe.type)}
         </Text>
-      </View>
-      <View style={styles.mealMenuIcon}>
-        <Ionicons name="ellipsis-vertical" size={16} color={colors.gray} />
       </View>
     </View>
   );
