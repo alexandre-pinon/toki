@@ -13,7 +13,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.gray,
         tabBarStyle: {
           backgroundColor: colors.white,
-          borderTopColor: colors.lightGrey,
+          borderTopColor: colors.gray300,
           paddingTop: 10,
           opacity: 0.9,
           backdropFilter: "blur(10px)",

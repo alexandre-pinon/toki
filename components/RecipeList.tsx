@@ -4,6 +4,7 @@ import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { colors, typography } from "../theme";
@@ -81,7 +82,12 @@ export function RecipeList() {
       {filteredRecipes.length > 0 ? (
         <FlatList
           data={filteredRecipes}
-          renderItem={({ item }) => <RecipeCard recipe={item} />}
+          renderItem={({ item }) => (
+            <RecipeCard
+              recipe={item}
+              onPress={() => router.push({ pathname: "/recipes/[id]", params: { id: item.id } })}
+            />
+          )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
         />

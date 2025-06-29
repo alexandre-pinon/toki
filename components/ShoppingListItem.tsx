@@ -9,6 +9,7 @@ import { colors, typography } from "../theme";
 import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
 import { mapUnitTypeToName } from "../types/unit-type";
 import { mapPlainDateToDayName } from "../utils/date";
+import { Pill } from "./Pill";
 
 type ShoppingItemProps = AggregatedShoppingItem & { isLastItem?: boolean };
 
@@ -112,13 +113,7 @@ export function ShoppingListItem({
               {quantity} {mapUnitTypeToName(unit)}
             </Text>
           </View>
-          {earliestMealDate && (
-            <View style={styles.datePill}>
-              <Text style={[typography.subtitle, styles.datePillText]}>
-                {mapPlainDateToDayName(earliestMealDate)}
-              </Text>
-            </View>
-          )}
+          {earliestMealDate && <Pill>{mapPlainDateToDayName(earliestMealDate)}</Pill>}
         </View>
       </View>
     </Swipeable>
@@ -189,15 +184,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  datePill: {
-    borderRadius: 15,
-    paddingHorizontal: 9,
-    paddingVertical: 7,
-    backgroundColor: colors.gray50,
-  },
-  datePillText: {
-    textTransform: "capitalize",
-    fontSize: 12,
   },
 });

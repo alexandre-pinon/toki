@@ -2,16 +2,18 @@ import type { Recipe } from "@/types/recipe/recipe";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, commonStyles, typography } from "../theme";
 
 type RecipeCardProps = {
   recipe: Recipe;
+  onPress?: () => void;
 };
 
-export function RecipeCard({ recipe }: RecipeCardProps) {
-  return (
-    <View style={styles.container}>
+export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
+  const CardContent = (
+    <>
       <Image
         source={recipe.imageUrl}
         placeholder={require("../assets/images/favicon.png")}
@@ -36,8 +38,18 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           </View>
         </View>
       </View>
-    </View>
+    </>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.container}>
+        {CardContent}
+      </TouchableOpacity>
+    );
+  }
+
+  return <View style={styles.container}>{CardContent}</View>;
 }
 
 const styles = StyleSheet.create({

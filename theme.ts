@@ -51,6 +51,7 @@ export const typography = {
 	header: {
 		fontSize: 20,
 		fontWeight: "500",
+		fontFamily,
 	},
 	headlineMedium: {
 		fontSize: 28,
