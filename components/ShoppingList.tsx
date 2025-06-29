@@ -1,5 +1,9 @@
 import { useShoppingList } from "@/contexts/ShoppingListContext";
-import { mapShoppingItemCategoryToName } from "@/types/shopping/shopping-item-category";
+import {
+  mapShoppingItemCategoryToImageSource,
+  mapShoppingItemCategoryToName,
+} from "@/types/shopping/shopping-item-category";
+import { Image } from "expo-image";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import { colors, typography } from "../theme";
 import { ShoppingListItem } from "./ShoppingListItem";
@@ -28,6 +32,7 @@ export function ShoppingList() {
           <Text style={[typography.subtitle, styles.sectionTitle]}>
             {mapShoppingItemCategoryToName(title)}
           </Text>
+          <Image source={mapShoppingItemCategoryToImageSource(title)} style={styles.sectionIcon} />
         </View>
       )}
       keyExtractor={(item) => item.ids[0]}
@@ -43,9 +48,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   sectionTitle: {
     color: colors.gray,
+  },
+  sectionIcon: {
+    width: 16,
+    height: 16,
   },
   centerContainer: {
     flex: 1,

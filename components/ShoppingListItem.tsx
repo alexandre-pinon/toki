@@ -8,6 +8,7 @@ import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/R
 import { colors, typography } from "../theme";
 import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
 import { mapUnitTypeToName } from "../types/unit-type";
+import { mapPlainDateToDayName } from "../utils/date";
 
 type ShoppingItemProps = AggregatedShoppingItem & { isLastItem?: boolean };
 
@@ -99,15 +100,25 @@ export function ShoppingListItem({
             color={colors.primary}
           />
         )}
+
         <View style={[styles.itemContent, !isLastItem && styles.itemContentWithBorder]}>
-          <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>
-            {name}
-          </Text>
-          <Text
-            style={[typography.subtext, checked && styles.itemSubtitleChecked, styles.itemSubtitle]}
-          >
-            {quantity} {mapUnitTypeToName(unit)}
-          </Text>
+          <View style={styles.itemContentLeft}>
+            <View style={styles.titleRow}>
+              <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>
+                {name}
+              </Text>
+            </View>
+            <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>
+              {quantity} {mapUnitTypeToName(unit)}
+            </Text>
+          </View>
+          {earliestMealDate && (
+            <View style={styles.datePill}>
+              <Text style={[typography.subtitle, styles.datePillText]}>
+                {mapPlainDateToDayName(earliestMealDate)}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </Swipeable>
@@ -118,13 +129,17 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 16,
     paddingLeft: 24,
-    gap: 16,
     backgroundColor: colors.white,
   },
   itemContent: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+  },
+  itemContentLeft: {
     gap: 4,
   },
   itemContentWithBorder: {
@@ -141,11 +156,7 @@ const styles = StyleSheet.create({
   itemSubtitleChecked: {
     color: colors.gray300,
   },
-  itemSubtitle: {
-    marginBottom: 16,
-  },
   checkbox: {
-    marginBottom: 16,
     borderRadius: 6,
     borderWidth: 1.5,
     width: 22,
@@ -173,5 +184,20 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     marginBottom: 16,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  datePill: {
+    borderRadius: 15,
+    paddingHorizontal: 9,
+    paddingVertical: 7,
+    backgroundColor: colors.gray50,
+  },
+  datePillText: {
+    textTransform: "capitalize",
+    fontSize: 12,
   },
 });

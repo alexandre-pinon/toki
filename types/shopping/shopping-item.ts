@@ -21,3 +21,24 @@ export type AggregatedShoppingItem = {
 	readonly checked: boolean;
 	readonly userId: string;
 };
+
+/**
+ * Sort shopping items by earliest meal date
+ * @note Items without earliest meal date are first
+ */
+export const byEarliestMealDate = (
+	a: AggregatedShoppingItem,
+	b: AggregatedShoppingItem,
+) => {
+	if (a.earliestMealDate && !b.earliestMealDate) {
+		return 1;
+	}
+	if (!a.earliestMealDate && b.earliestMealDate) {
+		return -1;
+	}
+	if (a.earliestMealDate && b.earliestMealDate) {
+		return Temporal.PlainDate.compare(a.earliestMealDate, b.earliestMealDate);
+	}
+
+	return 0;
+};

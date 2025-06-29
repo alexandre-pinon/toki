@@ -1,8 +1,12 @@
-import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
+import {
+	byShoppingItemCategoryOrder,
+	type ShoppingItemCategory,
+} from "@/types/shopping/shopping-item-category";
 import { supabase } from "../lib/supabase";
-import type {
-	AggregatedShoppingItem,
-	ShoppingItem,
+import {
+	byEarliestMealDate,
+	type AggregatedShoppingItem,
+	type ShoppingItem,
 } from "../types/shopping/shopping-item";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
 
@@ -61,8 +65,8 @@ export function useShoppingListService() {
 
 		// Group items by category
 		const itemsByCategory = [
-			...aggregatedItemsFromShoppingItems,
 			...aggregatedItemsFromUpcomingMeals,
+			...aggregatedItemsFromShoppingItems,
 		].reduce(
 			(acc, item) => {
 				if (!acc[item.category]) {
@@ -74,10 +78,12 @@ export function useShoppingListService() {
 			{} as Record<ShoppingItemCategory, AggregatedShoppingItem[]>,
 		);
 
-		return Object.entries(itemsByCategory).map(([category, items]) => ({
-			title: category as ShoppingItemCategory,
-			data: items,
-		}));
+		return Object.entries(itemsByCategory)
+			.map(([category, items]) => ({
+				title: category as ShoppingItemCategory,
+				data: items.sort(byEarliestMealDate),
+			}))
+			.sort((a, b) => byShoppingItemCategoryOrder(a.title, b.title));
 	};
 
 	const addShoppingListItem = async (item: Omit<ShoppingItem, "id">) => {
