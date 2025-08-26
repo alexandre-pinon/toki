@@ -1,6 +1,5 @@
-import { useAuth } from "@/contexts/AuthContext";
+import { useMeals } from "@/hooks/useMeals";
 import type { MealWithRecipe } from "@/services/meal";
-import { useMealService } from "@/services/meal";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
 import { useEffect, useState } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
@@ -17,29 +16,16 @@ type SectionData = {
 };
 
 export function MealList() {
-  const { session } = useAuth();
-  const { getUpcomingMeals } = useMealService();
+  const { meals, isLoading, error } = useMeals();
   const [sectionData, setSectionData] = useState<SectionData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!session) return;
-    loadMeals(session.user.id);
-  }, [session]);
-
-  const loadMeals = async (userId: string) => {
-    try {
-      setIsLoading(true);
-      const meals = await getUpcomingMeals(userId);
+    if (meals.length > 0) {
       const mealsByDate = groupMealsByDate(meals);
       const sections = createMealSections(mealsByDate);
       setSectionData(sections);
-    } catch (error) {
-      console.error("Error loading meals:", error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [meals]);
 
   if (isLoading) {
     return <Loader />;

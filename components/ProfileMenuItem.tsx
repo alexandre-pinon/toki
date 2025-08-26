@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, typography } from "../theme";
 
-interface ProfileMenuItemProps {
+type ProfileMenuItemProps = {
   icon: React.ComponentType<{ color: string; size: number }>;
   title: string;
   onPress: () => void;
   showChevron?: boolean;
   showBorder?: boolean;
-}
+};
 
 export function ProfileMenuItem({
   icon,

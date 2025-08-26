@@ -5,7 +5,7 @@ import { useShoppingListService } from "../services/shopping-list";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
 import { useAuth } from "./AuthContext";
 
-interface ShoppingListContextType {
+type ShoppingListContextType = {
   sections: ShoppingListSection[];
   error: Error | null;
   isLoading: boolean;
@@ -14,7 +14,7 @@ interface ShoppingListContextType {
   deleteItem: (id: string, userId: string) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
   editItem: (id: string, item: Omit<ShoppingItem, "id">) => Promise<void>;
-}
+};
 
 const ShoppingListContext = createContext<ShoppingListContextType | undefined>(undefined);
 

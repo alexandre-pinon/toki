@@ -1,5 +1,4 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { useRecipeService } from "@/services/recipe";
+import { useRecipes } from "@/hooks/useRecipes";
 import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
@@ -12,35 +11,15 @@ import { Loader } from "./Loader";
 import { RecipeCard } from "./RecipeCard";
 
 export function RecipeList() {
-  const { session } = useAuth();
-  const { getRecipes } = useRecipeService();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const { recipes, isLoading, error } = useRecipes();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<RecipeType | "all">("all");
-  const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-
-  useEffect(() => {
-    if (!session) return;
-    loadRecipes(session.user.id);
-  }, [session]);
 
   useEffect(() => {
     filterRecipes();
   }, [recipes, searchQuery, selectedType]);
-
-  const loadRecipes = async (userId: string) => {
-    try {
-      setIsLoading(true);
-      const data = await getRecipes(userId);
-      setRecipes(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const filterRecipes = () => {
     let filtered = [...recipes];

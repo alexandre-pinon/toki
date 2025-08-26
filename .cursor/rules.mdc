@@ -6,6 +6,8 @@ alwaysApply: true
 
 - At all point, follow apple's HIG (Human Interface Guidelines), this project is mainly meant for IOS, Android should still work decently but forget about material design guidelines.
 - Prefer good naming over comments, use them only in case of complex logic or business rules
+- Prefer types over interfaces
+- Avoid casting using `as` at all cost
 
 Commands
 
