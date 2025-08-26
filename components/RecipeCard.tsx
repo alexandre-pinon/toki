@@ -14,13 +14,7 @@ type RecipeCardProps = {
 export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
   const CardContent = (
     <>
-      <Image
-        source={recipe.imageUrl}
-        placeholder={require("../assets/images/favicon.png")}
-        style={styles.image}
-        contentFit="cover"
-        transition={200}
-      />
+      <Image source={recipe.imageUrl} style={styles.image} contentFit="cover" transition={200} />
       <View style={styles.content}>
         <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
         <Text style={typography.subtext}>

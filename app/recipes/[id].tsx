@@ -5,12 +5,12 @@ import { useRecipeService } from "@/services/recipe";
 import type { RecipeDetails } from "@/types/recipe/recipe";
 import { formatQuantityAndUnit } from "@/types/unit-type";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -64,13 +64,8 @@ export default function RecipeDetailsScreen() {
     require("../../assets/images/cooking.png"),
   ];
 
-  // Show loading overlay while fetching data
-  if (loading) {
-    return <LoadingOverlay visible={true} />;
-  }
-
   // Show error state
-  if (error || !recipeDetails) {
+  if (error || (!loading && !recipeDetails)) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <Stack.Screen
@@ -88,12 +83,16 @@ export default function RecipeDetailsScreen() {
     );
   }
 
-  const { recipe, ingredients, instructions } = recipeDetails;
+  const { recipe, ingredients, instructions } = recipeDetails || {
+    recipe: null,
+    ingredients: [],
+    instructions: [],
+  };
 
   // Calculate timers based on recipe data
   const timers = [
-    { icon: "time-outline", label: `${recipe.preparationTime || 0} min` },
-    { icon: "nutrition-outline", label: `${recipe.cookingTime || 0} min` },
+    { icon: "time-outline", label: `${recipe?.preparationTime || 0} min` },
+    { icon: "nutrition-outline", label: `${recipe?.cookingTime || 0} min` },
     { icon: "alarm-outline", label: "10 min" }, // Default value
     { icon: "restaurant-outline", label: "15 min" }, // Default value
   ];
@@ -122,13 +121,10 @@ export default function RecipeDetailsScreen() {
       <ScrollView>
         <View style={styles.imageContainer}>
           <Image
-            source={
-              recipe.imageUrl
-                ? { uri: recipe.imageUrl }
-                : require("../../assets/images/desserts.png")
-            }
+            source={recipe?.imageUrl ? { uri: recipe.imageUrl } : undefined}
             style={styles.image}
-            resizeMode="cover"
+            contentFit="cover"
+            transition={200}
           />
           <TouchableOpacity
             style={[styles.backButton, { top: insets.top }]}
@@ -143,15 +139,15 @@ export default function RecipeDetailsScreen() {
 
         <View style={styles.mainInfoContainer}>
           <View style={styles.headerRow}>
-            <Text style={[typography.header, styles.title]}>{recipe.name}</Text>
+            <Text style={[typography.header, styles.title]}>{recipe?.name || "Loading..."}</Text>
             <View style={styles.counter}>
               <Ionicons name="checkmark-circle" size={20} />
-              <Text style={typography.body}>{recipe.timesDone}</Text>
+              <Text style={typography.body}>{recipe?.timesDone || 0}</Text>
             </View>
           </View>
 
           <Text style={[typography.body, styles.lastTimeDoneRow]}>
-            Dernière fois faite : {formatLastTimeDone(recipe.lastTimeDone)}
+            Dernière fois faite : {formatLastTimeDone(recipe?.lastTimeDone)}
           </Text>
 
           <View style={styles.typeRow}>
@@ -164,7 +160,7 @@ export default function RecipeDetailsScreen() {
               }}
               textStyle={{ fontWeight: "200" }}
             >
-              {recipe.type}
+              {recipe?.type || "Loading..."}
             </Pill>
           </View>
 
@@ -276,6 +272,7 @@ export default function RecipeDetailsScreen() {
           )}
         </View>
       </ScrollView>
+      <LoadingOverlay visible={loading} />
     </SafeAreaView>
   );
 }

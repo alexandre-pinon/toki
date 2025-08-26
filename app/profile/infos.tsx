@@ -1,5 +1,6 @@
+import { Image } from "expo-image";
 import { Stack } from "expo-router";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
 import { colors, typography } from "../../theme";
@@ -33,7 +34,8 @@ export default function ProfileInfosScreen() {
           <Image
             source={require("../../assets/images/avatar_placeholder.png")}
             style={styles.avatarImage}
-            resizeMode="cover"
+            contentFit="cover"
+            transition={200}
           />
         </View>
         <View style={styles.form}>

@@ -13,7 +13,6 @@ export function MealCard({ meal }: MealCardProps) {
     <View style={styles.mealCard}>
       <Image
         source={meal.recipe.imageUrl}
-        placeholder={require("../assets/images/favicon.png")}
         style={styles.mealImage}
         contentFit="cover"
         transition={200}
