@@ -29,7 +29,7 @@ type PickerType = "unit" | "category" | "hide";
 export default function EditItemScreen() {
   const { sections, editItem, isLoading } = useShoppingList();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const item = sections.flatMap((s) => s.data).find((item) => item.id === id);
+  const item = sections.flatMap((s) => s.data).find((item) => item.ids[0] === id);
 
   //FIXME: display error screen with a button to go back to the list
   if (!item) {

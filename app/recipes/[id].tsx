@@ -1,8 +1,14 @@
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { Pill } from "@/components/Pill";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRecipeService } from "@/services/recipe";
+import type { RecipeDetails } from "@/types/recipe/recipe";
+import { formatQuantityAndUnit } from "@/types/unit-type";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -14,76 +20,42 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, typography } from "../../theme";
 
-const fakeRecipe = {
-  imageUrl: require("../../assets/images/desserts.png"),
-  name: "Pâtes au saumon",
-  lastTimeDone: "il y a 40 jours",
-  type: "Plat",
-  timesDone: 36,
-  servings: 3,
-  timers: [
-    { icon: "time-outline", label: "65 min" },
-    { icon: "nutrition-outline", label: "40 min" },
-    { icon: "alarm-outline", label: "10 min" },
-    { icon: "restaurant-outline", label: "15 min" },
-  ],
-  instructions: [
-    "Lorem ipsum dolor sit amet consectetur. Auctor in nulla enim vel urna.",
-    "Lorem ipsum dolor sit amet consectetur.",
-    "Lorem ipsum dolor sit amet consectetur. Scelerisque velit sit proin amet eu ut. Luctus cras a vel est adipiscing faucibus nibh integer diam.",
-  ],
-  ingredients: [
-    {
-      id: "1",
-      name: "Pâtes",
-      quantity: 200,
-      unit: "g",
-    },
-    {
-      id: "2",
-      name: "Crème fraîche",
-      quantity: 20,
-      unit: "cl",
-    },
-    {
-      id: "3",
-      name: "Saumon fumé",
-      quantity: 100,
-      unit: "g",
-    },
-    {
-      id: "4",
-      name: "Oignon",
-      quantity: 1,
-    },
-    {
-      id: "5",
-      name: "Sel",
-    },
-    {
-      id: "6",
-      name: "Poivre",
-    },
-  ],
-};
-
 export default function RecipeDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { session } = useAuth();
+  const { getRecipeById } = useRecipeService();
   const [tab, setTab] = useState<"instructions" | "ingredients">("instructions");
-  const [servings, setServings] = useState(fakeRecipe.servings);
+  const [servings, setServings] = useState(1);
+  const [recipeDetails, setRecipeDetails] = useState<RecipeDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-  // TODO: Fetch real recipe by id
-  const recipe = fakeRecipe;
 
-  const handleIncreaseServings = () => {
-    setServings((prev) => prev + 1);
-  };
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      if (!id || !session?.user?.id) {
+        setError("Missing recipe ID or user not authenticated");
+        setLoading(false);
+        return;
+      }
 
-  const handleDecreaseServings = () => {
-    if (servings > 1) {
-      setServings((prev) => prev - 1);
-    }
-  };
+      try {
+        setLoading(true);
+        setError(null);
+        const details = await getRecipeById(id);
+        setRecipeDetails(details);
+        setServings(details.recipe.servings);
+      } catch (err) {
+        console.error("Error fetching recipe:", err);
+        setError("Failed to load recipe");
+        Alert.alert("Error", "Failed to load recipe details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipe();
+  }, [id, session?.user?.id]);
 
   const timerImages = [
     require("../../assets/images/clock.png"),
@@ -91,6 +63,54 @@ export default function RecipeDetailsScreen() {
     require("../../assets/images/clock_food.png"),
     require("../../assets/images/cooking.png"),
   ];
+
+  // Show loading overlay while fetching data
+  if (loading) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  // Show error state
+  if (error || !recipeDetails) {
+    return (
+      <SafeAreaView style={styles.container} edges={["bottom"]}>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
+        <View style={styles.errorContainer}>
+          <Text style={[typography.header, styles.errorText]}>{error || "Recipe not found"}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => router.back()}>
+            <Text style={[typography.body, styles.retryButtonText]}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const { recipe, ingredients, instructions } = recipeDetails;
+
+  // Calculate timers based on recipe data
+  const timers = [
+    { icon: "time-outline", label: `${recipe.preparationTime || 0} min` },
+    { icon: "nutrition-outline", label: `${recipe.cookingTime || 0} min` },
+    { icon: "alarm-outline", label: "10 min" }, // Default value
+    { icon: "restaurant-outline", label: "15 min" }, // Default value
+  ];
+
+  // Format last time done
+  const formatLastTimeDone = (date?: Temporal.PlainDate) => {
+    if (!date) return "Jamais faite";
+
+    const now = Temporal.Now.plainDateISO();
+    const diff = now.since(date);
+
+    if (diff.days === 0) return "Aujourd'hui";
+    if (diff.days === 1) return "Hier";
+    if (diff.days < 7) return `il y a ${diff.days} jours`;
+    if (diff.days < 30) return `il y a ${Math.floor(diff.days / 7)} semaines`;
+    return `il y a ${Math.floor(diff.days / 30)} mois`;
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -101,7 +121,15 @@ export default function RecipeDetailsScreen() {
       />
       <ScrollView>
         <View style={styles.imageContainer}>
-          <Image source={recipe.imageUrl} style={styles.image} resizeMode="cover" />
+          <Image
+            source={
+              recipe.imageUrl
+                ? { uri: recipe.imageUrl }
+                : require("../../assets/images/desserts.png")
+            }
+            style={styles.image}
+            resizeMode="cover"
+          />
           <TouchableOpacity
             style={[styles.backButton, { top: insets.top }]}
             onPress={() => router.back()}
@@ -123,7 +151,7 @@ export default function RecipeDetailsScreen() {
           </View>
 
           <Text style={[typography.body, styles.lastTimeDoneRow]}>
-            Dernière fois faite : {recipe.lastTimeDone}
+            Dernière fois faite : {formatLastTimeDone(recipe.lastTimeDone)}
           </Text>
 
           <View style={styles.typeRow}>
@@ -147,7 +175,7 @@ export default function RecipeDetailsScreen() {
                 style={styles.servingsImage}
               />
               <Text style={typography.subtitle}>
-                {recipe.servings} personne{recipe.servings > 1 ? "s" : ""}
+                {servings} personne{servings > 1 ? "s" : ""}
               </Text>
             </View>
             {/* <View style={styles.servingsControls}>
@@ -167,10 +195,10 @@ export default function RecipeDetailsScreen() {
           <View style={styles.timersRow}>
             <View style={styles.timerItem}>
               <Image source={timerImages[0]} style={styles.timerImage} />
-              <Text style={[typography.body, styles.timerText]}>{recipe.timers[0].label}</Text>
+              <Text style={[typography.body, styles.timerText]}>{timers[0].label}</Text>
             </View>
             <View style={styles.timerSeparator} />
-            {recipe.timers.slice(1).map((timer, idx) => (
+            {timers.slice(1).map((timer, idx) => (
               <View key={idx} style={styles.timerItem}>
                 <Image source={timerImages[idx + 1]} style={styles.timerImage} />
                 <Text style={[typography.body, styles.timerText]}>{timer.label}</Text>
@@ -212,31 +240,38 @@ export default function RecipeDetailsScreen() {
           </View>
           {tab === "instructions" ? (
             <View style={styles.instructionsTabContent}>
-              {recipe.instructions.map((step, idx) => (
-                <View key={idx} style={styles.stepRow}>
-                  <Text style={[typography.bodyLarge, styles.stepTitle]}>Étape {idx + 1}</Text>
-                  <Text style={[typography.bodyLarge, styles.stepText]}>{step}</Text>
-                </View>
-              ))}
+              {instructions.length > 0 ? (
+                instructions.map((step, idx) => (
+                  <View key={idx} style={styles.stepRow}>
+                    <Text style={[typography.bodyLarge, styles.stepTitle]}>Étape {idx + 1}</Text>
+                    <Text style={[typography.bodyLarge, styles.stepText]}>{step}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={[typography.body, styles.noDataText]}>
+                  Aucune instruction disponible
+                </Text>
+              )}
             </View>
           ) : (
             <View style={styles.ingredientsTabContent}>
-              {recipe.ingredients.map((ingredient, idx) => (
-                <View key={idx} style={styles.ingredientRow}>
-                  <Text style={[typography.body, styles.bulletText]}>{"\u2022"}</Text>
-                  <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
-                  {ingredient.quantity && (
-                    <Text style={[typography.body, styles.ingredientSubtext]}>
-                      {ingredient.quantity}
-                    </Text>
-                  )}
-                  {ingredient.unit && (
-                    <Text style={[typography.body, styles.ingredientSubtext]}>
-                      {ingredient.unit}
-                    </Text>
-                  )}
-                </View>
-              ))}
+              {ingredients.length > 0 ? (
+                ingredients.map((ingredient, idx) => (
+                  <View key={idx} style={styles.ingredientRow}>
+                    <Text style={[typography.body, styles.bulletText]}>{"\u2022"}</Text>
+                    <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
+                    {(ingredient.quantity || ingredient.unit) && (
+                      <Text style={[typography.body, styles.ingredientSubtext]}>
+                        {formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
+                      </Text>
+                    )}
+                  </View>
+                ))
+              ) : (
+                <Text style={[typography.body, styles.noDataText]}>
+                  Aucun ingrédient disponible
+                </Text>
+              )}
             </View>
           )}
         </View>
@@ -250,6 +285,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  errorText: {
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: colors.white,
+  },
+  noDataText: {
+    textAlign: "center",
+    color: colors.gray600,
+    fontStyle: "italic",
   },
   imageContainer: {
     width: "100%",

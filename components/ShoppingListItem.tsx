@@ -7,7 +7,7 @@ import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "rea
 import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 import { colors, typography } from "../theme";
 import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
-import { mapUnitTypeToName } from "../types/unit-type";
+import { formatQuantityAndUnit } from "../types/unit-type";
 import { mapPlainDateToDayName } from "../utils/date";
 import { Pill } from "./Pill";
 
@@ -110,7 +110,7 @@ export function ShoppingListItem({
               </Text>
             </View>
             <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>
-              {quantity} {mapUnitTypeToName(unit)}
+              {formatQuantityAndUnit(quantity, unit)}
             </Text>
           </View>
           {earliestMealDate && <Pill>{mapPlainDateToDayName(earliestMealDate)}</Pill>}
