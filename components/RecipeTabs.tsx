@@ -65,7 +65,7 @@ export function RecipeTabs({ tab, onTabChange, instructions, ingredients }: Reci
             ingredients.map((ingredient, idx) => (
               <View key={idx} style={styles.ingredientRow}>
                 <Text style={[typography.body, styles.bulletText]}>{"\u2022"}</Text>
-                <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
+                <Text style={[typography.body]}>{ingredient.name}</Text>
                 {(ingredient.quantity || ingredient.unit) && (
                   <Text style={[typography.body, styles.ingredientSubtext]}>
                     {formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
@@ -128,14 +128,13 @@ const styles = StyleSheet.create({
   ingredientRow: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 6,
   },
   bulletText: {
     fontSize: 24,
   },
-  ingredientText: {
-    marginHorizontal: 8,
-  },
   ingredientSubtext: {
+    marginLeft: 4,
     color: colors.gray600,
   },
   noDataText: {

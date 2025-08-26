@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontWeight: "600",
+    fontWeight: "400",
   },
   counter: {
     flexDirection: "row",
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 8,
-    paddingVertical: 16,
+    paddingVertical: 14,
     backgroundColor: colors.contrast50,
   },
   timerItem: {
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
   },
   timerSeparator: {
     width: 1,
-    height: 48,
     backgroundColor: colors.gray200,
   },
   timerImage: {
