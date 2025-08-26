@@ -18,12 +18,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    // Configure Google Sign In
     GoogleSignin.configure({
       iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
     });
 
-    // Listen for auth state changes
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });

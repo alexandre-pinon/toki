@@ -10,7 +10,6 @@ export const ArrowTopBottomIcon = ({
   size: number;
   direction?: "up" | "down";
 }) => {
-  // Rotate 0deg for up, 180deg for down
   const rotation = direction === "down" ? "180deg" : "0deg";
   return (
     <View style={{ transform: [{ rotate: rotation }], width: size, height: size }}>

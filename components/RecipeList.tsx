@@ -45,14 +45,12 @@ export function RecipeList() {
   const filterRecipes = () => {
     let filtered = [...recipes];
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter((recipe) =>
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Filter by type
     if (selectedType !== "all") {
       filtered = filtered.filter((recipe) => recipe.type === selectedType);
     }

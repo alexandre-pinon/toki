@@ -30,7 +30,6 @@ export function useRecipeService() {
   };
 
   const getRecipeById = async (recipeId: string): Promise<RecipeDetails> => {
-    // Fetch recipe details
     const { data: recipeData, error: recipeError } = await supabase
       .from("recipes")
       .select("*")
@@ -41,7 +40,6 @@ export function useRecipeService() {
       throw recipeError;
     }
 
-    // Fetch recipe ingredients with ingredient names
     const { data: ingredientsData, error: ingredientsError } = await supabase
       .from("recipes_to_ingredients")
       .select(

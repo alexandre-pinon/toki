@@ -8,12 +8,10 @@ import { colors, typography } from "../../theme";
 export default function ProfileInfosScreen() {
   const { session } = useAuth();
 
-  // Extract user data from session
   const userEmail = session?.user?.email || "";
   const userMetadata = session?.user?.user_metadata || {};
   const displayName = userMetadata.full_name || userMetadata.name || "";
 
-  // Split display name into first and last name
   const nameParts = displayName.split(" ");
   const firstName = nameParts[0] || "";
   const lastName = nameParts.slice(1).join(" ") || "";

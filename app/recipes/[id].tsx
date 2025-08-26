@@ -64,7 +64,6 @@ export default function RecipeDetailsScreen() {
     require("../../assets/images/cooking.png"),
   ];
 
-  // Show error state
   if (error || (!loading && !recipeDetails)) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -89,15 +88,13 @@ export default function RecipeDetailsScreen() {
     instructions: [],
   };
 
-  // Calculate timers based on recipe data
   const timers = [
     { icon: "time-outline", label: `${recipe?.preparationTime || 0} min` },
     { icon: "nutrition-outline", label: `${recipe?.cookingTime || 0} min` },
-    { icon: "alarm-outline", label: "10 min" }, // Default value
-    { icon: "restaurant-outline", label: "15 min" }, // Default value
+    { icon: "alarm-outline", label: "10 min" }, //FIXME: Default value
+    { icon: "restaurant-outline", label: "15 min" }, //FIXME: Default value
   ];
 
-  // Format last time done
   const formatLastTimeDone = (date?: Temporal.PlainDate) => {
     if (!date) return "Jamais faite";
 
