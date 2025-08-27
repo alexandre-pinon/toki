@@ -25,3 +25,10 @@ export const formatLastTimeDone = (date?: Temporal.PlainDate) => {
   if (diff.days < 30) return `il y a ${Math.floor(diff.days / 7)} semaines`;
   return `il y a ${Math.floor(diff.days / 30)} mois`;
 };
+
+export const formatDuration = (duration?: number) => {
+  if (!duration) return "-";
+  if (duration === 0) return "0 min";
+  if (duration < 60) return `${duration} min`;
+  return `${Math.floor(duration / 60)} h ${duration % 60} min`;
+};

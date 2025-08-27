@@ -8,6 +8,7 @@ export type Recipe = {
   imageUrl?: string;
   preparationTime?: number;
   cookingTime?: number;
+  restTime?: number;
   servings: number;
   timesDone: number;
   lastTimeDone?: Temporal.PlainDate;

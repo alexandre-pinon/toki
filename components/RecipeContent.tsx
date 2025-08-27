@@ -25,6 +25,7 @@ export function RecipeContent({ recipeDetails, tab, onTabChange, servings }: Rec
         servings={servings}
         preparationTime={recipe.preparationTime}
         cookingTime={recipe.cookingTime}
+        restTime={recipe.restTime}
       />
       <RecipeTabs
         tab={tab}

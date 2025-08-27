@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { colors, typography } from "../theme";
-import { formatLastTimeDone } from "../utils/date";
+import { formatDuration, formatLastTimeDone } from "../utils/date";
 import { Pill } from "./Pill";
 
 type RecipeInfoProps = {
@@ -13,6 +13,7 @@ type RecipeInfoProps = {
   servings: number;
   preparationTime?: number;
   cookingTime?: number;
+  restTime?: number;
 };
 
 export function RecipeInfo({
@@ -23,6 +24,7 @@ export function RecipeInfo({
   servings,
   preparationTime = 0,
   cookingTime = 0,
+  restTime = 0,
 }: RecipeInfoProps) {
   const timerImages = [
     require("../assets/images/clock.png"),
@@ -32,10 +34,10 @@ export function RecipeInfo({
   ];
 
   const timers = [
-    { icon: "time-outline", label: `${preparationTime} min` },
-    { icon: "nutrition-outline", label: `${cookingTime} min` },
-    { icon: "alarm-outline", label: "10 min" }, //FIXME: Default value
-    { icon: "restaurant-outline", label: "15 min" }, //FIXME: Default value
+    { icon: "time-outline", label: formatDuration(preparationTime + cookingTime + restTime) },
+    { icon: "nutrition-outline", label: formatDuration(preparationTime) },
+    { icon: "alarm-outline", label: formatDuration(restTime) },
+    { icon: "restaurant-outline", label: formatDuration(cookingTime) },
   ];
 
   return (
