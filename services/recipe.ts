@@ -1,5 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import type { Recipe, RecipeDetails, RecipeIngredient } from "@/types/recipe/recipe";
+import type {
+  Recipe,
+  RecipeDetails,
+  RecipeIngredient,
+  RecipeUpdateData,
+} from "@/types/recipe/recipe";
 
 export function useRecipeService() {
   const getRecipes = async (userId: string): Promise<Recipe[]> => {
@@ -97,8 +102,53 @@ export function useRecipeService() {
     };
   };
 
+  const updateRecipe = async (recipeId: string, recipeData: RecipeUpdateData): Promise<void> => {
+    const { error: recipeError } = await supabase
+      .from("recipes")
+      .update({
+        name: recipeData.name,
+        type: recipeData.type,
+        image_url: recipeData.imageUrl,
+        preparation_time: recipeData.preparationTime,
+        cooking_time: recipeData.cookingTime,
+        rest_time: recipeData.restTime,
+        servings: recipeData.servings,
+        instructions: recipeData.instructions,
+      })
+      .eq("id", recipeId);
+
+    if (recipeError) {
+      throw recipeError;
+    }
+
+    const { error: deleteError } = await supabase
+      .from("recipes_to_ingredients")
+      .delete()
+      .eq("recipe_id", recipeId);
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+    if (recipeData.ingredients.length > 0) {
+      const { error: ingredientsError } = await supabase.from("recipes_to_ingredients").insert(
+        recipeData.ingredients.map((ingredient) => ({
+          recipe_id: recipeId,
+          ingredient_id: ingredient.ingredientId,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+        }))
+      );
+
+      if (ingredientsError) {
+        throw ingredientsError;
+      }
+    }
+  };
+
   return {
     getRecipes,
     getRecipeById,
+    updateRecipe,
   };
 }

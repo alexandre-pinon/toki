@@ -300,7 +300,7 @@ export type Database = {
         | "tanzanian"
         | "other"
       meal_type: "breakfast" | "lunch" | "dinner" | "snack"
-      recipe_type: "starter" | "main" | "side" | "dessert" | "sauce"
+      recipe_type: "starter" | "main" | "side" | "dessert" | "sauce" | "drink"
       shopping_item_category:
         | "fruits_vegetables"
         | "meat"
@@ -518,7 +518,7 @@ export const Constants = {
         "other",
       ],
       meal_type: ["breakfast", "lunch", "dinner", "snack"],
-      recipe_type: ["starter", "main", "side", "dessert", "sauce"],
+      recipe_type: ["starter", "main", "side", "dessert", "sauce", "drink"],
       shopping_item_category: [
         "fruits_vegetables",
         "meat",

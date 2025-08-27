@@ -7,9 +7,10 @@ import { colors } from "../theme";
 
 type RecipeHeaderProps = {
   imageUrl?: string;
+  recipeId: string;
 };
 
-export function RecipeHeader({ imageUrl }: RecipeHeaderProps) {
+export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -26,7 +27,10 @@ export function RecipeHeader({ imageUrl }: RecipeHeaderProps) {
       >
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.editButton, { top: insets.top }]}>
+      <TouchableOpacity
+        style={[styles.editButton, { top: insets.top }]}
+        onPress={() => recipeId && router.push(`/edit-recipe/${recipeId}`)}
+      >
         <Image source={require("../assets/images/pen.png")} style={styles.editButtonImage} />
       </TouchableOpacity>
     </View>

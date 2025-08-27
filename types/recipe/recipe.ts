@@ -28,3 +28,19 @@ export type RecipeIngredient = {
   unit?: UnitType;
   name: string;
 };
+
+export type RecipeUpdateData = {
+  name: string;
+  type: RecipeType;
+  imageUrl?: string;
+  preparationTime?: number;
+  cookingTime?: number;
+  restTime?: number;
+  servings: number;
+  instructions: string[];
+  ingredients: {
+    ingredientId: string;
+    quantity?: number;
+    unit?: UnitType;
+  }[];
+};

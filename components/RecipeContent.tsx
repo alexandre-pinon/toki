@@ -16,7 +16,7 @@ export function RecipeContent({ recipeDetails, tab, onTabChange, servings }: Rec
 
   return (
     <ScrollView>
-      <RecipeHeader imageUrl={recipe.imageUrl} />
+      <RecipeHeader imageUrl={recipe.imageUrl} recipeId={recipe.id} />
       <RecipeInfo
         name={recipe.name}
         timesDone={recipe.timesDone}
