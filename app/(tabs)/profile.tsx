@@ -26,7 +26,7 @@ export default function ProfileScreen() {
           headerShadowVisible: false,
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <SafeAreaView style={styles.container}>
         <ProfileMenuItem
           icon={InfoIcon}
           title="Informations"
@@ -58,6 +58,5 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: 24,
   },
 });

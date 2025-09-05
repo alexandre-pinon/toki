@@ -23,7 +23,7 @@ export default function ShoppingListScreen() {
           ),
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <SafeAreaView style={styles.container}>
         <ShoppingList />
       </SafeAreaView>
     </View>
@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   container: {
-    marginTop: 24,
     flex: 1,
   },
   addButton: {

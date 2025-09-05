@@ -13,7 +13,7 @@ export default function WeeklyMealsScreen() {
           headerShadowVisible: false,
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <SafeAreaView style={styles.container}>
         <MealList />
       </SafeAreaView>
     </View>
@@ -27,6 +27,5 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 24,
   },
 });

@@ -127,7 +127,6 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
         updateIngredient(selectedIngredientIndex, "unit", unit);
       }
     }
-    hidePicker();
   };
 
   const getPickerOptions = () => {
@@ -151,22 +150,11 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {/* Header */}
-        <View style={[styles.header]}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color={colors.black} />
-          </TouchableOpacity>
-          <Text style={[typography.header, styles.title]}>{name}</Text>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={[typography.body, styles.saveButtonText]}>Valider</Text>
-          </TouchableOpacity>
-        </View>
-
         {/* Recipe Name */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Image source={require("../assets/images/pen_color.png")} style={styles.sectionIcon} />
-            <Text style={[typography.subtitle, styles.sectionTitle]}>Nom</Text>
+            <Text style={[typography.subtitle]}>Nom</Text>
           </View>
           <TextInput
             style={styles.nameInput}
@@ -185,9 +173,7 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
             ) : (
               <View style={styles.imagePlaceholder}>
                 <Ionicons name="camera-outline" size={32} color={colors.gray400} />
-                <Text style={[typography.body, styles.imagePlaceholderText]}>
-                  Ajouter une image
-                </Text>
+                <Text style={[typography.body, styles.imagePlaceholderText]}>Ajouter une image</Text>
               </View>
             )}
           </View>
@@ -197,92 +183,74 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
         <View style={styles.section}>
           <View style={styles.servingsRow}>
             <View style={styles.servingsInfo}>
-              <Image
-                source={require("../assets/images/servings.png")}
-                style={styles.servingsIcon}
-              />
-              <Text style={[typography.subtitle, styles.servingsText]}>
+              <Image source={require("../assets/images/servings.png")} style={styles.servingsIcon} />
+              <Text style={[typography.subtitle]}>
                 {servings} personne{servings > 1 ? "s" : ""}
               </Text>
             </View>
             <View style={styles.servingsControls}>
-              <TouchableOpacity
-                onPress={() => setServings(Math.max(1, servings - 1))}
-                style={styles.servingsButton}
-              >
-                <Ionicons name="remove" size={20} color={colors.primary} />
+              <TouchableOpacity onPress={() => setServings(Math.max(1, servings - 1))} style={styles.servingsButton}>
+                <Ionicons name="remove" size={20} />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setServings(servings + 1)}
-                style={styles.servingsButton}
-              >
-                <Ionicons name="add" size={20} color={colors.primary} />
+              <TouchableOpacity onPress={() => setServings(servings + 1)} style={styles.servingsButton}>
+                <Ionicons name="add" size={20} />
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        {/* Times */}
-        <View style={styles.section}>
-          <View style={styles.timesRow}>
-            <View style={styles.timeItem}>
-              <Image source={require("../assets/images/clock.png")} style={styles.timeIcon} />
-              <TextInput
-                style={styles.timeInput}
-                value={(preparationTime + cookingTime + restTime).toString()}
-                keyboardType="numeric"
-                placeholder="0"
-                editable={false}
-              />
-              <Text style={[typography.body, styles.timeLabel]}>min</Text>
-            </View>
-            <View style={styles.timeItem}>
-              <Image
-                source={require("../assets/images/ingredient_preparation.png")}
-                style={styles.timeIcon}
-              />
-              <TextInput
-                style={styles.timeInput}
-                value={preparationTime.toString()}
-                onChangeText={(text) => setPreparationTime(parseInt(text) || 0)}
-                keyboardType="numeric"
-                placeholder="0"
-              />
-            </View>
-            <View style={styles.timeItem}>
-              <Image source={require("../assets/images/clock_food.png")} style={styles.timeIcon} />
-              <TextInput
-                style={styles.timeInput}
-                value={restTime.toString()}
-                onChangeText={(text) => setRestTime(parseInt(text) || 0)}
-                keyboardType="numeric"
-                placeholder="0"
-              />
-            </View>
-            <View style={styles.timeItem}>
-              <Image source={require("../assets/images/cooking.png")} style={styles.timeIcon} />
-              <TextInput
-                style={styles.timeInput}
-                value={cookingTime.toString()}
-                onChangeText={(text) => setCookingTime(parseInt(text) || 0)}
-                keyboardType="numeric"
-                placeholder="0"
-              />
-            </View>
+        {/* Timers */}
+        <View style={styles.timersRow}>
+          <View style={styles.timerItem}>
+            <Image source={require("../assets/images/clock.png")} style={styles.timeIcon} />
+            <Text style={[typography.body, styles.timerLabel]}>
+              {(preparationTime + cookingTime + restTime).toString()} min
+            </Text>
+          </View>
+          <View style={styles.timerSeparator} />
+          <View style={styles.timerItem}>
+            <Image source={require("../assets/images/ingredient_preparation.png")} style={styles.timeIcon} />
+            <TextInput
+              style={[typography.body, styles.timeInput]}
+              value={preparationTime.toString()}
+              onChangeText={(text) => setPreparationTime(parseInt(text) || 0)}
+              keyboardType="numeric"
+              placeholder="0"
+            />
+          </View>
+          <View style={styles.timerItem}>
+            <Image source={require("../assets/images/clock_food.png")} style={styles.timeIcon} />
+            <TextInput
+              style={[typography.body, styles.timeInput]}
+              value={restTime.toString()}
+              onChangeText={(text) => setRestTime(parseInt(text) || 0)}
+              keyboardType="numeric"
+              placeholder="0"
+            />
+          </View>
+          <View style={styles.timerItem}>
+            <Image source={require("../assets/images/cooking.png")} style={styles.timeIcon} />
+            <TextInput
+              style={[typography.body, styles.timeInput]}
+              value={cookingTime.toString()}
+              onChangeText={(text) => setCookingTime(parseInt(text) || 0)}
+              keyboardType="numeric"
+              placeholder="0"
+            />
           </View>
         </View>
 
         {/* Recipe Type */}
         <View style={styles.section}>
           <TouchableOpacity onPress={showRecipeTypePicker} style={styles.typeSelector}>
-            <Text style={[typography.subtitle, styles.typeText]}>{mapRecipeTypeToName(type)}</Text>
+            <Text style={[typography.body, styles.typeText]}>{mapRecipeTypeToName(type)}</Text>
             <Ionicons name="chevron-down" size={20} color={colors.gray400} />
           </TouchableOpacity>
         </View>
 
         {/* Ingredients */}
         <View style={styles.section}>
-          <Text style={[typography.subtitle, styles.sectionTitle]}>Ingrédients</Text>
+          <Text style={[typography.subtitle]}>Ingrédients</Text>
           {ingredients.map((ingredient, index) => (
             <View key={index} style={styles.ingredientRow}>
               <TextInput
@@ -295,9 +263,7 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
               <TextInput
                 style={styles.ingredientQuantityInput}
                 value={ingredient.quantity?.toString() || ""}
-                onChangeText={(text) =>
-                  updateIngredient(index, "quantity", parseFloat(text) || undefined)
-                }
+                onChangeText={(text) => updateIngredient(index, "quantity", parseFloat(text) || undefined)}
                 placeholder="Qté"
                 placeholderTextColor={colors.gray400}
                 keyboardType="numeric"
@@ -320,7 +286,7 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
 
         {/* Instructions */}
         <View style={styles.section}>
-          <Text style={[typography.subtitle, styles.sectionTitle]}>Instructions</Text>
+          <Text style={[typography.subtitle]}>Instructions</Text>
           {instructions.map((instruction, index) => (
             <View key={index} style={styles.instructionRow}>
               <Text style={[typography.body, styles.instructionNumber]}>{index + 1}.</Text>
@@ -332,10 +298,7 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
                 placeholderTextColor={colors.gray400}
                 multiline
               />
-              <TouchableOpacity
-                onPress={() => removeInstruction(index)}
-                style={styles.removeButton}
-              >
+              <TouchableOpacity onPress={() => removeInstruction(index)} style={styles.removeButton}>
                 <Ionicons name="trash-outline" size={20} color={colors.alert} />
               </TouchableOpacity>
             </View>
@@ -383,18 +346,9 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
   },
-  saveButton: {
-    padding: 8,
-  },
-  saveButtonText: {
-    color: colors.primary,
-    fontWeight: "600",
-  },
   section: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray100,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -406,15 +360,12 @@ const styles = StyleSheet.create({
     height: 20,
     marginRight: 8,
   },
-  sectionTitle: {
-    fontWeight: "600",
-  },
   nameInput: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.gray300,
+    borderRadius: 10,
     padding: 12,
-    fontSize: 16,
+    fontSize: 12,
   },
   imageContainer: {
     height: 200,
@@ -448,27 +399,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   servingsIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
-  },
-  servingsText: {
-    fontWeight: "600",
+    width: 16,
+    height: 16,
+    marginRight: 12,
   },
   servingsControls: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 4,
   },
   servingsButton: {
-    padding: 8,
+    padding: 4,
     marginHorizontal: 4,
+    backgroundColor: colors.gray50,
+    borderRadius: 99,
   },
-  timesRow: {
+  timersRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 8,
+    paddingVertical: 14,
+    backgroundColor: colors.contrast50,
   },
-  timeItem: {
+  timerItem: {
     alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    gap: 4,
+  },
+  timerSeparator: {
+    width: 1,
+    backgroundColor: colors.gray200,
   },
   timeIcon: {
     width: 24,
@@ -476,18 +437,17 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   timeInput: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: 4,
-    padding: 4,
-    width: 40,
     textAlign: "center",
+    backgroundColor: colors.white,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.gray300,
+    borderRadius: 10,
+    paddingVertical: 4,
     fontSize: 12,
+    width: 60,
   },
-  timeLabel: {
+  timerLabel: {
     fontSize: 12,
-    color: colors.gray400,
-    marginTop: 2,
   },
   typeSelector: {
     flexDirection: "row",
@@ -498,9 +458,7 @@ const styles = StyleSheet.create({
     borderColor: colors.gray200,
     borderRadius: 8,
   },
-  typeText: {
-    fontWeight: "600",
-  },
+  typeText: {},
   ingredientRow: {
     flexDirection: "row",
     alignItems: "center",

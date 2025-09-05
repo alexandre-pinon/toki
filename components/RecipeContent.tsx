@@ -1,18 +1,29 @@
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import type { RecipeDetails } from "../types/recipe/recipe";
 import { RecipeHeader } from "./RecipeHeader";
 import { RecipeInfo } from "./RecipeInfo";
-import { RecipeTab, RecipeTabs } from "./RecipeTabs";
+import { RecipeIngredientList } from "./RecipeIngredientList";
+import { RecipeTabName, RecipeTabs } from "./RecipeTabs";
+import { RecipeInstructionList } from "./RecipeInstructionList";
 
 type RecipeContentProps = {
   recipeDetails: RecipeDetails;
-  tab: RecipeTab;
-  onTabChange: (tab: RecipeTab) => void;
+  tab: RecipeTabName;
+  onTabChange: (tab: RecipeTabName) => void;
   servings: number;
 };
 
 export function RecipeContent({ recipeDetails, tab, onTabChange, servings }: RecipeContentProps) {
   const { recipe, ingredients, instructions } = recipeDetails;
+
+  const showActiveTab = () => {
+    switch (tab) {
+      case "ingredients":
+        return <RecipeIngredientList ingredients={ingredients} />;
+      case "instructions":
+        return <RecipeInstructionList instructions={instructions} />;
+    }
+  };
 
   return (
     <ScrollView>
@@ -27,12 +38,14 @@ export function RecipeContent({ recipeDetails, tab, onTabChange, servings }: Rec
         cookingTime={recipe.cookingTime}
         restTime={recipe.restTime}
       />
-      <RecipeTabs
-        tab={tab}
-        onTabChange={onTabChange}
-        instructions={instructions}
-        ingredients={ingredients}
-      />
+      <RecipeTabs tab={tab} onTabChange={onTabChange} />
+      <View style={styles.tabsContainer}>{showActiveTab()}</View>
     </ScrollView>
   );
 }
+
+export const styles = StyleSheet.create({
+  tabsContainer: {
+    padding: 24,
+  },
+});

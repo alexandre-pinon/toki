@@ -22,7 +22,7 @@ export default function RecipesScreen() {
           ),
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <SafeAreaView style={styles.container}>
         <RecipeList />
       </SafeAreaView>
     </View>
@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   container: {
-    marginTop: 24,
     flex: 1,
   },
   addButton: {

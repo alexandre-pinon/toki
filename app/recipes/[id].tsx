@@ -1,7 +1,7 @@
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RecipeContent } from "@/components/RecipeContent";
 import { RecipeError } from "@/components/RecipeError";
-import { RecipeTab } from "@/components/RecipeTabs";
+import { RecipeTabName } from "@/components/RecipeIngredientList";
 import { useRecipeDetails } from "@/hooks/useRecipeDetails";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -12,7 +12,7 @@ import { colors } from "../../theme";
 export default function RecipeDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { recipeDetails, isLoading, error } = useRecipeDetails(id);
-  const [tab, setTab] = useState<RecipeTab>("instructions");
+  const [tab, setTab] = useState<RecipeTabName>("instructions");
 
   if (error || (!isLoading && !recipeDetails)) {
     return (

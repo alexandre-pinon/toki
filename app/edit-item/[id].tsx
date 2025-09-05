@@ -84,9 +84,17 @@ export default function EditItemScreen() {
 
   const handlePickerSelect = (value?: string) => {
     if (showPicker === "unit") {
-      value ? setUnit(isUnitType(value) ? value : undefined) : setUnit(undefined);
+      if (value && isUnitType(value)) {
+        setUnit(value);
+      } else {
+        setUnit(undefined);
+      }
     } else if (showPicker === "category") {
-      value ? setCategory(isShoppingItemCategory(value) ? value : "other") : setCategory("other");
+      if (value && isShoppingItemCategory(value)) {
+        setCategory(value);
+      } else {
+        setCategory("other");
+      }
     }
   };
 
@@ -120,11 +128,7 @@ export default function EditItemScreen() {
           headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
-              <Text
-                style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}
-              >
-                Annuler
-              </Text>
+              <Text style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}>Annuler</Text>
             </TouchableOpacity>
           ),
           headerRight: () => (
@@ -146,15 +150,12 @@ export default function EditItemScreen() {
           ),
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.content}>
         <View style={styles.form}>
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Nom</Text>
             <TextInput
-              style={styles.input}
+              style={[typography.body, styles.input]}
               value={name}
               onChangeText={setName}
               placeholder="Ex: Pommes"
@@ -168,7 +169,7 @@ export default function EditItemScreen() {
             <View style={[styles.inputGroup, styles.quantityInput]}>
               <Text style={[typography.body, styles.label]}>Quantité</Text>
               <TextInput
-                style={styles.input}
+                style={[typography.body, styles.input]}
                 value={quantity}
                 onChangeText={setQuantity}
                 placeholder="1"
@@ -196,18 +197,8 @@ export default function EditItemScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Catégorie</Text>
-            <Pressable
-              onPress={showCategoryPicker}
-              style={styles.pickerButton}
-              disabled={isLoading}
-            >
-              <Text
-                style={[
-                  typography.body,
-                  styles.pickerButtonText,
-                  isLoading && styles.buttonDisabled,
-                ]}
-              >
+            <Pressable onPress={showCategoryPicker} style={styles.pickerButton} disabled={isLoading}>
+              <Text style={[typography.body, styles.pickerButtonText, isLoading && styles.buttonDisabled]}>
                 {mapShoppingItemCategoryToName(category)}
               </Text>
             </Pressable>
@@ -259,7 +250,6 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
   input: {
-    ...typography.body,
     height: 44,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray300,
