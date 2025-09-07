@@ -1,45 +1,60 @@
-import { LoadingOverlay } from "@/components/LoadingOverlay";
-import { RecipeContent } from "@/components/RecipeContent";
-import { RecipeError } from "@/components/RecipeError";
-import { useRecipeDetails } from "@/hooks/useRecipeDetails";
+import { Loader } from "@/components/Loader";
+import { RecipeHeader } from "@/components/RecipeHeader";
+import { RecipeInfo } from "@/components/RecipeInfo";
+import { RecipeIngredientList } from "@/components/RecipeIngredientList";
+import { RecipeInstructionList } from "@/components/RecipeInstructionList";
+import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
+import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { StyleSheet } from "react-native";
+import { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeDetailsScreen() {
-  const { recipeId } = useLocalSearchParams<{ recipeId: string }>();
-  const { recipeDetails, isLoading, error } = useRecipeDetails(recipeId);
+  const { currentRecipe, isLoading } = useCurrentRecipe();
+  const [tab, setTab] = useState<RecipeTabName>("instructions");
 
-  if (error || (!isLoading && !recipeDetails)) {
-    return (
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-        />
-        <RecipeError error={error} />
-      </SafeAreaView>
-    );
-  }
+  if (isLoading) return <Loader />;
+  if (!currentRecipe) throw new Error("Recipe not found");
+
+  const { recipe, ingredients, instructions } = currentRecipe;
+
+  const displayActiveTab = () => {
+    switch (tab) {
+      case "ingredients":
+        return <RecipeIngredientList ingredients={ingredients} />;
+      case "instructions":
+        return <RecipeInstructionList instructions={instructions} />;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      {recipeDetails && <RecipeContent recipeDetails={recipeDetails} servings={recipeDetails.recipe.servings} />}
-      <LoadingOverlay visible={isLoading} />
+      <ScrollView>
+        <RecipeHeader imageUrl={recipe.imageUrl} recipeId={recipe.id} />
+        <RecipeInfo
+          name={recipe.name}
+          timesDone={recipe.timesDone}
+          lastTimeDone={recipe.lastTimeDone}
+          type={recipe.type}
+          servings={recipe.servings}
+          preparationTime={recipe.preparationTime}
+          cookingTime={recipe.cookingTime}
+          restTime={recipe.restTime}
+        />
+        <RecipeTabs tab={tab} setTab={setTab} />
+        <View style={styles.tabsContainer}>{displayActiveTab()}</View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  tabsContainer: {
+    padding: 24,
   },
 });

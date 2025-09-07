@@ -25,7 +25,7 @@ function RootLayoutNav() {
     } else if (session && inAuthGroup) {
       router.replace("/(tabs)");
     }
-  }, [session, segments, isMounted]);
+  }, [session, segments, isMounted, router]);
 
   return (
     <GestureHandlerRootView style={styles.container}>

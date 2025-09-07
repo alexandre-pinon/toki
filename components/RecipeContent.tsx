@@ -9,10 +9,9 @@ import { RecipeTabName, RecipeTabs } from "./RecipeTabs";
 
 type RecipeContentProps = {
   recipeDetails: RecipeDetails;
-  servings: number;
 };
 
-export function RecipeContent({ recipeDetails, servings }: RecipeContentProps) {
+export function RecipeContent({ recipeDetails }: RecipeContentProps) {
   const { recipe, ingredients, instructions } = recipeDetails;
   const [tab, setTab] = useState<RecipeTabName>("instructions");
 

@@ -13,6 +13,13 @@ type RecipeHeaderProps = {
 export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
   const insets = useSafeAreaInsets();
 
+  const handleEdit = () => {
+    router.push({
+      pathname: `./[recipeId]/edit`,
+      params: { recipeId },
+    });
+  };
+
   return (
     <View style={styles.imageContainer}>
       <Image
@@ -24,10 +31,7 @@ export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
       <TouchableOpacity style={[styles.backButton, { top: insets.top }]} onPress={() => router.back()}>
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.editButton, { top: insets.top }]}
-        onPress={() => recipeId && router.push({ pathname: `./[recipeId]/edit`, params: { recipeId } })}
-      >
+      <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>
         <Image source={require("../assets/images/pen.png")} style={styles.editButtonImage} />
       </TouchableOpacity>
     </View>
