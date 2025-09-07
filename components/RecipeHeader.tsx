@@ -21,15 +21,12 @@ export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
         contentFit="cover"
         transition={200}
       />
-      <TouchableOpacity
-        style={[styles.backButton, { top: insets.top }]}
-        onPress={() => router.back()}
-      >
+      <TouchableOpacity style={[styles.backButton, { top: insets.top }]} onPress={() => router.back()}>
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.editButton, { top: insets.top }]}
-        onPress={() => recipeId && router.push(`/edit-recipe/${recipeId}`)}
+        onPress={() => recipeId && router.push({ pathname: `./[recipeId]/edit`, params: { recipeId } })}
       >
         <Image source={require("../assets/images/pen.png")} style={styles.editButtonImage} />
       </TouchableOpacity>

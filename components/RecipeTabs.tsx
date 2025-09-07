@@ -2,22 +2,22 @@ import { colors, typography } from "@/theme";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
 type RecipeTabsProps = {
-  onTabChange: (tab: RecipeTabName) => void;
+  setTab: (tab: RecipeTabName) => void;
   tab: RecipeTabName;
 };
 
 export type RecipeTabName = "ingredients" | "instructions";
 
-export function RecipeTabs({ tab, onTabChange }: RecipeTabsProps) {
+export function RecipeTabs({ tab, setTab }: RecipeTabsProps) {
   return (
     <View style={styles.tabsRow}>
-      <TouchableOpacity style={styles.tabButton} onPress={() => onTabChange("instructions")}>
+      <TouchableOpacity style={styles.tabButton} onPress={() => setTab("instructions")}>
         <Text style={[typography.header, styles.tabText, tab === "instructions" && styles.tabTextActive]}>
           Instructions
         </Text>
         <View style={[styles.tabIndicator, tab === "instructions" && styles.tabIndicatorActive]} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.tabButton} onPress={() => onTabChange("ingredients")}>
+      <TouchableOpacity style={styles.tabButton} onPress={() => setTab("ingredients")}>
         <Text style={[typography.header, styles.tabText, tab === "ingredients" && styles.tabTextActive]}>
           Ingrédients
         </Text>
@@ -30,11 +30,11 @@ export function RecipeTabs({ tab, onTabChange }: RecipeTabsProps) {
 export const styles = StyleSheet.create({
   tabsRow: {
     flexDirection: "row",
+    justifyContent: "center",
+    gap: 40,
   },
   tabButton: {
-    flex: 1,
     alignItems: "center",
-    paddingVertical: 10,
     gap: 8,
   },
   tabIndicator: {

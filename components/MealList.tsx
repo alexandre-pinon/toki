@@ -20,11 +20,9 @@ export function MealList() {
   const [sectionData, setSectionData] = useState<SectionData[]>([]);
 
   useEffect(() => {
-    if (meals.length > 0) {
-      const mealsByDate = groupMealsByDate(meals);
-      const sections = createMealSections(mealsByDate);
-      setSectionData(sections);
-    }
+    const mealsByDate = groupMealsByDate(meals);
+    const sections = createMealSections(mealsByDate);
+    setSectionData(sections);
   }, [meals]);
 
   if (isLoading) {
@@ -55,14 +53,17 @@ export function MealList() {
 }
 
 function groupMealsByDate(meals: MealWithRecipe[]): Record<string, MealWithRecipe[]> {
-  return meals.reduce((mealsGroupedBy, meal) => {
-    const dateKey = meal.date.toString();
-    if (!mealsGroupedBy[dateKey]) {
-      mealsGroupedBy[dateKey] = [];
-    }
-    mealsGroupedBy[dateKey].push(meal);
-    return mealsGroupedBy;
-  }, {} as Record<string, MealWithRecipe[]>);
+  return meals.reduce(
+    (mealsGroupedBy, meal) => {
+      const dateKey = meal.date.toString();
+      if (!mealsGroupedBy[dateKey]) {
+        mealsGroupedBy[dateKey] = [];
+      }
+      mealsGroupedBy[dateKey].push(meal);
+      return mealsGroupedBy;
+    },
+    {} as Record<string, MealWithRecipe[]>,
+  );
 }
 
 function createMealSections(mealsByDate: Record<string, MealWithRecipe[]>): SectionData[] {

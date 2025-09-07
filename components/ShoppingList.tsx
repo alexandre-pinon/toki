@@ -14,9 +14,7 @@ export function ShoppingList() {
   if (sections.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={[typography.body, styles.emptyText]}>
-          Vous n'avez plus rien à acheter ! 🎉
-        </Text>
+        <Text style={[typography.body, styles.emptyText]}>Vous n{"\&apos"}avez plus rien à acheter ! 🎉</Text>
       </View>
     );
   }
@@ -29,9 +27,7 @@ export function ShoppingList() {
       )}
       renderSectionHeader={({ section: { title } }) => (
         <View style={styles.sectionHeader}>
-          <Text style={[typography.subtitle, styles.sectionTitle]}>
-            {mapShoppingItemCategoryToName(title)}
-          </Text>
+          <Text style={[typography.subtitle, styles.sectionTitle]}>{mapShoppingItemCategoryToName(title)}</Text>
           <Image source={mapShoppingItemCategoryToImageSource(title)} style={styles.sectionIcon} />
         </View>
       )}

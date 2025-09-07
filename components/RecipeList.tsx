@@ -25,9 +25,7 @@ export function RecipeList() {
     let filtered = [...recipes];
 
     if (searchQuery) {
-      filtered = filtered.filter((recipe) =>
-        recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filtered = filtered.filter((recipe) => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
     if (selectedType !== "all") {
@@ -53,16 +51,14 @@ export function RecipeList() {
         showFilters={showFilters}
         setShowFilters={setShowFilters}
       />
-      {showFilters ? (
-        <FilterBar selectedType={selectedType} setSelectedType={setSelectedType} />
-      ) : null}
+      {showFilters ? <FilterBar selectedType={selectedType} setSelectedType={setSelectedType} /> : null}
       {filteredRecipes.length > 0 ? (
         <FlatList
           data={filteredRecipes}
           renderItem={({ item }) => (
             <RecipeCard
               recipe={item}
-              onPress={() => router.push({ pathname: "/recipes/[id]", params: { id: item.id } })}
+              onPress={() => router.push({ pathname: "/recipes/[recipeId]", params: { recipeId: item.id } })}
             />
           )}
           keyExtractor={(item) => item.id}
@@ -89,12 +85,7 @@ type SearchBarProps = {
   showFilters: boolean;
   setShowFilters: (show: boolean) => void;
 };
-const SearchBar = ({
-  searchQuery,
-  setSearchQuery,
-  showFilters,
-  setShowFilters,
-}: SearchBarProps) => {
+const SearchBar = ({ searchQuery, setSearchQuery, showFilters, setShowFilters }: SearchBarProps) => {
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>

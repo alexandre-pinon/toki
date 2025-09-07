@@ -1,16 +1,18 @@
+import { formatQuantityAndUnit } from "@/types/unit-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useEditRecipe } from "../hooks/useEditRecipe";
+import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
 import { colors, typography } from "../theme";
-import type { RecipeDetails } from "../types/recipe/recipe";
+import type { RecipeDetails, RecipeIngredient } from "../types/recipe/recipe";
 import type { RecipeType } from "../types/recipe/recipe-type";
 import { isRecipeType, mapRecipeTypeToName, recipeTypes } from "../types/recipe/recipe-type";
-import { isUnitType, mapUnitTypeToName, unitTypes } from "../types/unit-type";
 import { BottomSheetPicker } from "./BottomSheetPicker";
-import { LoadingOverlay } from "./LoadingOverlay";
+import { RecipeTabName, RecipeTabs } from "./RecipeTabs";
+import { SwipeableItem } from "./SwipeableItem";
+import { UnderlinedListItem } from "./UnderlinedListItem";
 
 type EditRecipeContentProps = {
   recipeDetails: RecipeDetails;
@@ -20,6 +22,7 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
   const [showPicker, setShowPicker] = useState(false);
   const [type, setType] = useState<RecipeType>(recipeDetails.recipe.type);
   const [previousType, setPreviousType] = useState<RecipeType | undefined>();
+  const [tab, setTab] = useState<RecipeTabName>("ingredients");
 
   const [name, setName] = useState(recipeDetails.recipe.name);
   const [imageUrl, setImageUrl] = useState(recipeDetails.recipe.imageUrl);
@@ -27,6 +30,8 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
   const [preparationTime, setPreparationTime] = useState(recipeDetails.recipe.preparationTime || 0);
   const [cookingTime, setCookingTime] = useState(recipeDetails.recipe.cookingTime || 0);
   const [restTime, setRestTime] = useState(recipeDetails.recipe.restTime || 0);
+  const [ingredients, setIngredients] = useState(recipeDetails.ingredients);
+  const [instructions, setInstructions] = useState(recipeDetails.instructions);
 
   const handlePickerSelect = (value?: string) => {
     if (value && isRecipeType(value)) {
@@ -48,6 +53,31 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
 
   const closePicker = () => {
     setShowPicker(false);
+  };
+
+  const displayActiveTab = () => {
+    switch (tab) {
+      case "ingredients":
+        return ingredients.map((ingredient, idx) => (
+          <IngredientListItem
+            key={ingredient.ingredientId}
+            ingredient={ingredient}
+            setIngredients={setIngredients}
+            isLastItem={idx === ingredients.length - 1}
+          />
+        ));
+      case "instructions":
+        return instructions.map((instruction, idx) => (
+          <InstructionListItem
+            key={`edit-recipe-content-instruction-${idx}`}
+            index={idx}
+            recipeId={recipeDetails.recipe.id}
+            instruction={instruction}
+            setInstructions={setInstructions}
+            isLastItem={idx === instructions.length - 1}
+          />
+        ));
+    }
   };
 
   return (
@@ -150,8 +180,10 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
             <Ionicons name="chevron-down" size={20} color={colors.gray400} />
           </TouchableOpacity>
         </View>
-      </ScrollView>
 
+        <RecipeTabs tab={tab} setTab={setTab} />
+        <View style={styles.tabSection}>{displayActiveTab()}</View>
+      </ScrollView>
       <BottomSheetPicker
         visible={showPicker}
         title={"Type de recette"}
@@ -164,6 +196,79 @@ export function EditRecipeContent({ recipeDetails }: EditRecipeContentProps) {
     </View>
   );
 }
+
+type IngredientListItemProps = {
+  ingredient: RecipeIngredient;
+  setIngredients: Dispatch<SetStateAction<RecipeIngredient[]>>;
+  isLastItem: boolean;
+};
+const IngredientListItem = ({ ingredient, setIngredients, isLastItem }: IngredientListItemProps) => {
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
+
+  const handleDelete = () => {
+    swipeableRef.current?.close();
+    setIngredients((prev) => prev.filter((p) => p.ingredientId !== ingredient.ingredientId));
+  };
+
+  const handleEdit = () => {
+    swipeableRef.current?.close();
+    router.push({
+      pathname: `./edit/ingredients/[id]`,
+      params: { id: ingredient.ingredientId },
+    });
+  };
+
+  return (
+    <SwipeableItem ref={swipeableRef} handleEdit={handleEdit} handleDelete={handleDelete}>
+      <View style={styles.listItemContainer}>
+        <UnderlinedListItem
+          key={ingredient.ingredientId}
+          title={ingredient.name}
+          subTitle={formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
+          isLastItem={isLastItem}
+        />
+      </View>
+    </SwipeableItem>
+  );
+};
+
+type InstructionListItemProps = {
+  index: number;
+  recipeId: string;
+  instruction: string;
+  setInstructions: Dispatch<SetStateAction<string[]>>;
+  isLastItem: boolean;
+};
+const InstructionListItem = ({
+  index,
+  recipeId,
+  instruction,
+  setInstructions,
+  isLastItem,
+}: InstructionListItemProps) => {
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
+
+  const handleDelete = () => {
+    swipeableRef.current?.close();
+    setInstructions((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+  };
+
+  const handleEdit = () => {
+    swipeableRef.current?.close();
+    router.push({
+      pathname: `./edit/instructions`,
+      params: { instruction },
+    });
+  };
+
+  return (
+    <SwipeableItem ref={swipeableRef} handleEdit={handleEdit} handleDelete={handleDelete}>
+      <View style={styles.listItemContainer}>
+        <UnderlinedListItem title={`Étape ${index + 1}`} subTitle={instruction} isLastItem={isLastItem} />
+      </View>
+    </SwipeableItem>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -191,6 +296,9 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  tabSection: {
     paddingVertical: 16,
   },
   sectionHeader: {
@@ -302,4 +410,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   typeText: {},
+  listItemContainer: {
+    paddingLeft: 20,
+  },
 });

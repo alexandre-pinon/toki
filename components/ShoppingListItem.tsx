@@ -1,15 +1,15 @@
 import { useShoppingList } from "@/contexts/ShoppingListContext";
-import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { colors, typography } from "../theme";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import { colors } from "../theme";
 import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
 import { formatQuantityAndUnit } from "../types/unit-type";
 import { mapPlainDateToDayName } from "../utils/date";
-import { Pill } from "./Pill";
+import { SwipeableItem } from "./SwipeableItem";
+import { UnderlinedListItem } from "./UnderlinedListItem";
 
 type ShoppingItemProps = AggregatedShoppingItem & { isLastItem?: boolean };
 
@@ -45,7 +45,7 @@ export function ShoppingListItem({
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -60,63 +60,26 @@ export function ShoppingListItem({
     setIsCheckLoading(false);
   };
 
-  const renderRightActions = () => {
-    return (
-      <View style={styles.actions}>
-        <Pressable
-          onPress={handleEdit}
-          disabled={!!earliestMealDate}
-          style={({ pressed }) => [styles.editAction, pressed && styles.actionPressed]}
-        >
-          <Ionicons name="pencil-outline" size={24} color="white" />
-        </Pressable>
-        <Pressable
-          onPress={handleDelete}
-          disabled={!!earliestMealDate}
-          style={({ pressed }) => [styles.deleteAction, pressed && styles.actionPressed]}
-        >
-          <Ionicons name="trash-outline" size={24} color="white" />
-        </Pressable>
-      </View>
-    );
-  };
-
   return (
-    <Swipeable
-      ref={swipeableRef}
-      renderRightActions={renderRightActions}
-      rightThreshold={40}
-      overshootRight={false}
-    >
+    <SwipeableItem ref={swipeableRef} handleEdit={handleEdit} handleDelete={handleDelete} disabled={!!earliestMealDate}>
       <View style={styles.item}>
         {isCheckLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : (
-          <Checkbox
-            style={styles.checkbox}
-            value={checked}
-            onValueChange={handleCheck}
-            color={colors.primary}
-          />
+          <Checkbox style={styles.checkbox} value={checked} onValueChange={handleCheck} color={colors.primary} />
         )}
 
-        <View style={[styles.itemContent, !isLastItem && styles.itemContentWithBorder]}>
-          <View style={styles.itemContentLeft}>
-            <View style={styles.titleRow}>
-              <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>
-                {name}
-              </Text>
-            </View>
-            <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>
-              {formatQuantityAndUnit(quantity, unit)}
-            </Text>
-          </View>
-          {earliestMealDate && <Pill>{mapPlainDateToDayName(earliestMealDate)}</Pill>}
-        </View>
+        <UnderlinedListItem
+          title={name}
+          subTitle={formatQuantityAndUnit(quantity, unit)}
+          isLastItem={isLastItem}
+          checked={checked}
+          tag={earliestMealDate ? mapPlainDateToDayName(earliestMealDate) : undefined}
+        />
       </View>
-    </Swipeable>
+    </SwipeableItem>
   );
 }
 
@@ -156,24 +119,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     width: 22,
     height: 22,
-  },
-  actions: {
-    flexDirection: "row",
-  },
-  editAction: {
-    backgroundColor: colors.contrast500,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 80,
-  },
-  deleteAction: {
-    backgroundColor: colors.alert,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 80,
-  },
-  actionPressed: {
-    opacity: 0.8,
   },
   loadingContainer: {
     width: 22,

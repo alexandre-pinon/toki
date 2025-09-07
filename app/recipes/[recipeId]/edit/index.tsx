@@ -2,14 +2,14 @@ import { EditRecipeContent } from "@/components/EditRecipeContent";
 import { EditRecipeError } from "@/components/EditRecipeError";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { useEditRecipe } from "@/hooks/useEditRecipe";
+import { colors, typography } from "@/theme";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, typography } from "../../theme";
 
 export default function EditRecipeScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { recipeDetails, isLoading, error } = useEditRecipe(id);
+  const { recipeId } = useLocalSearchParams<{ recipeId: string }>();
+  const { recipeDetails, isLoading, error } = useEditRecipe(recipeId);
 
   if (error || (!isLoading && !recipeDetails)) {
     return (
