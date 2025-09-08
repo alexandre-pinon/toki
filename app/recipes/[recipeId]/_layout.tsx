@@ -64,6 +64,16 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
           ),
         }}
       />
+      <Stack.Screen
+        name="edit/ingredients/[id]"
+        options={{
+          headerTitleStyle: typography.header,
+          headerTitle: "Ingrédient",
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+        }}
+      />
     </Stack>
   );
 };

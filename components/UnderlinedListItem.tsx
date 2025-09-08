@@ -4,7 +4,7 @@ import { Pill } from "./Pill";
 
 type UnderlinedListItemProps = {
   title: string;
-  subTitle: string;
+  subTitle?: string;
   isLastItem?: boolean;
   checked?: boolean;
   tag?: string;
@@ -17,7 +17,7 @@ export function UnderlinedListItem({ title, subTitle, isLastItem, checked, tag }
         <View style={styles.titleRow}>
           <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>{title}</Text>
         </View>
-        <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>{subTitle}</Text>
+        {subTitle && <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>{subTitle}</Text>}
       </View>
       {tag && <Pill>{tag}</Pill>}
     </View>
