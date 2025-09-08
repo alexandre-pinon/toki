@@ -31,7 +31,11 @@ function RootLayoutNav() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <ShoppingListProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+          <Stack.Screen name="recipes/[recipeId]" options={{ headerShown: false }} />
+        </Stack>
       </ShoppingListProvider>
     </GestureHandlerRootView>
   );

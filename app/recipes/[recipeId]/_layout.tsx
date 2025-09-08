@@ -2,7 +2,7 @@ import { Loader } from "@/components/Loader";
 import { FormRecipeProvider, useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
 import { CurrentRecipeProvider, useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors, typography } from "@/theme";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 export default function RecipeDetailsLayout() {
@@ -29,7 +29,7 @@ const RecipeDetailsStack = () => {
 
 type RecipeEditStackProps = { headerTitle: string };
 const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
-  const { upsertRecipe } = useFormRecipe();
+  const { formRecipe, formIngredients, formInstructions, upsertRecipe, resetForm } = useFormRecipe();
 
   return (
     <Stack>
@@ -40,14 +40,26 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
           headerTitleStyle: typography.header,
           headerTitle,
           headerShadowVisible: false,
-          headerBackButtonDisplayMode: "minimal",
-          headerTintColor: colors.black,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                resetForm();
+                router.back();
+              }}
+              style={({ pressed }) => [styles.actionButton, pressed && styles.buttonPressed]}
+            >
+              <Text style={[typography.subtitle, styles.cancelButtonText]}>Annuler</Text>
+            </Pressable>
+          ),
           headerRight: () => (
             <Pressable
-              onPress={upsertRecipe}
-              style={({ pressed }) => [styles.saveButton, pressed && styles.buttonPressed]}
+              onPress={() => {
+                console.log({ formRecipe, formIngredients, formInstructions });
+                // upsertRecipe()
+              }}
+              style={({ pressed }) => [styles.actionButton, pressed && styles.buttonPressed]}
             >
-              <Text style={[typography.body, styles.saveButtonText]}>Valider</Text>
+              <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
             </Pressable>
           ),
         }}
@@ -60,11 +72,13 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.7,
   },
-  saveButton: {
-    padding: 8,
+  actionButton: {
+    paddingHorizontal: 8,
+  },
+  cancelButtonText: {
+    color: colors.gray,
   },
   saveButtonText: {
     color: colors.primary,
-    fontWeight: "600",
   },
 });

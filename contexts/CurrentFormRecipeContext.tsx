@@ -11,6 +11,7 @@ type FormRecipeContextType = {
   setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
   isLoading: boolean;
   upsertRecipe: () => void;
+  resetForm: () => void;
 };
 
 const FormRecipeContext = createContext<FormRecipeContextType | null>(null);
@@ -26,6 +27,12 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
   const [formIngredients, setFormIngredients] = useState<FormRecipeContextType["formIngredients"]>(ingredients);
   const [formInstructions, setFormInstructions] = useState(instructions);
   const [isLoading, startTransition] = useTransition();
+
+  const resetForm = () => {
+    setFormRecipe(recipe);
+    setFormIngredients(ingredients);
+    setFormInstructions(instructions);
+  };
 
   return (
     <FormRecipeContext.Provider
@@ -45,6 +52,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
               instructions: formInstructions,
             }),
           ),
+        resetForm,
       }}
     >
       {children}

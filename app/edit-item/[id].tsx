@@ -128,7 +128,9 @@ export default function EditItemScreen() {
           headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
-              <Text style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}>Annuler</Text>
+              <Text style={[typography.subtitle, styles.cancelButton, isLoading && styles.buttonDisabled]}>
+                Annuler
+              </Text>
             </TouchableOpacity>
           ),
           headerRight: () => (
@@ -139,7 +141,7 @@ export default function EditItemScreen() {
             >
               <Text
                 style={[
-                  typography.body,
+                  typography.subtitle,
                   styles.saveButtonText,
                   (!name.trim() || isLoading) && styles.saveButtonTextDisabled,
                 ]}
