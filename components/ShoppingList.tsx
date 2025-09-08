@@ -1,11 +1,11 @@
 import { useShoppingList } from "@/contexts/ShoppingListContext";
+import { colors, typography } from "@/theme";
 import {
   mapShoppingItemCategoryToImageSource,
   mapShoppingItemCategoryToName,
 } from "@/types/shopping/shopping-item-category";
 import { Image } from "expo-image";
 import { SectionList, StyleSheet, Text, View } from "react-native";
-import { colors, typography } from "../theme";
 import { ShoppingListItem } from "./ShoppingListItem";
 
 export function ShoppingList() {

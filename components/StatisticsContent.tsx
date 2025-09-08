@@ -1,17 +1,14 @@
+import { useRecipes } from "@/hooks/useRecipes";
+import { colors, commonStyles, typography } from "@/theme";
 import { useMemo } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useRecipes } from "../hooks/useRecipes";
-import { colors, commonStyles, typography } from "../theme";
 import { ArrowTopBottomIcon } from "./icons/ArrowTopBottomIcon";
 import { RecipeCard } from "./RecipeCard";
 
 export function StatisticsContent() {
   const { recipes, isLoading, error } = useRecipes();
 
-  const sortedRecipes = useMemo(
-    () => [...recipes].sort((a, b) => b.timesDone - a.timesDone),
-    [recipes]
-  );
+  const sortedRecipes = useMemo(() => [...recipes].sort((a, b) => b.timesDone - a.timesDone), [recipes]);
   const top3 = useMemo(() => sortedRecipes.slice(0, 3), [sortedRecipes]);
   const bottom3 = useMemo(() => sortedRecipes.slice(-3).reverse(), [sortedRecipes]);
 

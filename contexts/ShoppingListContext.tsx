@@ -1,8 +1,8 @@
+import { useShoppingListService } from "@/services/shopping-list";
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
+import type { ShoppingListSection } from "@/types/shopping/shopping-list";
 import { type ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { useShoppingListService } from "../services/shopping-list";
-import type { ShoppingListSection } from "../types/shopping/shopping-list";
 import { useAuth } from "./AuthContext";
 
 type ShoppingListContextType = {

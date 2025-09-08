@@ -1,11 +1,10 @@
 import { useRecipeService } from "@/services/recipe";
-import { RecipeDetails, RecipeUpdateData } from "@/types/recipe/recipe";
+import { RecipeDetails } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, startTransition, useActionState, useContext, useEffect } from "react";
 
 type CurrentRecipeContextType = {
   currentRecipe: RecipeDetails | null;
   isLoading: boolean;
-  updateRecipe: (recipeData: RecipeUpdateData) => Promise<void>;
   refetch: () => void;
 };
 
@@ -15,7 +14,7 @@ type CurrentRecipeProviderProps = PropsWithChildren & {
   recipeId: string;
 };
 export const CurrentRecipeProvider = ({ recipeId, children }: CurrentRecipeProviderProps) => {
-  const { getRecipeById, updateRecipe } = useRecipeService();
+  const { getRecipeById } = useRecipeService();
 
   const [currentRecipe, getCurrentRecipe, isLoading] = useActionState<RecipeDetails | null>(
     () => getRecipeById(recipeId),
@@ -31,7 +30,6 @@ export const CurrentRecipeProvider = ({ recipeId, children }: CurrentRecipeProvi
       value={{
         currentRecipe,
         isLoading,
-        updateRecipe: updateRecipe(recipeId),
         refetch: () => startTransition(getCurrentRecipe),
       }}
     >

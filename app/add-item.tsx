@@ -1,5 +1,16 @@
+import { BottomSheetPicker } from "@/components/BottomSheetPicker";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShoppingList } from "@/contexts/ShoppingListContext";
+import { colors, commonStyles, typography } from "@/theme";
+import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
+import {
+  isShoppingItemCategory,
+  mapShoppingItemCategoryToName,
+  shoppingItemCategories,
+} from "@/types/shopping/shopping-item-category";
+import type { UnitType } from "@/types/unit-type";
+import { isUnitType, mapUnitTypeToName, unitTypes } from "@/types/unit-type";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import {
@@ -13,17 +24,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheetPicker } from "../components/BottomSheetPicker";
-import { LoadingOverlay } from "../components/LoadingOverlay";
-import { colors, commonStyles, typography } from "../theme";
-import type { ShoppingItemCategory } from "../types/shopping/shopping-item-category";
-import {
-  isShoppingItemCategory,
-  mapShoppingItemCategoryToName,
-  shoppingItemCategories,
-} from "../types/shopping/shopping-item-category";
-import type { UnitType } from "../types/unit-type";
-import { isUnitType, mapUnitTypeToName, unitTypes } from "../types/unit-type";
 
 type PickerType = "unit" | "category" | "hide";
 
@@ -106,11 +106,7 @@ export default function AddItemScreen() {
           headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
-              <Text
-                style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}
-              >
-                Annuler
-              </Text>
+              <Text style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}>Annuler</Text>
             </TouchableOpacity>
           ),
           headerRight: () => (
@@ -132,10 +128,7 @@ export default function AddItemScreen() {
           ),
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.content}>
         <View style={styles.form}>
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Nom</Text>
@@ -182,18 +175,8 @@ export default function AddItemScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Catégorie</Text>
-            <Pressable
-              onPress={showCategoryPicker}
-              style={styles.pickerButton}
-              disabled={isLoading}
-            >
-              <Text
-                style={[
-                  typography.body,
-                  styles.pickerButtonText,
-                  isLoading && styles.buttonDisabled,
-                ]}
-              >
+            <Pressable onPress={showCategoryPicker} style={styles.pickerButton} disabled={isLoading}>
+              <Text style={[typography.body, styles.pickerButtonText, isLoading && styles.buttonDisabled]}>
                 {mapShoppingItemCategoryToName(category)}
               </Text>
             </Pressable>

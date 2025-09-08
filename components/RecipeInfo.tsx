@@ -1,8 +1,8 @@
+import { colors, typography } from "@/theme";
+import { formatDuration, formatLastTimeDone } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, typography } from "../theme";
-import { formatDuration, formatLastTimeDone } from "../utils/date";
 import { Pill } from "./Pill";
 
 type RecipeInfoProps = {
@@ -27,10 +27,10 @@ export function RecipeInfo({
   restTime = 0,
 }: RecipeInfoProps) {
   const timerImages = [
-    require("../assets/images/clock.png"),
-    require("../assets/images/ingredient_preparation.png"),
-    require("../assets/images/clock_food.png"),
-    require("../assets/images/cooking.png"),
+    require("@/assets/images/clock.png"),
+    require("@/assets/images/ingredient_preparation.png"),
+    require("@/assets/images/clock_food.png"),
+    require("@/assets/images/cooking.png"),
   ];
 
   const timers = [
@@ -70,7 +70,7 @@ export function RecipeInfo({
 
       <View style={styles.servingsRow}>
         <View style={styles.servingsTextContainer}>
-          <Image source={require("../assets/images/servings.png")} style={styles.servingsImage} />
+          <Image source={require("@/assets/images/servings.png")} style={styles.servingsImage} />
           <Text style={typography.subtitle}>
             {servings} personne{servings > 1 ? "s" : ""}
           </Text>

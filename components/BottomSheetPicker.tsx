@@ -1,8 +1,8 @@
+import { usePickerAnimation } from "@/hooks/use-picker-animation";
+import { colors, typography } from "@/theme";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useRef } from "react";
 import { Animated, Modal, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { usePickerAnimation } from "../hooks/use-picker-animation";
-import { colors, typography } from "../theme";
 
 type Option = { label: string; value: string };
 type Props = {
@@ -15,15 +15,7 @@ type Props = {
   onClose: () => void;
 };
 
-export function BottomSheetPicker({
-  visible,
-  title,
-  options,
-  selectedValue,
-  previousValue,
-  onSelect,
-  onClose,
-}: Props) {
+export function BottomSheetPicker({ visible, title, options, selectedValue, previousValue, onSelect, onClose }: Props) {
   const { fadeAnim, slideAnim, showAnimation, hideAnimation } = usePickerAnimation();
   const isVisible = useRef(visible);
 
@@ -66,10 +58,7 @@ export function BottomSheetPicker({
                 <Text style={[typography.body, { color: colors.gray }]}>Annuler</Text>
               </TouchableOpacity>
               <Text style={[typography.body, styles.pickerTitle]}>{title}</Text>
-              <TouchableOpacity
-                style={styles.pickerDoneButton}
-                onPress={() => hideAnimation(onClose)}
-              >
+              <TouchableOpacity style={styles.pickerDoneButton} onPress={() => hideAnimation(onClose)}>
                 <Text style={[typography.body, { color: colors.primary }]}>OK</Text>
               </TouchableOpacity>
             </View>

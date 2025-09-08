@@ -1,10 +1,10 @@
 import { useMeals } from "@/hooks/useMeals";
 import type { MealWithRecipe } from "@/services/meal";
+import { colors, typography } from "@/theme";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
 import { useEffect, useState } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import "temporal-polyfill/global";
-import { colors, typography } from "../theme";
 import { Loader } from "./Loader";
 import { MealCard } from "./MealCard";
 

@@ -1,12 +1,12 @@
+import { InfoIcon } from "@/components/icons/InfoIcon";
+import { LogoutIcon } from "@/components/icons/LogoutIcon";
+import { StatisticIcon } from "@/components/icons/StatisticIcon";
+import { ProfileMenuItem } from "@/components/ProfileMenuItem";
+import { useAuth } from "@/contexts/AuthContext";
+import { colors, typography } from "@/theme";
 import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { InfoIcon } from "../../components/icons/InfoIcon";
-import { LogoutIcon } from "../../components/icons/LogoutIcon";
-import { StatisticIcon } from "../../components/icons/StatisticIcon";
-import { ProfileMenuItem } from "../../components/ProfileMenuItem";
-import { useAuth } from "../../contexts/AuthContext";
-import { colors, typography } from "../../theme";
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();

@@ -1,50 +1,59 @@
 import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { forwardRef, PropsWithChildren } from "react";
+import { PropsWithChildren, useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import Swipeable, { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type SwipeableItemProps = PropsWithChildren & {
-  handleEdit: () => void;
-  handleDelete: () => void;
+  itemId: string;
+  onEdit: (itemId: string) => void;
+  onDelete: (itemId: string) => void;
   disabled?: boolean;
 };
 
-export const SwipeableItem = forwardRef<SwipeableMethods, SwipeableItemProps>(
-  ({ children, handleEdit, handleDelete, disabled }, ref) => {
-    const renderRightActions = () => {
-      return (
-        <View style={styles.actions}>
-          <Pressable onPress={handleEdit} style={({ pressed }) => [styles.editAction, pressed && styles.actionPressed]}>
-            <Ionicons name="pencil-outline" size={24} color="white" />
-          </Pressable>
-          <Pressable
-            onPress={handleDelete}
-            style={({ pressed }) => [styles.deleteAction, pressed && styles.actionPressed]}
-          >
-            <Ionicons name="trash-outline" size={24} color="white" />
-          </Pressable>
-        </View>
-      );
-    };
+export const SwipeableItem = ({ itemId, onEdit, onDelete, disabled, children }: SwipeableItemProps) => {
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
 
+  const onPressEdit = () => {
+    swipeableRef.current?.close();
+    onEdit(itemId);
+  };
+
+  const onPressDelete = () => {
+    swipeableRef.current?.close();
+    onDelete(itemId);
+  };
+
+  const renderRightActions = () => {
     return (
-      <Swipeable
-        ref={ref}
-        renderRightActions={renderRightActions}
-        rightThreshold={40}
-        overshootRight={false}
-        enabled={!(disabled ?? false)}
-      >
-        {children}
-      </Swipeable>
+      <View style={styles.actions}>
+        <Pressable onPress={onPressEdit} style={({ pressed }) => [styles.editAction, pressed && styles.actionPressed]}>
+          <Ionicons name="pencil-outline" size={24} color="white" />
+        </Pressable>
+        <Pressable
+          onPress={onPressDelete}
+          style={({ pressed }) => [styles.deleteAction, pressed && styles.actionPressed]}
+        >
+          <Ionicons name="trash-outline" size={24} color="white" />
+        </Pressable>
+      </View>
     );
-  },
-);
+  };
 
-SwipeableItem.displayName = "SwipeableItem";
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      rightThreshold={40}
+      overshootRight={false}
+      enabled={!(disabled ?? false)}
+    >
+      {children}
+    </Swipeable>
+  );
+};
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
   },

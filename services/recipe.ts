@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Recipe, RecipeDetails, RecipeIngredient, RecipeUpdateData } from "@/types/recipe/recipe";
+import type { Recipe, RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 
 export function useRecipeService() {
   const getRecipes = async (userId: string): Promise<Recipe[]> => {
@@ -90,46 +90,42 @@ export function useRecipeService() {
     };
   };
 
-  const updateRecipe =
-    (recipeId: string) =>
-    async (recipeData: RecipeUpdateData): Promise<void> => {
-      const { error: recipeError } = await supabase
-        .from("recipes")
-        .update({
-          name: recipeData.name,
-          type: recipeData.type,
-          image_url: recipeData.imageUrl,
-          preparation_time: recipeData.preparationTime,
-          cooking_time: recipeData.cookingTime,
-          rest_time: recipeData.restTime,
-          servings: recipeData.servings,
-          instructions: recipeData.instructions,
-        })
-        .eq("id", recipeId);
+  const upsertRecipe = async (recipeData: RecipeUpsertData): Promise<void> => {
+    const { error: recipeUpsertError } = await supabase.from("recipes").upsert({
+      id: recipeData.recipe.id,
+      name: recipeData.recipe.name,
+      type: recipeData.recipe.type,
+      image_url: recipeData.recipe.imageUrl,
+      preparation_time: recipeData.recipe.preparationTime,
+      cooking_time: recipeData.recipe.cookingTime,
+      rest_time: recipeData.recipe.restTime,
+      servings: recipeData.recipe.servings,
+      instructions: recipeData.instructions,
+    });
 
-      if (recipeError) {
-        throw recipeError;
+    if (recipeUpsertError) {
+      throw recipeUpsertError;
+    }
+
+    if (recipeData.ingredients.length > 0) {
+      const { error: ingredientsUpsertError } = await supabase.from("recipes_to_ingredients").upsert(
+        recipeData.ingredients.map((ingredient) => ({
+          recipe_id: recipeData.recipe.id,
+          ingredient_id: ingredient.ingredientId,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+        })),
+      );
+
+      if (ingredientsUpsertError) {
+        throw ingredientsUpsertError;
       }
-
-      if (recipeData.ingredients.length > 0) {
-        const { error: ingredientsError } = await supabase.from("recipes_to_ingredients").upsert(
-          recipeData.ingredients.map((ingredient) => ({
-            recipe_id: recipeId,
-            ingredient_id: ingredient.ingredientId,
-            quantity: ingredient.quantity,
-            unit: ingredient.unit,
-          })),
-        );
-
-        if (ingredientsError) {
-          throw ingredientsError;
-        }
-      }
-    };
+    }
+  };
 
   return {
     getRecipes,
     getRecipeById,
-    updateRecipe,
+    upsertRecipe,
   };
 }

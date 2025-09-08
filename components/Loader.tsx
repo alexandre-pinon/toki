@@ -1,11 +1,5 @@
-import {
-  ActivityIndicator,
-  ActivityIndicatorProps,
-  ColorValue,
-  StyleSheet,
-  View,
-} from "react-native";
-import { colors } from "../theme";
+import { colors } from "@/theme";
+import { ActivityIndicator, ActivityIndicatorProps, ColorValue, StyleSheet, View } from "react-native";
 
 export const Loader = ({
   color = colors.primary,

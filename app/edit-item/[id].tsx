@@ -1,3 +1,15 @@
+import { BottomSheetPicker } from "@/components/BottomSheetPicker";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
+import { useShoppingList } from "@/contexts/ShoppingListContext";
+import { colors, commonStyles, typography } from "@/theme";
+import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
+import {
+  isShoppingItemCategory,
+  mapShoppingItemCategoryToName,
+  shoppingItemCategories,
+} from "@/types/shopping/shopping-item-category";
+import type { UnitType } from "@/types/unit-type";
+import { isUnitType, mapUnitTypeToName, unitTypes } from "@/types/unit-type";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -11,18 +23,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheetPicker } from "../../components/BottomSheetPicker";
-import { LoadingOverlay } from "../../components/LoadingOverlay";
-import { useShoppingList } from "../../contexts/ShoppingListContext";
-import { colors, commonStyles, typography } from "../../theme";
-import type { ShoppingItemCategory } from "../../types/shopping/shopping-item-category";
-import {
-  isShoppingItemCategory,
-  mapShoppingItemCategoryToName,
-  shoppingItemCategories,
-} from "../../types/shopping/shopping-item-category";
-import type { UnitType } from "../../types/unit-type";
-import { isUnitType, mapUnitTypeToName, unitTypes } from "../../types/unit-type";
 
 type PickerType = "unit" | "category" | "hide";
 

@@ -2,8 +2,8 @@ import { MenuIcon } from "@/components/icons/MenuIcon";
 import { ProfileIcon } from "@/components/icons/ProfileIcon";
 import { RecipeIcon } from "@/components/icons/RecipeIcon";
 import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
+import { colors } from "@/theme";
 import { Tabs } from "expo-router";
-import { colors } from "../../theme";
 
 export default function TabsLayout() {
   return (

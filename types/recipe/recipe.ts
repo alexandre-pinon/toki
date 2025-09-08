@@ -29,18 +29,12 @@ export type RecipeIngredient = {
   name: string;
 };
 
-export type RecipeUpdateData = {
-  name: string;
-  type: RecipeType;
-  imageUrl?: string;
-  preparationTime?: number;
-  cookingTime?: number;
-  restTime?: number;
-  servings: number;
+export type RecipeUpsertData = {
+  recipe: Omit<Recipe, "timesDone" | "lastTimeDone" | "userId">;
+  ingredients: Omit<RecipeIngredient, "recipeId" | "name">[];
   instructions: string[];
-  ingredients: {
-    ingredientId: string;
-    quantity?: number;
-    unit?: UnitType;
-  }[];
+};
+
+export const getTotalTime = (recipe: Pick<Recipe, "preparationTime" | "cookingTime" | "restTime">) => {
+  return (recipe.preparationTime ?? 0) + (recipe.cookingTime ?? 0) + (recipe.restTime ?? 0);
 };

@@ -1,13 +1,12 @@
 import { useShoppingList } from "@/contexts/ShoppingListContext";
+import { colors } from "@/theme";
+import type { AggregatedShoppingItem } from "@/types/shopping/shopping-item";
+import { formatQuantityAndUnit } from "@/types/unit-type";
+import { mapPlainDateToDayName } from "@/utils/date";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
-import { type SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { colors } from "../theme";
-import type { AggregatedShoppingItem } from "../types/shopping/shopping-item";
-import { formatQuantityAndUnit } from "../types/unit-type";
-import { mapPlainDateToDayName } from "../utils/date";
 import { SwipeableItem } from "./SwipeableItem";
 import { UnderlinedListItem } from "./UnderlinedListItem";
 
@@ -23,11 +22,10 @@ export function ShoppingListItem({
   isLastItem,
   userId,
 }: ShoppingItemProps) {
-  const swipeableRef = useRef<SwipeableMethods | null>(null);
   const { setChecked, deleteItem } = useShoppingList();
   const [isCheckLoading, setIsCheckLoading] = useState(false);
 
-  const handleDelete = () => {
+  const onDelete = () => {
     Alert.alert(
       "Supprimer l'article",
       "Êtes-vous sûr de vouloir supprimer cet article ?",
@@ -40,7 +38,6 @@ export function ShoppingListItem({
           text: "Supprimer",
           style: "destructive",
           onPress: () => {
-            swipeableRef.current?.close();
             deleteItem(ids[0], userId);
           },
         },
@@ -49,9 +46,11 @@ export function ShoppingListItem({
     );
   };
 
-  const handleEdit = () => {
-    swipeableRef.current?.close();
-    router.push(`/edit-item/${ids[0]}`);
+  const onEdit = () => {
+    router.push({
+      pathname: `/edit-item/[id]`,
+      params: { id: ids[0] },
+    });
   };
 
   const handleCheck = async () => {
@@ -61,7 +60,7 @@ export function ShoppingListItem({
   };
 
   return (
-    <SwipeableItem ref={swipeableRef} handleEdit={handleEdit} handleDelete={handleDelete} disabled={!!earliestMealDate}>
+    <SwipeableItem itemId={ids[0]} onEdit={onEdit} onDelete={onDelete} disabled={!!earliestMealDate}>
       <View style={styles.item}>
         {isCheckLoading ? (
           <View style={styles.loadingContainer}>

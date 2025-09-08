@@ -1,5 +1,5 @@
 import { colors, typography } from "@/theme";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type RecipeTabsProps = {
   setTab: (tab: RecipeTabName) => void;
@@ -27,7 +27,7 @@ export function RecipeTabs({ tab, setTab }: RecipeTabsProps) {
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   tabsRow: {
     flexDirection: "row",
     justifyContent: "center",

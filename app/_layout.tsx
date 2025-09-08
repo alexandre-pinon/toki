@@ -1,9 +1,10 @@
-import { Stack, useRouter, useSegments } from "expo-router";
+import { CustomErrorBoundary } from "@/components/ErrorBoundary";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
+import { ErrorBoundaryProps, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AuthProvider, useAuth } from "../contexts/AuthContext";
-import { ShoppingListProvider } from "../contexts/ShoppingListContext";
 
 function RootLayoutNav() {
   const { session } = useAuth();
@@ -30,13 +31,14 @@ function RootLayoutNav() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <ShoppingListProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth" options={{ headerShown: false }} />
-        </Stack>
+        <Stack screenOptions={{ headerShown: false }} />
       </ShoppingListProvider>
     </GestureHandlerRootView>
   );
+}
+
+export function ErrorBoundary(props: ErrorBoundaryProps) {
+  return <CustomErrorBoundary {...props} />;
 }
 
 export default function RootLayout() {

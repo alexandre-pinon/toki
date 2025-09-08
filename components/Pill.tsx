@@ -1,5 +1,5 @@
+import { colors, typography } from "@/theme";
 import { StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import { colors, typography } from "../theme";
 
 type PillProps = {
   children: React.ReactNode;

@@ -1,8 +1,8 @@
+import type { MealWithRecipe } from "@/services/meal";
+import { colors, commonStyles, typography } from "@/theme";
+import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import type { MealWithRecipe } from "../services/meal";
-import { colors, commonStyles, typography } from "../theme";
-import { mapRecipeTypeToName } from "../types/recipe/recipe-type";
 
 type MealCardProps = {
   meal: MealWithRecipe;
@@ -11,17 +11,10 @@ type MealCardProps = {
 export function MealCard({ meal }: MealCardProps) {
   return (
     <View style={styles.mealCard}>
-      <Image
-        source={meal.recipe.imageUrl}
-        style={styles.mealImage}
-        contentFit="cover"
-        transition={200}
-      />
+      <Image source={meal.recipe.imageUrl} style={styles.mealImage} contentFit="cover" transition={200} />
       <View style={styles.mealContent}>
         <Text style={[typography.subtitle, styles.mealTitle]}>{meal.recipe.name}</Text>
-        <Text style={[typography.subtext, styles.mealType]}>
-          {mapRecipeTypeToName(meal.recipe.type)}
-        </Text>
+        <Text style={[typography.subtext, styles.mealType]}>{mapRecipeTypeToName(meal.recipe.type)}</Text>
       </View>
     </View>
   );

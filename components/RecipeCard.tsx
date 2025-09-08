@@ -1,10 +1,10 @@
+import { colors, commonStyles, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, commonStyles, typography } from "../theme";
 
 type RecipeCardProps = {
   recipe: Recipe;
@@ -17,14 +17,10 @@ export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
       <Image source={recipe.imageUrl} style={styles.image} contentFit="cover" transition={200} />
       <View style={styles.content}>
         <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
-        <Text style={typography.subtext}>
-          {recipe.lastTimeDone ? recipe.lastTimeDone.toLocaleString() : "-"}
-        </Text>
+        <Text style={typography.subtext}>{recipe.lastTimeDone ? recipe.lastTimeDone.toLocaleString() : "-"}</Text>
         <View style={styles.tagsContainer}>
           <View style={styles.typeTag}>
-            <Text style={[typography.subtext, styles.typeText]}>
-              {mapRecipeTypeToName(recipe.type)}
-            </Text>
+            <Text style={[typography.subtext, styles.typeText]}>{mapRecipeTypeToName(recipe.type)}</Text>
           </View>
           <View style={styles.counterContainer}>
             <Ionicons name="checkmark-circle" size={16} />

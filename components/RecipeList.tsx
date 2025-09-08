@@ -1,4 +1,5 @@
 import { useRecipes } from "@/hooks/useRecipes";
+import { colors, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
@@ -6,7 +7,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { colors, typography } from "../theme";
 import { Loader } from "./Loader";
 import { RecipeCard } from "./RecipeCard";
 

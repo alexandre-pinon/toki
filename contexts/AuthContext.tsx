@@ -1,7 +1,7 @@
+import { supabase } from "@/lib/supabase";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
 
 type AuthContextType = {
   session: Session | null;
@@ -90,11 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ session, signInWithGoogle, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ session, signInWithGoogle, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

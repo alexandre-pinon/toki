@@ -14,8 +14,7 @@ export default function RecipeDetailsScreen() {
   const { currentRecipe, isLoading } = useCurrentRecipe();
   const [tab, setTab] = useState<RecipeTabName>("instructions");
 
-  if (isLoading) return <Loader />;
-  if (!currentRecipe) throw new Error("Recipe not found");
+  if (isLoading || !currentRecipe) return <Loader />;
 
   const { recipe, ingredients, instructions } = currentRecipe;
 
@@ -49,7 +48,7 @@ export default function RecipeDetailsScreen() {
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,

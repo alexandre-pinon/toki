@@ -22,7 +22,7 @@ export function RecipeInstructionList({ instructions }: RecipeInstructionListPro
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   instructionsTabContent: {
     gap: 24,
   },

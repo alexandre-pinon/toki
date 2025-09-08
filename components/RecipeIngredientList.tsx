@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import { colors, typography } from "../theme";
-import { formatQuantityAndUnit } from "../types/unit-type";
+import { colors, typography } from "@/theme";
 import { RecipeIngredient } from "@/types/recipe/recipe";
+import { formatQuantityAndUnit } from "@/types/unit-type";
+import { StyleSheet, Text, View } from "react-native";
 
 type RecipeTabsProps = {
   ingredients: Omit<RecipeIngredient, "recipeId" | "ingredientId">[];
@@ -29,7 +29,7 @@ export function RecipeIngredientList({ ingredients }: RecipeTabsProps) {
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   ingredientRow: {
     flexDirection: "row",
     alignItems: "center",

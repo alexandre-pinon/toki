@@ -1,9 +1,9 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { colors, typography } from "@/theme";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../../contexts/AuthContext";
-import { colors, typography } from "../../theme";
 
 export default function ProfileInfosScreen() {
   const { session } = useAuth();
@@ -30,7 +30,7 @@ export default function ProfileInfosScreen() {
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <View style={styles.avatarWrapper}>
           <Image
-            source={require("../../assets/images/avatar_placeholder.png")}
+            source={require("@/assets/images/avatar_placeholder.png")}
             style={styles.avatarImage}
             contentFit="cover"
             transition={200}

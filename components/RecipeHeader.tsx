@@ -1,9 +1,9 @@
+import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "../theme";
 
 type RecipeHeaderProps = {
   imageUrl?: string;
@@ -15,7 +15,7 @@ export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
 
   const handleEdit = () => {
     router.push({
-      pathname: `./[recipeId]/edit`,
+      pathname: `/recipes/[recipeId]/edit`,
       params: { recipeId },
     });
   };
@@ -32,7 +32,7 @@ export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
       <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>
-        <Image source={require("../assets/images/pen.png")} style={styles.editButtonImage} />
+        <Image source={require("@/assets/images/pen.png")} style={styles.editButtonImage} />
       </TouchableOpacity>
     </View>
   );

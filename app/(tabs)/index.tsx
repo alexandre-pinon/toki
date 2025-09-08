@@ -1,10 +1,10 @@
+import { ShoppingList } from "@/components/ShoppingList";
+import { colors, typography } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "temporal-polyfill/global";
-import { ShoppingList } from "../../components/ShoppingList";
-import { colors, typography } from "../../theme";
 
 export default function ShoppingListScreen() {
   return (
