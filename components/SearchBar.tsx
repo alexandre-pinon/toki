@@ -5,8 +5,9 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 type SearchBarProps = {
   query: { value: string; set: (query: string) => void };
   filters?: { value: boolean; set: (show: boolean) => void };
+  autoFocus?: boolean;
 };
-export const SearchBar = ({ query, filters }: SearchBarProps) => {
+export const SearchBar = ({ query, filters, autoFocus }: SearchBarProps) => {
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
@@ -17,6 +18,7 @@ export const SearchBar = ({ query, filters }: SearchBarProps) => {
           value={query.value}
           onChangeText={query.set}
           placeholderTextColor={colors.gray}
+          autoFocus={autoFocus ?? false}
         />
 
         {filters && (

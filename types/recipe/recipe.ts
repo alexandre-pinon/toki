@@ -1,3 +1,4 @@
+import { Ingredient } from "../ingredient";
 import type { UnitType } from "../unit-type";
 import type { RecipeType } from "./recipe-type";
 
@@ -23,15 +24,16 @@ export type RecipeDetails = {
 
 export type RecipeIngredient = {
   recipeId: string;
-  ingredientId: string;
   quantity?: number;
   unit?: UnitType;
-  name: string;
+  ingredientId: Ingredient["id"];
+  name: Ingredient["name"];
+  category: Ingredient["category"];
 };
 
 export type RecipeUpsertData = {
   recipe: Omit<Recipe, "timesDone" | "lastTimeDone" | "userId">;
-  ingredients: Omit<RecipeIngredient, "recipeId" | "name">[];
+  ingredients: Omit<RecipeIngredient, "recipeId" | "name" | "category">[];
   instructions: string[];
 };
 

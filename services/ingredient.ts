@@ -11,7 +11,6 @@ export function useIngredientService() {
       .like("name_normalized", `%${sanitizedSearchTerm}%`)
       .limit(10);
 
-    console.log({ searchTerm: sanitizedSearchTerm, data });
     if (error) {
       throw error;
     }

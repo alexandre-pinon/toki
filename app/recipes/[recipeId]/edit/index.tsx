@@ -15,16 +15,8 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditScreen() {
-  const {
-    formRecipe,
-    setFormRecipe,
-    formIngredients,
-    setFormIngredients,
-    formInstructions,
-    setFormInstructions,
-    isLoading,
-    upsertRecipe,
-  } = useFormRecipe();
+  const { formRecipe, setFormRecipe, formIngredients, setFormIngredients, formInstructions, setFormInstructions } =
+    useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
   const [previousType, setPreviousType] = useState<RecipeType | undefined>();
@@ -58,11 +50,10 @@ export default function RecipeEditScreen() {
         return formIngredients.map((ingredient, idx) => (
           <SwipeableItem
             key={ingredient.ingredientId}
-            itemId={ingredient.ingredientId}
-            onEdit={(id) =>
+            onEdit={() =>
               router.push({
-                pathname: `./edit/ingredients/[id]`,
-                params: { id },
+                pathname: "./edit/ingredients/quantity",
+                params: { ingredientId: ingredient.ingredientId },
               })
             }
             onDelete={() => setFormIngredients((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
@@ -80,7 +71,6 @@ export default function RecipeEditScreen() {
         return formInstructions.map((instruction, idx) => (
           <SwipeableItem
             key={`edit-instruction-item-${idx}`}
-            itemId={`edit-instruction-item-${idx}`}
             onEdit={() =>
               router.push({
                 pathname: `./edit/instructions`,
@@ -202,7 +192,7 @@ export default function RecipeEditScreen() {
         <View style={styles.section}>
           <TouchableOpacity onPress={openPicker} style={styles.typeSelector}>
             <Text style={[typography.body, styles.typeText]}>{mapRecipeTypeToName(formRecipe.type)}</Text>
-            <Ionicons name="chevron-down" size={20} color={colors.gray400} />
+            <Ionicons name="chevron-down" size={12} color={colors.gray400} />
           </TouchableOpacity>
         </View>
 
@@ -265,7 +255,7 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.gray300,
+    borderColor: colors.gray200,
     borderRadius: 10,
     padding: 12,
     fontSize: 12,
@@ -343,7 +333,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: colors.white,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.gray300,
+    borderColor: colors.gray200,
     borderRadius: 10,
     paddingVertical: 4,
     fontSize: 12,
@@ -356,12 +346,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 12,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray200,
     borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
-  typeText: {},
+  typeText: {
+    fontSize: 12,
+  },
   listItemContainer: {
     paddingLeft: 20,
   },

@@ -5,23 +5,22 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type SwipeableItemProps = PropsWithChildren & {
-  itemId: string;
-  onEdit: (itemId: string) => void;
-  onDelete: (itemId: string) => void;
+  onEdit: () => void;
+  onDelete: () => void;
   disabled?: boolean;
 };
 
-export const SwipeableItem = ({ itemId, onEdit, onDelete, disabled, children }: SwipeableItemProps) => {
+export const SwipeableItem = ({ onEdit, onDelete, disabled, children }: SwipeableItemProps) => {
   const swipeableRef = useRef<SwipeableMethods | null>(null);
 
   const onPressEdit = () => {
     swipeableRef.current?.close();
-    onEdit(itemId);
+    onEdit();
   };
 
   const onPressDelete = () => {
     swipeableRef.current?.close();
-    onDelete(itemId);
+    onDelete();
   };
 
   const renderRightActions = () => {

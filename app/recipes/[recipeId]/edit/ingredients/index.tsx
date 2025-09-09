@@ -6,8 +6,9 @@ import { colors, typography } from "@/theme";
 import { Ingredient } from "@/types/ingredient";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
@@ -41,7 +42,7 @@ export default function RecipeEditIngredientScreen() {
     performSearch(debouncedSearchTerm);
   }, [debouncedSearchTerm, searchIngredient]);
 
-  const displayResults = () => {
+  const displaySearchResults = () => {
     if (isLoading) {
       return <Loader />;
     }
@@ -67,7 +68,18 @@ export default function RecipeEditIngredientScreen() {
     return (
       <FlatList
         data={results}
-        renderItem={({ item }) => <UnderlinedListItem title={item.name} />}
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "./ingredients/quantity",
+                params: { ingredientId: item.id },
+              })
+            }
+          >
+            <UnderlinedListItem title={item.name} />
+          </Pressable>
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
       />
@@ -76,8 +88,8 @@ export default function RecipeEditIngredientScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <SearchBar query={{ value: searchTerm, set: setSearchTerm }} />
-      {displayResults()}
+      <SearchBar query={{ value: searchTerm, set: setSearchTerm }} autoFocus />
+      {displaySearchResults()}
     </SafeAreaView>
   );
 }

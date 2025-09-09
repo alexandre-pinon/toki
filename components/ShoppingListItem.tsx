@@ -60,7 +60,7 @@ export function ShoppingListItem({
   };
 
   return (
-    <SwipeableItem itemId={ids[0]} onEdit={onEdit} onDelete={onDelete} disabled={!!earliestMealDate}>
+    <SwipeableItem onEdit={onEdit} onDelete={onDelete} disabled={!!earliestMealDate}>
       <View style={styles.item}>
         {isCheckLoading ? (
           <View style={styles.loadingContainer}>

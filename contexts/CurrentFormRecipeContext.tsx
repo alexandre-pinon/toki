@@ -1,14 +1,22 @@
 import { useRecipeService } from "@/services/recipe";
+import { Ingredient } from "@/types/ingredient";
 import { RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
 import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState, useTransition } from "react";
+
+type FormRecipeIngredient = RecipeUpsertData["ingredients"][number] & {
+  readonly name: string;
+  readonly category: Ingredient["category"];
+};
 
 type FormRecipeContextType = {
   formRecipe: RecipeUpsertData["recipe"];
   setFormRecipe: Dispatch<SetStateAction<FormRecipeContextType["formRecipe"]>>;
-  formIngredients: (RecipeUpsertData["ingredients"][number] & { readonly name: string })[];
+  formIngredients: FormRecipeIngredient[];
   setFormIngredients: Dispatch<SetStateAction<FormRecipeContextType["formIngredients"]>>;
   formInstructions: RecipeUpsertData["instructions"];
   setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
+  formCurrentIngredient: FormRecipeIngredient | null;
+  setFormCurrentIngredient: Dispatch<SetStateAction<FormRecipeContextType["formCurrentIngredient"]>>;
   isLoading: boolean;
   upsertRecipe: () => void;
   resetForm: () => void;
@@ -26,12 +34,15 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
   const [formRecipe, setFormRecipe] = useState<FormRecipeContextType["formRecipe"]>(recipe);
   const [formIngredients, setFormIngredients] = useState<FormRecipeContextType["formIngredients"]>(ingredients);
   const [formInstructions, setFormInstructions] = useState(instructions);
+  const [formCurrentIngredient, setFormCurrentIngredient] =
+    useState<FormRecipeContextType["formCurrentIngredient"]>(null);
   const [isLoading, startTransition] = useTransition();
 
   const resetForm = () => {
     setFormRecipe(recipe);
     setFormIngredients(ingredients);
     setFormInstructions(instructions);
+    setFormCurrentIngredient(null);
   };
 
   return (
@@ -43,6 +54,8 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
         setFormIngredients,
         formInstructions,
         setFormInstructions,
+        formCurrentIngredient,
+        setFormCurrentIngredient,
         isLoading,
         upsertRecipe: () =>
           startTransition(() =>
