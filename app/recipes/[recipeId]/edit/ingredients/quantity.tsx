@@ -1,26 +1,20 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
 import { useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
 import { colors, typography } from "@/theme";
-import { isShoppingItemCategory, mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
+import { mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
 import { isUnitType, mapUnitTypeToName, UnitType, unitTypes } from "@/types/unit-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientQuantityScreen() {
-  const { ingredientId, name, category } = useLocalSearchParams<{
-    ingredientId?: string;
-    name?: string;
-    category?: string;
-  }>();
-  const { formIngredients, formCurrentIngredient, setFormCurrentIngredient } = useFormRecipe();
+  const { formCurrentIngredient, setFormCurrentIngredient } = useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
-  const [quantityString, setQuantityString] = useState("");
+  const [quantityString, setQuantityString] = useState(formCurrentIngredient?.quantity?.toString() ?? "");
 
   const handlePickerSelect = (value?: string) => {
     if (value && isUnitType(value)) {
@@ -48,25 +42,6 @@ export default function RecipeEditIngredientQuantityScreen() {
   const closePicker = () => {
     setShowPicker(false);
   };
-
-  useEffect(() => {
-    const maybeFormIngredient = formIngredients.find((ingredient) => ingredient.ingredientId === ingredientId);
-    if (maybeFormIngredient) {
-      setFormCurrentIngredient(maybeFormIngredient);
-      if (maybeFormIngredient.quantity) {
-        setQuantityString(maybeFormIngredient.quantity.toString());
-      }
-      return;
-    }
-
-    if (!ingredientId || !name || !category) return;
-
-    setFormCurrentIngredient({
-      ingredientId,
-      name,
-      category: isShoppingItemCategory(category) ? category : "other",
-    });
-  }, [ingredientId, name, category, formIngredients, setFormCurrentIngredient]);
 
   const onChangeQuantity = (value: string) => {
     setQuantityString(value);
@@ -97,7 +72,7 @@ export default function RecipeEditIngredientQuantityScreen() {
             style={[typography.body, styles.input]}
             value={quantityString}
             onChangeText={onChangeQuantity}
-            placeholder="1"
+            placeholder="Quantité"
             placeholderTextColor={colors.gray}
             keyboardType="decimal-pad"
             autoFocus

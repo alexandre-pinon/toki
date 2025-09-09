@@ -1,5 +1,5 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
-import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
+import { RecipeTabs } from "@/components/RecipeTabs";
 import { SwipeableItem } from "@/components/SwipeableItem";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
 import { useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
@@ -7,6 +7,7 @@ import { colors, typography } from "@/theme";
 import { getTotalTime } from "@/types/recipe/recipe";
 import { isRecipeType, mapRecipeTypeToName, RecipeType, recipeTypes } from "@/types/recipe/recipe-type";
 import { formatQuantityAndUnit } from "@/types/unit-type";
+import { capitalize } from "@/utils/string";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -15,12 +16,21 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditScreen() {
-  const { formRecipe, setFormRecipe, formIngredients, setFormIngredients, formInstructions, setFormInstructions } =
-    useFormRecipe();
+  const {
+    formRecipe,
+    setFormRecipe,
+    formIngredients,
+    setFormIngredients,
+    formInstructions,
+    setFormInstructions,
+    setFormCurrentIngredient,
+    setFormCurrentInstruction,
+    activeTab,
+    setActiveTab,
+  } = useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
   const [previousType, setPreviousType] = useState<RecipeType | undefined>();
-  const [tab, setTab] = useState<RecipeTabName>("ingredients");
 
   const handlePickerSelect = (value?: string) => {
     if (value && isRecipeType(value)) {
@@ -30,7 +40,7 @@ export default function RecipeEditScreen() {
 
   const getPickerOptions = () => {
     return recipeTypes.map((recipeType) => ({
-      label: mapRecipeTypeToName(recipeType),
+      label: capitalize(mapRecipeTypeToName(recipeType)),
       value: recipeType,
     }));
   };
@@ -45,26 +55,24 @@ export default function RecipeEditScreen() {
   };
 
   const displayActiveTab = () => {
-    switch (tab) {
+    switch (activeTab) {
       case "ingredients":
         return (
           <>
-            {formIngredients.map((ingredient, idx) => (
+            {formIngredients.map((ingredient, index) => (
               <SwipeableItem
                 key={ingredient.ingredientId}
-                onEdit={() =>
-                  router.push({
-                    pathname: "./edit/ingredients/quantity",
-                    params: { ingredientId: ingredient.ingredientId },
-                  })
-                }
-                onDelete={() => setFormIngredients((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
+                onEdit={() => {
+                  setFormCurrentIngredient(ingredient);
+                  router.push({ pathname: "./edit/ingredients/quantity" });
+                }}
+                onDelete={() => setFormIngredients((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)])}
               >
                 <View style={styles.listItemContainer}>
                   <UnderlinedListItem
                     title={ingredient.name}
                     subTitle={formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
-                    isLastItem={idx === formIngredients.length - 1}
+                    isLastItem={index === formIngredients.length - 1}
                   />
                 </View>
               </SwipeableItem>
@@ -83,22 +91,20 @@ export default function RecipeEditScreen() {
       case "instructions":
         return (
           <>
-            {formInstructions.map((instruction, idx) => (
+            {formInstructions.map((instruction, index) => (
               <SwipeableItem
-                key={`edit-instruction-item-${idx}`}
-                onEdit={() =>
-                  router.push({
-                    pathname: `./edit/instructions`,
-                    params: { instruction },
-                  })
-                }
-                onDelete={() => setFormInstructions((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
+                key={`edit-instruction-item-${index}`}
+                onEdit={() => {
+                  setFormCurrentInstruction({ value: instruction, index });
+                  router.push({ pathname: `./edit/instructions` });
+                }}
+                onDelete={() => setFormInstructions((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)])}
               >
                 <View style={styles.listItemContainer}>
                   <UnderlinedListItem
-                    title={`Étape ${idx + 1}`}
+                    title={`Étape ${index + 1}`}
                     subTitle={instruction}
-                    isLastItem={idx === formInstructions.length - 1}
+                    isLastItem={index === formInstructions.length - 1}
                   />
                 </View>
               </SwipeableItem>
@@ -106,10 +112,13 @@ export default function RecipeEditScreen() {
             <View style={[styles.section, styles.addButtonContainer]}>
               <TouchableOpacity
                 style={styles.addButton}
-                onPress={() => router.push({ pathname: "./edit/instructions" })}
+                onPress={() => {
+                  setFormCurrentInstruction(null);
+                  router.push({ pathname: "./edit/instructions" });
+                }}
               >
                 <Ionicons name="add" size={12} color={colors.primary} />
-                <Text style={styles.addButtonText}>Ajouter une instruction</Text>
+                <Text style={styles.addButtonText}>Ajouter une étape</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -217,12 +226,12 @@ export default function RecipeEditScreen() {
         {/* Recipe Type */}
         <View style={styles.section}>
           <TouchableOpacity onPress={openPicker} style={styles.typeSelector}>
-            <Text style={[typography.body, styles.typeText]}>{mapRecipeTypeToName(formRecipe.type)}</Text>
+            <Text style={[typography.body, styles.typeText]}>{capitalize(mapRecipeTypeToName(formRecipe.type))}</Text>
             <Ionicons name="chevron-down" size={12} color={colors.gray400} />
           </TouchableOpacity>
         </View>
 
-        <RecipeTabs tab={tab} setTab={setTab} />
+        <RecipeTabs tab={activeTab} setTab={setActiveTab} />
         <View style={styles.tabSection}>{displayActiveTab()}</View>
       </ScrollView>
 

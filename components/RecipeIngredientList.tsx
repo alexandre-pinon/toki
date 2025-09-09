@@ -14,8 +14,8 @@ export function RecipeIngredientList({ ingredients }: RecipeTabsProps) {
 
   return (
     <View>
-      {ingredients.map((ingredient, idx) => (
-        <View key={idx} style={styles.ingredientRow}>
+      {ingredients.map((ingredient) => (
+        <View key={ingredient.name} style={styles.ingredientRow}>
           <Text style={[typography.body, styles.bulletText]}>{"\u2022"}</Text>
           <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
           {(ingredient.quantity || ingredient.unit) && (

@@ -1,6 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
+import { useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
 import { useIngredientService } from "@/services/ingredient";
 import { colors, typography } from "@/theme";
 import { Ingredient } from "@/types/ingredient";
@@ -12,6 +13,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
+  const { setFormCurrentIngredient } = useFormRecipe();
   const { searchIngredient } = useIngredientService();
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<Ingredient[]>([]);
@@ -70,12 +72,10 @@ export default function RecipeEditIngredientScreen() {
         data={results}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "./ingredients/quantity",
-                params: { ingredientId: item.id, name: item.name, category: item.category },
-              })
-            }
+            onPress={() => {
+              setFormCurrentIngredient({ ingredientId: item.id, name: item.name, category: item.category });
+              router.push({ pathname: "./ingredients/quantity" });
+            }}
           >
             <UnderlinedListItem title={item.name} />
           </TouchableOpacity>

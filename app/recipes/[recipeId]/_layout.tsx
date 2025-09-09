@@ -34,8 +34,11 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
     formIngredients,
     setFormIngredients,
     formInstructions,
+    setFormInstructions,
     formCurrentIngredient,
     setFormCurrentIngredient,
+    formCurrentInstruction,
+    setFormCurrentInstruction,
     upsertRecipe,
     resetForm,
   } = useFormRecipe();
@@ -97,18 +100,49 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
                 if (!formCurrentIngredient) return;
 
                 setFormIngredients((prev) => {
-                  const idxToReplace = prev.findIndex(
+                  const indexToReplace = prev.findIndex(
                     (ingredient) => ingredient.ingredientId === formCurrentIngredient.ingredientId,
                   );
 
-                  if (idxToReplace === -1) {
+                  if (indexToReplace === -1) {
                     return [...prev, formCurrentIngredient];
                   }
 
-                  return [...prev.slice(0, idxToReplace), formCurrentIngredient, ...prev.slice(idxToReplace + 1)];
+                  return [...prev.slice(0, indexToReplace), formCurrentIngredient, ...prev.slice(indexToReplace + 1)];
                 });
-                setFormCurrentIngredient(null);
-                router.replace({
+
+                router.push({
+                  pathname: "/recipes/[recipeId]/edit",
+                  params: { recipeId: formRecipe.id },
+                });
+              }}
+              style={styles.actionButton}
+            >
+              <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="edit/instructions/index"
+        options={{
+          headerTitleStyle: typography.header,
+          headerTitle: `Étape ${(formCurrentInstruction?.index ?? formInstructions.length) + 1}`,
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                if (!formCurrentInstruction) return;
+
+                setFormInstructions((prev) => [
+                  ...prev.slice(0, formCurrentInstruction.index),
+                  formCurrentInstruction.value,
+                  ...prev.slice(formCurrentInstruction.index + 1),
+                ]);
+
+                router.push({
                   pathname: "/recipes/[recipeId]/edit",
                   params: { recipeId: formRecipe.id },
                 });

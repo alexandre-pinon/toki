@@ -1,3 +1,4 @@
+import { RecipeTabName } from "@/components/RecipeTabs";
 import { useRecipeService } from "@/services/recipe";
 import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState, useTransition } from "react";
@@ -11,6 +12,10 @@ type FormRecipeContextType = {
   setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
   formCurrentIngredient: Omit<RecipeIngredient, "recipeId"> | null;
   setFormCurrentIngredient: Dispatch<SetStateAction<FormRecipeContextType["formCurrentIngredient"]>>;
+  formCurrentInstruction: { value: string; index: number } | null;
+  setFormCurrentInstruction: Dispatch<SetStateAction<FormRecipeContextType["formCurrentInstruction"]>>;
+  activeTab: RecipeTabName;
+  setActiveTab: Dispatch<SetStateAction<FormRecipeContextType["activeTab"]>>;
   isLoading: boolean;
   upsertRecipe: () => void;
   resetForm: () => void;
@@ -30,6 +35,9 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
   const [formInstructions, setFormInstructions] = useState(instructions);
   const [formCurrentIngredient, setFormCurrentIngredient] =
     useState<FormRecipeContextType["formCurrentIngredient"]>(null);
+  const [formCurrentInstruction, setFormCurrentInstruction] =
+    useState<FormRecipeContextType["formCurrentInstruction"]>(null);
+  const [activeTab, setActiveTab] = useState<RecipeTabName>("ingredients");
   const [isLoading, startTransition] = useTransition();
 
   const resetForm = () => {
@@ -37,6 +45,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
     setFormIngredients(ingredients);
     setFormInstructions(instructions);
     setFormCurrentIngredient(null);
+    setFormCurrentInstruction(null);
   };
 
   return (
@@ -50,6 +59,10 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
         setFormInstructions,
         formCurrentIngredient,
         setFormCurrentIngredient,
+        formCurrentInstruction,
+        setFormCurrentInstruction,
+        activeTab,
+        setActiveTab,
         isLoading,
         upsertRecipe: () =>
           startTransition(() =>

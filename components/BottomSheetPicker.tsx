@@ -9,13 +9,13 @@ type Props = {
   visible: boolean;
   title: string;
   options: Option[];
-  selectedValue?: string;
-  previousValue?: string;
   onSelect: (value?: string) => void;
   onClose: () => void;
+  selectedValue?: string;
+  previousValue?: string;
 };
 
-export function BottomSheetPicker({ visible, title, options, selectedValue, previousValue, onSelect, onClose }: Props) {
+export function BottomSheetPicker({ visible, title, options, onSelect, onClose, selectedValue, previousValue }: Props) {
   const { fadeAnim, slideAnim, showAnimation, hideAnimation } = usePickerAnimation();
   const isVisible = useRef(visible);
 
@@ -66,7 +66,7 @@ export function BottomSheetPicker({ visible, title, options, selectedValue, prev
               selectedValue={selectedValue}
               onValueChange={onSelect}
               style={styles.picker}
-              itemStyle={styles.pickerItem}
+              itemStyle={typography.body}
             >
               {options.map((option) => (
                 <Picker.Item key={option.value} label={option.label} value={option.value} />
@@ -113,8 +113,5 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 200,
-  },
-  pickerItem: {
-    ...typography.body,
   },
 });

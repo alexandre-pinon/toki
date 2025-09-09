@@ -9,9 +9,9 @@ export function RecipeInstructionList({ instructions }: RecipeInstructionListPro
   return (
     <View style={styles.instructionsTabContent}>
       {instructions.length > 0 ? (
-        instructions.map((step, idx) => (
-          <View key={idx} style={styles.stepRow}>
-            <Text style={[typography.bodyLarge, styles.stepTitle]}>Étape {idx + 1}</Text>
+        instructions.map((step, index) => (
+          <View key={`recipe-instruction-step-${index + 1}`} style={styles.stepRow}>
+            <Text style={[typography.bodyLarge, styles.stepTitle]}>Étape {index + 1}</Text>
             <Text style={[typography.bodyLarge, styles.stepText]}>{step}</Text>
           </View>
         ))

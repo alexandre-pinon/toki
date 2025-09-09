@@ -83,9 +83,9 @@ export function RecipeInfo({
           <Text style={[typography.body, styles.timerText]}>{timers[0].label}</Text>
         </View>
         <View style={styles.timerSeparator} />
-        {timers.slice(1).map((timer, idx) => (
-          <View key={idx} style={styles.timerItem}>
-            <Image source={timerImages[idx + 1]} style={styles.timerImage} />
+        {timers.slice(1).map((timer, index) => (
+          <View key={timer.icon} style={styles.timerItem}>
+            <Image source={timerImages[index + 1]} style={styles.timerImage} />
             <Text style={[typography.body, styles.timerText]}>{timer.label}</Text>
           </View>
         ))}
