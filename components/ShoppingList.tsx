@@ -6,10 +6,15 @@ import {
 } from "@/types/shopping/shopping-item-category";
 import { Image } from "expo-image";
 import { SectionList, StyleSheet, Text, View } from "react-native";
+import { Loader } from "./Loader";
 import { ShoppingListItem } from "./ShoppingListItem";
 
 export function ShoppingList() {
-  const { sections } = useShoppingList();
+  const { isLoading, sections } = useShoppingList();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (sections.length === 0) {
     return (

@@ -1,10 +1,17 @@
 import { supabase } from "@/lib/supabase";
 import { Ingredient } from "@/types/ingredient";
+import { useCallback } from "react";
 
 export function useIngredientService() {
-  const searchIngredient = async (searchTerm: string): Promise<Ingredient[]> => {
-    const { data, error } = await supabase.from("ingredients").select("*").textSearch("name", searchTerm).limit(10);
+  const searchIngredient = useCallback(async (searchTerm: string): Promise<Ingredient[]> => {
+    const sanitizedSearchTerm = searchTerm.trim().toLowerCase();
+    const { data, error } = await supabase
+      .from("ingredients")
+      .select("*")
+      .like("name_normalized", `%${sanitizedSearchTerm}%`)
+      .limit(10);
 
+    console.log({ searchTerm: sanitizedSearchTerm, data });
     if (error) {
       throw error;
     }
@@ -14,7 +21,7 @@ export function useIngredientService() {
       name: ingredient.name,
       category: ingredient.category ?? "other",
     }));
-  };
+  }, []);
 
   return {
     searchIngredient,

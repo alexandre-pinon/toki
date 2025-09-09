@@ -4,29 +4,51 @@ import { UnderlinedListItem } from "@/components/UnderlinedListItem";
 import { useIngredientService } from "@/services/ingredient";
 import { colors, typography } from "@/theme";
 import { Ingredient } from "@/types/ingredient";
+import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
-import { startTransition, useActionState, useDeferredValue, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
   const { searchIngredient } = useIngredientService();
-  const [searchQuery, setSearchQuery] = useState("");
-  const defferedSearchTerm = useDeferredValue(searchQuery);
-  const [results, search, isLoading] = useActionState<Ingredient[]>(() => searchIngredient(defferedSearchTerm), []);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState<Ingredient[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   useEffect(() => {
-    startTransition(search);
-  }, [defferedSearchTerm, search]);
+    const performSearch = async (query: string) => {
+      if (query.length === 0) {
+        setResults([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const searchResults = await searchIngredient(query);
+        setResults(searchResults);
+      } catch (error) {
+        console.error("Search error:", error);
+        setResults([]);
+        throw new Error("Error searching ingredients");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    performSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm, searchIngredient]);
 
   const displayResults = () => {
     if (isLoading) {
       return <Loader />;
     }
 
-    if (searchQuery === "") {
+    if (debouncedSearchTerm === "") {
       return (
-        <View style={[styles.centerContainer]}>
+        <View style={styles.centerContainer}>
           <Image source={require("@/assets/images/groceries.png")} style={styles.image} />
           <Text style={[typography.body, styles.imageText]}>Rechercher un ingrédient</Text>
         </View>
@@ -47,13 +69,14 @@ export default function RecipeEditIngredientScreen() {
         data={results}
         renderItem={({ item }) => <UnderlinedListItem title={item.name} />}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
       />
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <SearchBar query={{ value: searchQuery, set: setSearchQuery }} />
+      <SearchBar query={{ value: searchTerm, set: setSearchTerm }} />
       {displayResults()}
     </SafeAreaView>
   );
@@ -80,5 +103,8 @@ const styles = StyleSheet.create({
   noResultsText: {
     color: colors.gray,
     textAlign: "center",
+  },
+  listContent: {
+    paddingHorizontal: 20,
   },
 });
