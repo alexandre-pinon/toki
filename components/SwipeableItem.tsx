@@ -1,7 +1,7 @@
 import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { PropsWithChildren, useRef } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type SwipeableItemProps = PropsWithChildren & {
@@ -26,15 +26,12 @@ export const SwipeableItem = ({ onEdit, onDelete, disabled, children }: Swipeabl
   const renderRightActions = () => {
     return (
       <View style={styles.actions}>
-        <Pressable onPress={onPressEdit} style={({ pressed }) => [styles.editAction, pressed && styles.actionPressed]}>
+        <TouchableOpacity onPress={onPressEdit} style={styles.editAction}>
           <Ionicons name="pencil-outline" size={24} color="white" />
-        </Pressable>
-        <Pressable
-          onPress={onPressDelete}
-          style={({ pressed }) => [styles.deleteAction, pressed && styles.actionPressed]}
-        >
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onPressDelete} style={styles.deleteAction}>
           <Ionicons name="trash-outline" size={24} color="white" />
-        </Pressable>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -67,8 +64,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 80,
-  },
-  actionPressed: {
-    opacity: 0.8,
   },
 });

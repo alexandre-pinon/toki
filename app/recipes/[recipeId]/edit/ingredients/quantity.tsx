@@ -1,7 +1,7 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
 import { useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
 import { colors, typography } from "@/theme";
-import { mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
+import { isShoppingItemCategory, mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
 import { isUnitType, mapUnitTypeToName, UnitType, unitTypes } from "@/types/unit-type";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -11,7 +11,11 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientQuantityScreen() {
-  const { ingredientId } = useLocalSearchParams<{ ingredientId: string }>();
+  const { ingredientId, name, category } = useLocalSearchParams<{
+    ingredientId?: string;
+    name?: string;
+    category?: string;
+  }>();
   const { formIngredients, formCurrentIngredient, setFormCurrentIngredient } = useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
@@ -52,10 +56,17 @@ export default function RecipeEditIngredientQuantityScreen() {
       if (maybeFormIngredient.quantity) {
         setQuantityString(maybeFormIngredient.quantity.toString());
       }
-    } else {
-      setFormCurrentIngredient(null);
+      return;
     }
-  }, [ingredientId, formIngredients, setFormCurrentIngredient]);
+
+    if (!ingredientId || !name || !category) return;
+
+    setFormCurrentIngredient({
+      ingredientId,
+      name,
+      category: isShoppingItemCategory(category) ? category : "other",
+    });
+  }, [ingredientId, name, category, formIngredients, setFormCurrentIngredient]);
 
   const onChangeQuantity = (value: string) => {
     setQuantityString(value);
@@ -90,19 +101,13 @@ export default function RecipeEditIngredientQuantityScreen() {
             placeholderTextColor={colors.gray}
             keyboardType="decimal-pad"
             autoFocus
-            editable={!!formCurrentIngredient}
           />
         </View>
         <View style={styles.inputGroup}>
           <Text style={[typography.body, styles.label]}>Unité</Text>
           <TouchableOpacity onPress={openPicker} style={styles.unitSelector} disabled={!formCurrentIngredient}>
             <Text
-              style={[
-                typography.body,
-                styles.unitText,
-                !formCurrentIngredient?.unit && styles.pickerButtonPlaceholder,
-                !formCurrentIngredient && styles.buttonDisabled,
-              ]}
+              style={[typography.body, styles.unitText, !formCurrentIngredient?.unit && styles.pickerButtonPlaceholder]}
             >
               {formCurrentIngredient?.unit ? mapUnitTypeToName(formCurrentIngredient.unit) : "Sélectionner"}
             </Text>
@@ -175,8 +180,5 @@ const styles = StyleSheet.create({
   },
   pickerButtonPlaceholder: {
     color: colors.gray,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
   },
 });

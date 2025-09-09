@@ -12,16 +12,7 @@ import type { UnitType } from "@/types/unit-type";
 import { isUnitType, mapUnitTypeToName, unitTypes } from "@/types/unit-type";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type PickerType = "unit" | "category" | "hide";
@@ -183,7 +174,7 @@ export default function EditItemScreen() {
 
             <View style={[styles.inputGroup, styles.unitInput]}>
               <Text style={[typography.body, styles.label]}>Unité</Text>
-              <Pressable onPress={showUnitPicker} style={styles.pickerButton} disabled={isLoading}>
+              <TouchableOpacity onPress={showUnitPicker} style={styles.pickerButton} disabled={isLoading}>
                 <Text
                   style={[
                     typography.body,
@@ -193,17 +184,17 @@ export default function EditItemScreen() {
                 >
                   {unit ? mapUnitTypeToName(unit) : "Sélectionner"}
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={[typography.body, styles.label]}>Catégorie</Text>
-            <Pressable onPress={showCategoryPicker} style={styles.pickerButton} disabled={isLoading}>
+            <TouchableOpacity onPress={showCategoryPicker} style={styles.pickerButton} disabled={isLoading}>
               <Text style={[typography.body, styles.pickerButtonText, isLoading && styles.buttonDisabled]}>
                 {mapShoppingItemCategoryToName(category)}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>

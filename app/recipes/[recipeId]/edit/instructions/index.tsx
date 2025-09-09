@@ -1,10 +1,9 @@
 import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 
-type EditRecipeInstructionProps = {};
+export default function EditRecipeInstruction() {
+  const { recipeId, instruction } = useLocalSearchParams<{ recipeId: string; instruction?: string }>();
 
-export default function EditRecipeInstruction({}: EditRecipeInstructionProps) {
-  const { instruction, recipeId } = useLocalSearchParams<{ instruction: string; recipeId: string }>();
   return (
     <View>
       <Text>Edit recipe instruction for recipe {recipeId}</Text>

@@ -3,7 +3,7 @@ import { FormRecipeProvider, useFormRecipe } from "@/contexts/CurrentFormRecipeC
 import { CurrentRecipeProvider, useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors, typography } from "@/theme";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export default function RecipeDetailsLayout() {
   const { recipeId } = useLocalSearchParams<{ recipeId: string }>();
@@ -50,26 +50,26 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
           headerTitle,
           headerShadowVisible: false,
           headerLeft: () => (
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 resetForm();
                 router.back();
               }}
-              style={({ pressed }) => [styles.actionButton, pressed && styles.buttonPressed]}
+              style={styles.actionButton}
             >
               <Text style={[typography.subtitle, styles.cancelButtonText]}>Annuler</Text>
-            </Pressable>
+            </TouchableOpacity>
           ),
           headerRight: () => (
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 console.log({ formRecipe, formIngredients, formInstructions });
                 // upsertRecipe()
               }}
-              style={({ pressed }) => [styles.actionButton, pressed && styles.buttonPressed]}
+              style={styles.actionButton}
             >
               <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
-            </Pressable>
+            </TouchableOpacity>
           ),
         }}
       />
@@ -92,7 +92,7 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
           headerBackButtonDisplayMode: "minimal",
           headerTintColor: colors.black,
           headerRight: () => (
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 if (!formCurrentIngredient) return;
 
@@ -108,12 +108,15 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
                   return [...prev.slice(0, idxToReplace), formCurrentIngredient, ...prev.slice(idxToReplace + 1)];
                 });
                 setFormCurrentIngredient(null);
-                router.back();
+                router.replace({
+                  pathname: "/recipes/[recipeId]/edit",
+                  params: { recipeId: formRecipe.id },
+                });
               }}
-              style={({ pressed }) => [styles.actionButton, pressed && styles.buttonPressed]}
+              style={styles.actionButton}
             >
               <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
-            </Pressable>
+            </TouchableOpacity>
           ),
         }}
       />
@@ -122,9 +125,6 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
 };
 
 const styles = StyleSheet.create({
-  buttonPressed: {
-    opacity: 0.7,
-  },
   actionButton: {
     paddingHorizontal: 8,
   },

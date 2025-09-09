@@ -1,6 +1,6 @@
 import { colors, typography } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ProfileMenuItemProps = {
   icon: React.ComponentType<{ color: string; size: number }>;
@@ -14,7 +14,7 @@ export function ProfileMenuItem({ icon, title, onPress, showChevron = true, show
   const IconComponent = icon;
 
   return (
-    <Pressable style={({ pressed }) => [pressed && styles.itemPressed]} onPress={onPress}>
+    <TouchableOpacity onPress={onPress}>
       <View style={[styles.item, showBorder && styles.itemWithBorder]}>
         <View style={styles.icon}>
           <IconComponent color={colors.primary} size={24} />
@@ -22,7 +22,7 @@ export function ProfileMenuItem({ icon, title, onPress, showChevron = true, show
         <Text style={styles.text}>{title}</Text>
         {showChevron && <Ionicons name="chevron-forward" size={16} color={colors.gray} style={styles.chevron} />}
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
@@ -36,9 +36,6 @@ const styles = StyleSheet.create({
   itemWithBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.gray300,
-  },
-  itemPressed: {
-    opacity: 0.7,
   },
   icon: {
     marginRight: 16,

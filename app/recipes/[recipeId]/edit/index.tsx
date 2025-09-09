@@ -47,47 +47,73 @@ export default function RecipeEditScreen() {
   const displayActiveTab = () => {
     switch (tab) {
       case "ingredients":
-        return formIngredients.map((ingredient, idx) => (
-          <SwipeableItem
-            key={ingredient.ingredientId}
-            onEdit={() =>
-              router.push({
-                pathname: "./edit/ingredients/quantity",
-                params: { ingredientId: ingredient.ingredientId },
-              })
-            }
-            onDelete={() => setFormIngredients((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
-          >
-            <View style={styles.listItemContainer}>
-              <UnderlinedListItem
-                title={ingredient.name}
-                subTitle={formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
-                isLastItem={idx === formIngredients.length - 1}
-              />
+        return (
+          <>
+            {formIngredients.map((ingredient, idx) => (
+              <SwipeableItem
+                key={ingredient.ingredientId}
+                onEdit={() =>
+                  router.push({
+                    pathname: "./edit/ingredients/quantity",
+                    params: { ingredientId: ingredient.ingredientId },
+                  })
+                }
+                onDelete={() => setFormIngredients((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
+              >
+                <View style={styles.listItemContainer}>
+                  <UnderlinedListItem
+                    title={ingredient.name}
+                    subTitle={formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
+                    isLastItem={idx === formIngredients.length - 1}
+                  />
+                </View>
+              </SwipeableItem>
+            ))}
+            <View style={[styles.section, styles.addButtonContainer]}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => router.push({ pathname: "./edit/ingredients" })}
+              >
+                <Ionicons name="add" size={12} color={colors.primary} />
+                <Text style={styles.addButtonText}>Ajouter un ingrédient</Text>
+              </TouchableOpacity>
             </View>
-          </SwipeableItem>
-        ));
+          </>
+        );
       case "instructions":
-        return formInstructions.map((instruction, idx) => (
-          <SwipeableItem
-            key={`edit-instruction-item-${idx}`}
-            onEdit={() =>
-              router.push({
-                pathname: `./edit/instructions`,
-                params: { instruction },
-              })
-            }
-            onDelete={() => setFormInstructions((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
-          >
-            <View style={styles.listItemContainer}>
-              <UnderlinedListItem
-                title={`Étape ${idx + 1}`}
-                subTitle={instruction}
-                isLastItem={idx === formInstructions.length - 1}
-              />
+        return (
+          <>
+            {formInstructions.map((instruction, idx) => (
+              <SwipeableItem
+                key={`edit-instruction-item-${idx}`}
+                onEdit={() =>
+                  router.push({
+                    pathname: `./edit/instructions`,
+                    params: { instruction },
+                  })
+                }
+                onDelete={() => setFormInstructions((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)])}
+              >
+                <View style={styles.listItemContainer}>
+                  <UnderlinedListItem
+                    title={`Étape ${idx + 1}`}
+                    subTitle={instruction}
+                    isLastItem={idx === formInstructions.length - 1}
+                  />
+                </View>
+              </SwipeableItem>
+            ))}
+            <View style={[styles.section, styles.addButtonContainer]}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => router.push({ pathname: "./edit/instructions" })}
+              >
+                <Ionicons name="add" size={12} color={colors.primary} />
+                <Text style={styles.addButtonText}>Ajouter une instruction</Text>
+              </TouchableOpacity>
             </View>
-          </SwipeableItem>
-        ));
+          </>
+        );
     }
   };
 
@@ -199,6 +225,7 @@ export default function RecipeEditScreen() {
         <RecipeTabs tab={tab} setTab={setTab} />
         <View style={styles.tabSection}>{displayActiveTab()}</View>
       </ScrollView>
+
       <BottomSheetPicker
         visible={showPicker}
         title={"Type de recette"}
@@ -357,5 +384,16 @@ const styles = StyleSheet.create({
   },
   listItemContainer: {
     paddingLeft: 20,
+  },
+  addButtonText: {
+    color: colors.primary,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    columnGap: 4,
+  },
+  addButtonContainer: {
+    alignItems: "center",
   },
 });

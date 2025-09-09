@@ -8,7 +8,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
@@ -69,16 +69,16 @@ export default function RecipeEditIngredientScreen() {
       <FlatList
         data={results}
         renderItem={({ item }) => (
-          <Pressable
+          <TouchableOpacity
             onPress={() =>
               router.push({
                 pathname: "./ingredients/quantity",
-                params: { ingredientId: item.id },
+                params: { ingredientId: item.id, name: item.name, category: item.category },
               })
             }
           >
             <UnderlinedListItem title={item.name} />
-          </Pressable>
+          </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}

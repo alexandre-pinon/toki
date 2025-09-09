@@ -1,21 +1,15 @@
 import { useRecipeService } from "@/services/recipe";
-import { Ingredient } from "@/types/ingredient";
-import { RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
+import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState, useTransition } from "react";
-
-type FormRecipeIngredient = RecipeUpsertData["ingredients"][number] & {
-  readonly name: string;
-  readonly category: Ingredient["category"];
-};
 
 type FormRecipeContextType = {
   formRecipe: RecipeUpsertData["recipe"];
   setFormRecipe: Dispatch<SetStateAction<FormRecipeContextType["formRecipe"]>>;
-  formIngredients: FormRecipeIngredient[];
+  formIngredients: Omit<RecipeIngredient, "recipeId">[];
   setFormIngredients: Dispatch<SetStateAction<FormRecipeContextType["formIngredients"]>>;
   formInstructions: RecipeUpsertData["instructions"];
   setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
-  formCurrentIngredient: FormRecipeIngredient | null;
+  formCurrentIngredient: Omit<RecipeIngredient, "recipeId"> | null;
   setFormCurrentIngredient: Dispatch<SetStateAction<FormRecipeContextType["formCurrentIngredient"]>>;
   isLoading: boolean;
   upsertRecipe: () => void;
