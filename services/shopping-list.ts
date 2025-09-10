@@ -1,5 +1,5 @@
 import { byShoppingItemCategoryOrder, type ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
-import { getDataOrThrow, supabase } from "../lib/supabase";
+import { getDbResponseDataOrThrow, supabase } from "../lib/supabase";
 import { byEarliestMealDate, type AggregatedShoppingItem, type ShoppingItem } from "../types/shopping/shopping-item";
 import type { ShoppingListSection } from "../types/shopping/shopping-list";
 
@@ -60,7 +60,7 @@ export function useShoppingListService() {
   };
 
   const addShoppingListItem = async (item: Omit<ShoppingItem, "id">) => {
-    getDataOrThrow(
+    getDbResponseDataOrThrow(
       await supabase.from("shopping_items").insert({
         name: item.name,
         quantity: item.quantity,
@@ -74,7 +74,7 @@ export function useShoppingListService() {
   };
 
   const updateShoppingListItem = async (id: string, item: Omit<ShoppingItem, "id">) => {
-    getDataOrThrow(
+    getDbResponseDataOrThrow(
       await supabase
         .from("shopping_items")
         .update({
@@ -94,7 +94,7 @@ export function useShoppingListService() {
       return;
     }
 
-    getDataOrThrow(
+    getDbResponseDataOrThrow(
       await supabase
         .from("shopping_items")
         .update({ checked, updated_at: Temporal.Now.plainDateTimeISO().toString() })
@@ -103,7 +103,7 @@ export function useShoppingListService() {
   };
 
   const deleteShoppingListItem = async (id: string) => {
-    getDataOrThrow(await supabase.from("shopping_items").delete().eq("id", id));
+    getDbResponseDataOrThrow(await supabase.from("shopping_items").delete().eq("id", id));
   };
 
   return {

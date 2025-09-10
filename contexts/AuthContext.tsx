@@ -37,14 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("Starting Google sign in process...");
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signIn();
       const { idToken } = await GoogleSignin.getTokens();
-      console.log("Got Google ID token");
 
       if (idToken) {
-        const { data, error } = await supabase.auth.signInWithIdToken({
+        const { error } = await supabase.auth.signInWithIdToken({
           provider: "google",
           token: idToken,
         });
@@ -53,8 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error("Supabase sign in error:", error);
           throw error;
         }
-
-        console.log("Successfully signed in with Supabase:", data);
       }
     } catch (error) {
       if (error instanceof Error) {

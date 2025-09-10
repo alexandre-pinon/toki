@@ -1,14 +1,16 @@
-import { getDataOrThrow, supabase } from "@/lib/supabase";
-import type { Recipe, RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
-import { useImageService } from "./image";
-import AddItemScreen from "@/app/add-item";
+import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
+import type { Recipe, RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
 import { byShoppingItemCategoryOrder } from "@/types/shopping/shopping-item-category";
+import mime from "mime";
+import { useImageService } from "./image";
 
 export function useRecipeService() {
   const { uploadImage } = useImageService();
 
   const getRecipes = async (userId: string): Promise<Recipe[]> => {
-    const recipes = getDataOrThrow(await supabase.from("recipes").select("*").eq("user_id", userId).order("name"));
+    const recipes = getDbResponseDataOrThrow(
+      await supabase.from("recipes").select("*").eq("user_id", userId).order("name"),
+    );
 
     return recipes.map((recipe) => ({
       id: recipe.id,
@@ -26,8 +28,8 @@ export function useRecipeService() {
   };
 
   const getRecipeById = async (id: string): Promise<RecipeDetails> => {
-    const recipe = getDataOrThrow(await supabase.from("recipes").select("*").eq("id", id).single());
-    const recipeIngredients = getDataOrThrow(
+    const recipe = getDbResponseDataOrThrow(await supabase.from("recipes").select("*").eq("id", id).single());
+    const recipeIngredients = getDbResponseDataOrThrow(
       await supabase
         .from("recipes_to_ingredients")
         .select(
@@ -81,14 +83,12 @@ export function useRecipeService() {
   };
 
   const upsertRecipe = async ({ recipe, ingredients, instructions }: RecipeUpsertData): Promise<void> => {
-    console.log("upsertRecipe", { recipe, ingredients, instructions });
-
     if (recipe.imageUrl && recipe.imageType && recipe.imageUrl.startsWith("file://")) {
-      console.log("uploading image");
-      await uploadImage(recipe.imageUrl, `recipes/${recipe.id}`, recipe.imageType);
+      const filePath = `recipes/${recipe.id}.${mime.getExtension(recipe.imageType)}`;
+      await uploadImage(recipe.imageUrl, filePath, recipe.imageType);
     }
 
-    getDataOrThrow(
+    getDbResponseDataOrThrow(
       await supabase.from("recipes").upsert({
         id: recipe.id,
         name: recipe.name,
@@ -103,7 +103,7 @@ export function useRecipeService() {
       }),
     );
 
-    const ingredientsToDelete = getDataOrThrow(
+    const ingredientsToDelete = getDbResponseDataOrThrow(
       await supabase
         .from("recipes_to_ingredients")
         .select("*")
@@ -112,7 +112,7 @@ export function useRecipeService() {
     );
 
     if (ingredientsToDelete.length > 0) {
-      getDataOrThrow(
+      getDbResponseDataOrThrow(
         await supabase
           .from("recipes_to_ingredients")
           .delete()
@@ -125,7 +125,7 @@ export function useRecipeService() {
     }
 
     if (ingredients.length > 0) {
-      getDataOrThrow(
+      getDbResponseDataOrThrow(
         await supabase.from("recipes_to_ingredients").upsert(
           ingredients.map((ingredient) => ({
             recipe_id: recipe.id,

@@ -1,6 +1,6 @@
-import { getDataOrThrow, supabase } from "@/lib/supabase";
-import * as FileSystem from "expo-file-system";
+import { getStorageResponseDataOrThrow, supabase } from "@/lib/supabase";
 import { decode } from "base64-arraybuffer";
+import * as FileSystem from "expo-file-system";
 
 export function useImageService() {
   const BUCKET_NAME = "toki-images";
@@ -8,7 +8,7 @@ export function useImageService() {
   const uploadImage = async (uri: string, path: string, mimeType: string) => {
     const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
 
-    getDataOrThrow(
+    getStorageResponseDataOrThrow(
       await supabase.storage.from(BUCKET_NAME).upload(path, decode(base64), {
         upsert: true,
         contentType: mimeType,

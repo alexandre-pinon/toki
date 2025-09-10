@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createClient } from "@supabase/supabase-js";
+import { StorageError } from "@supabase/storage-js";
+import { createClient, PostgrestSingleResponse } from "@supabase/supabase-js";
 import type { Database } from "./database.types.ts";
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? "";
@@ -18,9 +19,19 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-export const getDataOrThrow = <T, E>(supabaseResult: { data: T | null; error: E | null }): T => {
-  const { data, error } = supabaseResult;
-  if (error || !data) {
+export const getDbResponseDataOrThrow = <T>(response: PostgrestSingleResponse<T>): T => {
+  const { data, error } = response;
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+  return data;
+};
+
+type StorageResponse<T> = { data: T; error: null } | { data: null; error: StorageError };
+export const getStorageResponseDataOrThrow = <T>(response: StorageResponse<T>): T => {
+  const { data, error } = response;
+  if (error) {
     console.error(error);
     throw error;
   }

@@ -1,4 +1,4 @@
-import { getDataOrThrow, supabase } from "@/lib/supabase";
+import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 
 export type MealWithRecipe = {
@@ -19,7 +19,7 @@ export function useMealService() {
   const getUpcomingMeals = async (userId: string): Promise<MealWithRecipe[]> => {
     const today = Temporal.Now.plainDateISO().toString();
 
-    const meals = getDataOrThrow(
+    const meals = getDbResponseDataOrThrow(
       await supabase
         .from("meals")
         .select(
