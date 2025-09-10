@@ -32,7 +32,7 @@ export type RecipeIngredient = {
 };
 
 export type RecipeUpsertData = {
-  recipe: Omit<Recipe, "timesDone" | "lastTimeDone" | "userId">;
+  recipe: Omit<Recipe, "timesDone" | "lastTimeDone" | "userId"> & { imageType?: string };
   ingredients: Omit<RecipeIngredient, "recipeId" | "name" | "category">[];
   instructions: string[];
 };

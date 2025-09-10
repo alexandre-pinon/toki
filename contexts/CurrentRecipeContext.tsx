@@ -1,6 +1,14 @@
 import { useRecipeService } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
-import { createContext, PropsWithChildren, startTransition, useActionState, useContext, useEffect } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  startTransition,
+  useActionState,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 
 type CurrentRecipeContextType = {
   currentRecipe: RecipeDetails | null;
@@ -11,31 +19,29 @@ type CurrentRecipeContextType = {
 const CurrentRecipeContext = createContext<CurrentRecipeContextType | null>(null);
 
 type CurrentRecipeProviderProps = PropsWithChildren & {
-  recipeId: string;
+  id: string;
 };
-export const CurrentRecipeProvider = ({ recipeId, children }: CurrentRecipeProviderProps) => {
+export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderProps) => {
   const { getRecipeById } = useRecipeService();
 
   const [currentRecipe, getCurrentRecipe, isLoading] = useActionState<RecipeDetails | null>(
-    () => getRecipeById(recipeId),
+    () => getRecipeById(id),
     null,
   );
 
   useEffect(() => {
     startTransition(getCurrentRecipe);
-  }, [recipeId, getCurrentRecipe]);
+  }, [id, getCurrentRecipe]);
 
-  return (
-    <CurrentRecipeContext.Provider
-      value={{
-        currentRecipe,
-        isLoading,
-        refetch: () => startTransition(getCurrentRecipe),
-      }}
-    >
-      {children}
-    </CurrentRecipeContext.Provider>
-  );
+  const contextValue = useMemo(() => {
+    return {
+      currentRecipe,
+      isLoading,
+      refetch: () => startTransition(getCurrentRecipe),
+    };
+  }, [currentRecipe, isLoading, getCurrentRecipe]);
+
+  return <CurrentRecipeContext.Provider value={contextValue}>{children}</CurrentRecipeContext.Provider>;
 };
 
 export const useCurrentRecipe = () => {

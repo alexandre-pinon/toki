@@ -30,7 +30,7 @@ export default function RecipeDetailsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView>
-        <RecipeHeader imageUrl={recipe.imageUrl} recipeId={recipe.id} />
+        <RecipeHeader imageUrl={recipe.imageUrl} id={recipe.id} />
         <RecipeInfo
           name={recipe.name}
           timesDone={recipe.timesDone}

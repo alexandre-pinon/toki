@@ -1,7 +1,18 @@
 import { RecipeTabName } from "@/components/RecipeTabs";
 import { useRecipeService } from "@/services/recipe";
 import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
-import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState, useTransition } from "react";
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
+import { useCurrentRecipe } from "./CurrentRecipeContext";
+import { useRecipeList } from "./RecipeListContext";
 
 type FormRecipeContextType = {
   formRecipe: RecipeUpsertData["recipe"];
@@ -17,8 +28,7 @@ type FormRecipeContextType = {
   activeTab: RecipeTabName;
   setActiveTab: Dispatch<SetStateAction<FormRecipeContextType["activeTab"]>>;
   isLoading: boolean;
-  upsertRecipe: () => void;
-  resetForm: () => void;
+  upsertRecipe: (callBack?: () => void) => void;
 };
 
 const FormRecipeContext = createContext<FormRecipeContextType | null>(null);
@@ -27,6 +37,8 @@ type FormRecipeProviderProps = PropsWithChildren & {
   initialRecipeValues: RecipeDetails;
 };
 export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
+  const { refetch: refetchRecipeList } = useRecipeList();
+  const { refetch: refetchCurrentRecipe } = useCurrentRecipe();
   const { upsertRecipe } = useRecipeService();
   const { recipe, ingredients, instructions } = initialRecipeValues;
 
@@ -40,44 +52,47 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
   const [activeTab, setActiveTab] = useState<RecipeTabName>("ingredients");
   const [isLoading, startTransition] = useTransition();
 
-  const resetForm = () => {
-    setFormRecipe(recipe);
-    setFormIngredients(ingredients);
-    setFormInstructions(instructions);
-    setFormCurrentIngredient(null);
-    setFormCurrentInstruction(null);
-  };
-
-  return (
-    <FormRecipeContext.Provider
-      value={{
-        formRecipe,
-        setFormRecipe,
-        formIngredients,
-        setFormIngredients,
-        formInstructions,
-        setFormInstructions,
-        formCurrentIngredient,
-        setFormCurrentIngredient,
-        formCurrentInstruction,
-        setFormCurrentInstruction,
-        activeTab,
-        setActiveTab,
-        isLoading,
-        upsertRecipe: () =>
-          startTransition(() =>
-            upsertRecipe({
-              recipe: formRecipe,
-              ingredients: formIngredients,
-              instructions: formInstructions,
-            }),
-          ),
-        resetForm,
-      }}
-    >
-      {children}
-    </FormRecipeContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      formRecipe,
+      setFormRecipe,
+      formIngredients,
+      setFormIngredients,
+      formInstructions,
+      setFormInstructions,
+      formCurrentIngredient,
+      setFormCurrentIngredient,
+      formCurrentInstruction,
+      setFormCurrentInstruction,
+      activeTab,
+      setActiveTab,
+      isLoading,
+      upsertRecipe: () =>
+        startTransition(async () => {
+          await upsertRecipe({
+            recipe: formRecipe,
+            ingredients: formIngredients,
+            instructions: formInstructions,
+          });
+          refetchCurrentRecipe();
+          refetchRecipeList();
+        }),
+    }),
+    [
+      formRecipe,
+      formIngredients,
+      formInstructions,
+      formCurrentIngredient,
+      formCurrentInstruction,
+      activeTab,
+      isLoading,
+      upsertRecipe,
+      refetchCurrentRecipe,
+      refetchRecipeList,
+    ],
   );
+
+  return <FormRecipeContext.Provider value={contextValue}>{children}</FormRecipeContext.Provider>;
 };
 
 export const useFormRecipe = () => {

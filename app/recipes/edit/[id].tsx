@@ -1,8 +1,9 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RecipeTabs } from "@/components/RecipeTabs";
 import { SwipeableItem } from "@/components/SwipeableItem";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
-import { useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
+import { useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
 import { getTotalTime } from "@/types/recipe/recipe";
 import { isRecipeType, mapRecipeTypeToName, RecipeType, recipeTypes } from "@/types/recipe/recipe-type";
@@ -10,9 +11,10 @@ import { formatQuantityAndUnit } from "@/types/unit-type";
 import { capitalize } from "@/utils/string";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditScreen() {
@@ -27,6 +29,7 @@ export default function RecipeEditScreen() {
     setFormCurrentInstruction,
     activeTab,
     setActiveTab,
+    isLoading,
   } = useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
@@ -64,7 +67,7 @@ export default function RecipeEditScreen() {
                 key={ingredient.ingredientId}
                 onEdit={() => {
                   setFormCurrentIngredient(ingredient);
-                  router.push({ pathname: "./edit/ingredients/quantity" });
+                  router.push({ pathname: "./ingredients/quantity" });
                 }}
                 onDelete={() => setFormIngredients((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)])}
               >
@@ -78,10 +81,7 @@ export default function RecipeEditScreen() {
               </SwipeableItem>
             ))}
             <View style={[styles.section, styles.addButtonContainer]}>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => router.push({ pathname: "./edit/ingredients" })}
-              >
+              <TouchableOpacity style={styles.addButton} onPress={() => router.push({ pathname: "./ingredients" })}>
                 <Ionicons name="add" size={12} color={colors.primary} />
                 <Text style={styles.addButtonText}>Ajouter un ingrédient</Text>
               </TouchableOpacity>
@@ -96,7 +96,7 @@ export default function RecipeEditScreen() {
                 key={`edit-instruction-item-${index}`}
                 onEdit={() => {
                   setFormCurrentInstruction({ value: instruction, index });
-                  router.push({ pathname: `./edit/instructions` });
+                  router.push({ pathname: `./instructions` });
                 }}
                 onDelete={() => setFormInstructions((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)])}
               >
@@ -114,7 +114,7 @@ export default function RecipeEditScreen() {
                 style={styles.addButton}
                 onPress={() => {
                   setFormCurrentInstruction(null);
-                  router.push({ pathname: "./edit/instructions" });
+                  router.push({ pathname: "./instructions" });
                 }}
               >
                 <Ionicons name="add" size={12} color={colors.primary} />
@@ -123,6 +123,28 @@ export default function RecipeEditScreen() {
             </View>
           </>
         );
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      if (!result.assets.at(0)?.mimeType) {
+        Alert.alert("Erreur", "Veuillez sélectionner une image valide.");
+        return;
+      }
+
+      setFormRecipe((prev) => ({
+        ...prev,
+        imageUrl: result.assets.at(0)?.uri,
+        imageType: result.assets.at(0)?.mimeType,
+      }));
     }
   };
 
@@ -146,7 +168,7 @@ export default function RecipeEditScreen() {
 
         {/* Recipe Image */}
         <View style={styles.section}>
-          <View style={styles.imageContainer}>
+          <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
             {formRecipe.imageUrl ? (
               <Image source={{ uri: formRecipe.imageUrl }} style={styles.recipeImage} contentFit="cover" />
             ) : (
@@ -155,7 +177,7 @@ export default function RecipeEditScreen() {
                 <Text style={[typography.body, styles.imagePlaceholderText]}>Ajouter une image</Text>
               </View>
             )}
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Servings */}
@@ -244,6 +266,8 @@ export default function RecipeEditScreen() {
         onSelect={handlePickerSelect}
         onClose={closePicker}
       />
+
+      <LoadingOverlay visible={isLoading} />
     </SafeAreaView>
   );
 }

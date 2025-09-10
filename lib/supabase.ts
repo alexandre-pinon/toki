@@ -6,14 +6,23 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
 if (!supabaseUrl || !supabaseAnonKey) {
-	console.error("Missing Supabase environment variables");
+  console.error("Missing Supabase environment variables");
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-	auth: {
-		storage: AsyncStorage,
-		autoRefreshToken: true,
-		persistSession: true,
-		detectSessionInUrl: false,
-	},
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
 });
+
+export const getDataOrThrow = <T, E>(supabaseResult: { data: T | null; error: E | null }): T => {
+  const { data, error } = supabaseResult;
+  if (error || !data) {
+    console.error(error);
+    throw error;
+  }
+  return data;
+};

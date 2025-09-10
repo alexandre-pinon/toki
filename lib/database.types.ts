@@ -31,7 +31,7 @@ export type Database = {
           id?: string
           name: string
           name_normalized: string
-          updated_at?: string
+          updated_at: string
         }
         Update: {
           category?:
@@ -61,7 +61,7 @@ export type Database = {
           id?: string
           recipe_id: string
           servings: number
-          updated_at?: string
+          updated_at: string
           user_id?: string
         }
         Update: {
@@ -113,7 +113,7 @@ export type Database = {
           servings: number
           times_done?: number
           type: Database["public"]["Enums"]["recipe_type"]
-          updated_at?: string
+          updated_at: string
           user_id?: string
         }
         Update: {
@@ -136,22 +136,28 @@ export type Database = {
       }
       recipes_to_ingredients: {
         Row: {
+          created_at: string
           ingredient_id: string
           quantity: number | null
           recipe_id: string
           unit: Database["public"]["Enums"]["unit_type"] | null
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           ingredient_id: string
           quantity?: number | null
           recipe_id: string
           unit?: Database["public"]["Enums"]["unit_type"] | null
+          updated_at: string
         }
         Update: {
+          created_at?: string
           ingredient_id?: string
           quantity?: number | null
           recipe_id?: string
           unit?: Database["public"]["Enums"]["unit_type"] | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -194,7 +200,7 @@ export type Database = {
           name: string
           quantity?: number | null
           unit?: Database["public"]["Enums"]["unit_type"] | null
-          updated_at?: string
+          updated_at: string
           user_id?: string
         }
         Update: {

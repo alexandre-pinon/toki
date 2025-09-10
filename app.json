@@ -45,6 +45,12 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.876817290985-28t9ssm2jeap87i6cirdjg22u9fnaur9"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you choose images for your recipes."
+        }
       ]
     ],
     "experiments": {

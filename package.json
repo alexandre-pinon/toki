@@ -20,15 +20,18 @@
     "@react-navigation/native": "^7.1.14",
     "@supabase/supabase-js": "^2.50.2",
     "@uidotdev/usehooks": "^2.4.1",
+    "base64-arraybuffer": "^1.0.2",
     "expo": "~53.0.13",
     "expo-auth-session": "~6.2.0",
     "expo-blur": "~14.1.5",
     "expo-checkbox": "~4.1.4",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "~5.2.2",
+    "expo-file-system": "~18.1.11",
     "expo-font": "~13.3.1",
     "expo-haptics": "~14.1.4",
     "expo-image": "~2.3.0",
+    "expo-image-picker": "~16.1.4",
     "expo-linking": "~7.1.5",
     "expo-router": "~5.1.1",
     "expo-splash-screen": "~0.30.9",
@@ -58,5 +61,5 @@
     "typescript": "~5.8.3"
   },
   "private": true,
-  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
 }

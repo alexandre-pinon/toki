@@ -7,16 +7,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RecipeHeaderProps = {
   imageUrl?: string;
-  recipeId: string;
+  id: string;
 };
 
-export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
+export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
   const insets = useSafeAreaInsets();
+
+  const handleCancel = () => {
+    router.back();
+  };
 
   const handleEdit = () => {
     router.push({
-      pathname: `/recipes/[recipeId]/edit`,
-      params: { recipeId },
+      pathname: `./edit/[id]`,
+      params: { id },
     });
   };
 
@@ -28,7 +32,7 @@ export function RecipeHeader({ imageUrl, recipeId }: RecipeHeaderProps) {
         contentFit="cover"
         transition={200}
       />
-      <TouchableOpacity style={[styles.backButton, { top: insets.top }]} onPress={() => router.back()}>
+      <TouchableOpacity style={[styles.backButton, { top: insets.top }]} onPress={handleCancel}>
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
       <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>

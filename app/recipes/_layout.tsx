@@ -1,15 +1,15 @@
 import { Loader } from "@/components/Loader";
-import { FormRecipeProvider, useFormRecipe } from "@/contexts/CurrentFormRecipeContext";
 import { CurrentRecipeProvider, useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
+import { FormRecipeProvider, useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export default function RecipeDetailsLayout() {
-  const { recipeId } = useLocalSearchParams<{ recipeId: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
   return (
-    <CurrentRecipeProvider recipeId={recipeId}>
+    <CurrentRecipeProvider id={id}>
       <RecipeDetailsStack />
     </CurrentRecipeProvider>
   );
@@ -31,46 +31,40 @@ type RecipeEditStackProps = { headerTitle: string };
 const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
   const {
     formRecipe,
-    formIngredients,
     setFormIngredients,
     formInstructions,
     setFormInstructions,
     formCurrentIngredient,
-    setFormCurrentIngredient,
     formCurrentInstruction,
-    setFormCurrentInstruction,
     upsertRecipe,
-    resetForm,
+    isLoading,
   } = useFormRecipe();
+
+  const handleCancel = () => {
+    router.back();
+  };
+
+  const handleSave = () => {
+    upsertRecipe();
+    router.push({ pathname: "./[id]", params: { id: formRecipe.id } });
+  };
 
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="[id]" options={{ headerShown: false }} />
       <Stack.Screen
-        name="edit/index"
+        name="edit/[id]"
         options={{
           headerTitleStyle: typography.header,
           headerTitle,
           headerShadowVisible: false,
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => {
-                resetForm();
-                router.back();
-              }}
-              style={styles.actionButton}
-            >
+            <TouchableOpacity onPress={handleCancel} style={styles.actionButton} disabled={isLoading}>
               <Text style={[typography.subtitle, styles.cancelButtonText]}>Annuler</Text>
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                console.log({ formRecipe, formIngredients, formInstructions });
-                // upsertRecipe()
-              }}
-              style={styles.actionButton}
-            >
+            <TouchableOpacity onPress={handleSave} style={styles.actionButton} disabled={isLoading}>
               <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
             </TouchableOpacity>
           ),
@@ -112,8 +106,8 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
                 });
 
                 router.push({
-                  pathname: "/recipes/[recipeId]/edit",
-                  params: { recipeId: formRecipe.id },
+                  pathname: "../[id]",
+                  params: { id: formRecipe.id },
                 });
               }}
               style={styles.actionButton}
@@ -143,8 +137,8 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
                 ]);
 
                 router.push({
-                  pathname: "/recipes/[recipeId]/edit",
-                  params: { recipeId: formRecipe.id },
+                  pathname: "./[id]",
+                  params: { id: formRecipe.id },
                 });
               }}
               style={styles.actionButton}

@@ -1,4 +1,4 @@
-import { useRecipes } from "@/hooks/useRecipes";
+import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
@@ -11,7 +11,7 @@ import { RecipeCard } from "./RecipeCard";
 import { SearchBar } from "./SearchBar";
 
 export function RecipeList() {
-  const { recipes, isLoading, error } = useRecipes();
+  const { recipes, isLoading } = useRecipeList();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<RecipeType | "all">("all");
@@ -52,7 +52,7 @@ export function RecipeList() {
           renderItem={({ item }) => (
             <RecipeCard
               recipe={item}
-              onPress={() => router.push({ pathname: "/recipes/[recipeId]", params: { recipeId: item.id } })}
+              onPress={() => router.push({ pathname: "../recipes/[id]", params: { id: item.id } })}
             />
           )}
           keyExtractor={(item) => item.id}

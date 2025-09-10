@@ -48,7 +48,7 @@ export function ShoppingListItem({
 
   const onEdit = () => {
     router.push({
-      pathname: `/edit-item/[id]`,
+      pathname: `../edit-item/[id]`,
       params: { id: ids[0] },
     });
   };
