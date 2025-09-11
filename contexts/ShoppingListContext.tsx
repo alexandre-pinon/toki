@@ -42,9 +42,9 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     Alert.alert("Error", message);
   };
 
-  const loadShoppingList = async (userId: string) => {
+  const loadShoppingList = async (userId: string, options?: { skipLoading: boolean }) => {
     try {
-      setIsLoading(true);
+      setIsLoading(!options?.skipLoading);
       const items = await getShoppingListItems(userId);
       setSections(items);
       setError(null);
@@ -70,14 +70,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
 
   const setChecked = async (ids: string[], checked: boolean, userId: string) => {
     try {
-      setIsLoading(true);
       await setCheckedShoppingListItems(ids, checked);
-      await loadShoppingList(userId);
+      await loadShoppingList(userId, { skipLoading: true });
       setError(null);
     } catch (err) {
       handleError(err, "Failed to update item");
-    } finally {
-      setIsLoading(false);
     }
   };
 
