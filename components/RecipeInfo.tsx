@@ -1,4 +1,6 @@
 import { colors, typography } from "@/theme";
+import { getTotalTime, Recipe } from "@/types/recipe/recipe";
+import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { formatDuration, formatLastTimeDone } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -6,26 +8,10 @@ import { StyleSheet, Text, View } from "react-native";
 import { Pill } from "./Pill";
 
 type RecipeInfoProps = {
-  name?: string;
-  timesDone?: number;
-  lastTimeDone?: Temporal.PlainDate;
-  type?: string;
-  servings: number;
-  preparationTime?: number;
-  cookingTime?: number;
-  restTime?: number;
+  recipe: Recipe;
 };
 
-export function RecipeInfo({
-  name,
-  timesDone = 0,
-  lastTimeDone,
-  type,
-  servings,
-  preparationTime = 0,
-  cookingTime = 0,
-  restTime = 0,
-}: RecipeInfoProps) {
+export function RecipeInfo({ recipe }: RecipeInfoProps) {
   const timerImages = [
     require("@/assets/images/clock.png"),
     require("@/assets/images/ingredient_preparation.png"),
@@ -34,24 +20,24 @@ export function RecipeInfo({
   ];
 
   const timers = [
-    { icon: "time-outline", label: formatDuration(preparationTime + cookingTime + restTime) },
-    { icon: "nutrition-outline", label: formatDuration(preparationTime) },
-    { icon: "alarm-outline", label: formatDuration(restTime) },
-    { icon: "restaurant-outline", label: formatDuration(cookingTime) },
+    { icon: "time-outline", label: formatDuration(getTotalTime(recipe)) },
+    { icon: "nutrition-outline", label: formatDuration(recipe.preparationTime) },
+    { icon: "alarm-outline", label: formatDuration(recipe.restTime) },
+    { icon: "restaurant-outline", label: formatDuration(recipe.cookingTime) },
   ];
 
   return (
     <View style={styles.mainInfoContainer}>
       <View style={styles.headerRow}>
-        <Text style={[typography.header, styles.title]}>{name || "Loading..."}</Text>
+        <Text style={[typography.header, styles.title]}>{recipe.name}</Text>
         <View style={styles.counter}>
           <Ionicons name="checkmark-circle" size={20} />
-          <Text style={typography.body}>{timesDone}</Text>
+          <Text style={typography.body}>{recipe.timesDone}</Text>
         </View>
       </View>
 
       <Text style={[typography.body, styles.lastTimeDoneRow]}>
-        Dernière fois faite : {formatLastTimeDone(lastTimeDone)}
+        Dernière fois faite : {formatLastTimeDone(recipe.lastTimeDone)}
       </Text>
 
       <View style={styles.typeRow}>
@@ -64,7 +50,7 @@ export function RecipeInfo({
           }}
           textStyle={{ fontWeight: "200" }}
         >
-          {type || "Loading..."}
+          {mapRecipeTypeToName(recipe.type)}
         </Pill>
       </View>
 
@@ -72,7 +58,7 @@ export function RecipeInfo({
         <View style={styles.servingsTextContainer}>
           <Image source={require("@/assets/images/servings.png")} style={styles.servingsImage} />
           <Text style={typography.subtitle}>
-            {servings} personne{servings > 1 ? "s" : ""}
+            {recipe.servings} personne{recipe.servings > 1 ? "s" : ""}
           </Text>
         </View>
       </View>

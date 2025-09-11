@@ -8,12 +8,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type RecipeCardProps = {
   recipe: Recipe;
-  onPress?: () => void;
+  onPress: () => void;
 };
 
 export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
-  const CardContent = (
-    <>
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.container}>
       <Image source={recipe.imageUrl} style={styles.image} contentFit="cover" transition={200} />
       <View style={styles.content}>
         <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
@@ -28,18 +28,8 @@ export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
           </View>
         </View>
       </View>
-    </>
+    </TouchableOpacity>
   );
-
-  if (onPress) {
-    return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.container}>
-        {CardContent}
-      </TouchableOpacity>
-    );
-  }
-
-  return <View style={styles.container}>{CardContent}</View>;
 }
 
 const styles = StyleSheet.create({

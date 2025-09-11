@@ -31,16 +31,7 @@ export default function RecipeDetailsScreen() {
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView>
         <RecipeHeader imageUrl={recipe.imageUrl} id={recipe.id} />
-        <RecipeInfo
-          name={recipe.name}
-          timesDone={recipe.timesDone}
-          lastTimeDone={recipe.lastTimeDone}
-          type={recipe.type}
-          servings={recipe.servings}
-          preparationTime={recipe.preparationTime}
-          cookingTime={recipe.cookingTime}
-          restTime={recipe.restTime}
-        />
+        <RecipeInfo recipe={recipe} />
         <RecipeTabs tab={tab} setTab={setTab} />
         <View style={styles.tabsContainer}>{displayActiveTab()}</View>
       </ScrollView>

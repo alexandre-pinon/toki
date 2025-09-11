@@ -1,46 +1,65 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRecipeService } from "@/services/recipe";
-import type { Recipe } from "@/types/recipe/recipe";
-import {
-  createContext,
-  PropsWithChildren,
-  startTransition,
-  useActionState,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import { createEmptyRecipeData, type Recipe } from "@/types/recipe/recipe";
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type RecipeListContextType = {
   recipes: Recipe[];
   isLoading: boolean;
-  refetch: () => void;
+  isAddRecipeLoading: boolean;
+  refetchRecipes: () => Promise<void>;
+  createNewRecipe: () => Promise<{ newRecipeId: string }>;
 };
 
 const RecipeListContext = createContext<RecipeListContextType | null>(null);
 
 export const RecipeListProvider = ({ children }: PropsWithChildren) => {
   const { session } = useAuth();
-  const { getRecipes } = useRecipeService();
+  const { getRecipes, upsertRecipe } = useRecipeService();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAddRecipeLoading, setIsAddRecipeLoading] = useState(false);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
-  const [recipes, getUserRecipes, isLoading] = useActionState<Recipe[]>(() => {
-    if (!session?.user?.id) {
-      return [];
+  const getUserRecipes = useCallback(async () => {
+    if (!session?.user.id) {
+      setRecipes([]);
+      return;
     }
-    return getRecipes(session.user.id);
-  }, []);
+
+    try {
+      setIsLoading(true);
+      const recipes = await getRecipes(session.user.id);
+      setRecipes(recipes);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session?.user.id, getRecipes]);
+
+  const createNewRecipe = useCallback(async () => {
+    try {
+      setIsAddRecipeLoading(true);
+      const newRecipeData = createEmptyRecipeData();
+      await upsertRecipe(newRecipeData);
+      await getUserRecipes();
+      return { newRecipeId: newRecipeData.recipe.id };
+    } finally {
+      setIsAddRecipeLoading(false);
+    }
+  }, [upsertRecipe, getUserRecipes]);
 
   useEffect(() => {
-    startTransition(getUserRecipes);
-  }, [session?.user?.id, getUserRecipes]);
+    getUserRecipes();
+  }, [getUserRecipes]);
 
   const contextValue = useMemo(
     () => ({
       recipes,
       isLoading,
-      refetch: () => startTransition(getUserRecipes),
+      isAddRecipeLoading,
+      refetchRecipes: getUserRecipes,
+      createNewRecipe,
     }),
-    [recipes, isLoading, getUserRecipes],
+    [recipes, isLoading, isAddRecipeLoading, getUserRecipes, createNewRecipe],
   );
 
   return <RecipeListContext.Provider value={contextValue}>{children}</RecipeListContext.Provider>;

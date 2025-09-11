@@ -1,22 +1,38 @@
 import { RecipeList } from "@/components/RecipeList";
+import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipesScreen() {
+  const { isAddRecipeLoading, createNewRecipe } = useRecipeList();
+
+  const handleAddRecipe = async () => {
+    const { newRecipeId } = await createNewRecipe();
+    router.push({
+      pathname: "../recipes/edit/[id]",
+      params: { id: newRecipeId },
+    });
+  };
+
   return (
     <View style={styles.root}>
       <Stack.Screen
         options={{
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerRight: () => (
-            <TouchableOpacity onPress={() => router.push("/add-item")} style={styles.addButton}>
-              <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />
-            </TouchableOpacity>
-          ),
+          headerRight: () =>
+            isAddRecipeLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handleAddRecipe} style={styles.addButton}>
+                <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />
+              </TouchableOpacity>
+            ),
         }}
       />
       <SafeAreaView style={styles.container}>
@@ -41,5 +57,8 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     marginRight: 8,
+  },
+  loadingContainer: {
+    marginRight: 16,
   },
 });

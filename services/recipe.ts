@@ -2,12 +2,13 @@ import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
 import type { Recipe, RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
 import { byShoppingItemCategoryOrder } from "@/types/shopping/shopping-item-category";
 import mime from "mime";
+import { useCallback, useMemo } from "react";
 import { useImageService } from "./image";
 
 export function useRecipeService() {
-  const { uploadImage } = useImageService();
+  const { uploadImage, removeImage } = useImageService();
 
-  const getRecipes = async (userId: string): Promise<Recipe[]> => {
+  const getRecipes = useCallback(async (userId: string): Promise<Recipe[]> => {
     const recipes = getDbResponseDataOrThrow(
       await supabase.from("recipes").select("*").eq("user_id", userId).order("name"),
     );
@@ -25,9 +26,9 @@ export function useRecipeService() {
       userId: recipe.user_id,
       lastTimeDone: recipe.last_time_done ? Temporal.PlainDate.from(recipe.last_time_done) : undefined,
     }));
-  };
+  }, []);
 
-  const getRecipeById = async (id: string): Promise<RecipeDetails> => {
+  const getRecipeById = useCallback(async (id: string): Promise<RecipeDetails> => {
     const recipe = getDbResponseDataOrThrow(await supabase.from("recipes").select("*").eq("id", id).single());
     const recipeIngredients = getDbResponseDataOrThrow(
       await supabase
@@ -80,68 +81,85 @@ export function useRecipeService() {
         .sort((a, b) => byShoppingItemCategoryOrder(a.category, b.category)),
       instructions: recipe.instructions,
     };
-  };
+  }, []);
 
-  const upsertRecipe = async ({ recipe, ingredients, instructions }: RecipeUpsertData): Promise<void> => {
-    if (recipe.imageUrl && recipe.imageType && recipe.imageUrl.startsWith("file://")) {
-      const filePath = `recipes/${recipe.id}.${mime.getExtension(recipe.imageType)}`;
-      await uploadImage(recipe.imageUrl, filePath, recipe.imageType);
-    }
+  const upsertRecipe = useCallback(
+    async ({ recipe, ingredients, instructions }: RecipeUpsertData): Promise<void> => {
+      if (recipe.imageUrl && recipe.imageType && recipe.imageUrl.startsWith("file://")) {
+        const filePath = `recipes/${recipe.id}.${mime.getExtension(recipe.imageType)}`;
+        const uploadedImagePath = await uploadImage(recipe.imageUrl, filePath, recipe.imageType);
+        recipe.imageUrl = uploadedImagePath;
+      }
 
-    getDbResponseDataOrThrow(
-      await supabase.from("recipes").upsert({
-        id: recipe.id,
-        name: recipe.name,
-        type: recipe.type,
-        image_url: recipe.imageUrl,
-        preparation_time: recipe.preparationTime,
-        cooking_time: recipe.cookingTime,
-        rest_time: recipe.restTime,
-        servings: recipe.servings,
-        instructions: instructions,
-        updated_at: Temporal.Now.plainDateTimeISO().toString(),
-      }),
-    );
-
-    const ingredientsToDelete = getDbResponseDataOrThrow(
-      await supabase
-        .from("recipes_to_ingredients")
-        .select("*")
-        .eq("recipe_id", recipe.id)
-        .not("ingredient_id", "in", `(${ingredients.map((ingredient) => ingredient.ingredientId).join(",")})`),
-    );
-
-    if (ingredientsToDelete.length > 0) {
       getDbResponseDataOrThrow(
+        await supabase.from("recipes").upsert({
+          id: recipe.id,
+          name: recipe.name,
+          type: recipe.type,
+          image_url: recipe.imageUrl,
+          preparation_time: recipe.preparationTime,
+          cooking_time: recipe.cookingTime,
+          rest_time: recipe.restTime,
+          servings: recipe.servings,
+          instructions: instructions,
+          updated_at: Temporal.Now.plainDateTimeISO().toString(),
+        }),
+      );
+
+      const ingredientsToDelete = getDbResponseDataOrThrow(
         await supabase
           .from("recipes_to_ingredients")
-          .delete()
+          .select("*")
           .eq("recipe_id", recipe.id)
-          .in(
-            "ingredient_id",
-            ingredientsToDelete.map(({ ingredient_id }) => ingredient_id),
+          .not("ingredient_id", "in", `(${ingredients.map((ingredient) => ingredient.ingredientId).join(",")})`),
+      );
+
+      if (ingredientsToDelete.length > 0) {
+        getDbResponseDataOrThrow(
+          await supabase
+            .from("recipes_to_ingredients")
+            .delete()
+            .eq("recipe_id", recipe.id)
+            .in(
+              "ingredient_id",
+              ingredientsToDelete.map(({ ingredient_id }) => ingredient_id),
+            ),
+        );
+      }
+
+      if (ingredients.length > 0) {
+        getDbResponseDataOrThrow(
+          await supabase.from("recipes_to_ingredients").upsert(
+            ingredients.map((ingredient) => ({
+              recipe_id: recipe.id,
+              ingredient_id: ingredient.ingredientId,
+              quantity: ingredient.quantity,
+              unit: ingredient.unit,
+              updated_at: Temporal.Now.plainDateTimeISO().toString(),
+            })),
           ),
-      );
-    }
+        );
+      }
+    },
+    [uploadImage],
+  );
 
-    if (ingredients.length > 0) {
-      getDbResponseDataOrThrow(
-        await supabase.from("recipes_to_ingredients").upsert(
-          ingredients.map((ingredient) => ({
-            recipe_id: recipe.id,
-            ingredient_id: ingredient.ingredientId,
-            quantity: ingredient.quantity,
-            unit: ingredient.unit,
-            updated_at: Temporal.Now.plainDateTimeISO().toString(),
-          })),
-        ),
+  const deleteRecipe = useCallback(
+    async (id: string) => {
+      const deletedRecipe = getDbResponseDataOrThrow(
+        await supabase.from("recipes").delete().eq("id", id).select("*").single(),
       );
-    }
-  };
 
-  return {
-    getRecipes,
-    getRecipeById,
-    upsertRecipe,
-  };
+      if (deletedRecipe.image_url) {
+        const fileExtension = deletedRecipe.image_url.split(".").at(-1);
+        await removeImage(`recipes/${id}.${fileExtension}`);
+      }
+    },
+    [removeImage],
+  );
+
+  return useMemo(
+    () => ({ getRecipes, getRecipeById, upsertRecipe, deleteRecipe }),
+    [getRecipes, getRecipeById, upsertRecipe, deleteRecipe],
+  );
 }

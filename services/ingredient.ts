@@ -1,6 +1,6 @@
 import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
 import { Ingredient } from "@/types/ingredient";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 export function useIngredientService() {
   const searchIngredient = useCallback(async (searchTerm: string): Promise<Ingredient[]> => {
@@ -16,7 +16,5 @@ export function useIngredientService() {
     }));
   }, []);
 
-  return {
-    searchIngredient,
-  };
+  return useMemo(() => ({ searchIngredient }), [searchIngredient]);
 }

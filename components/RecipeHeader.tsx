@@ -1,8 +1,9 @@
+import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RecipeHeaderProps = {
@@ -11,6 +12,7 @@ type RecipeHeaderProps = {
 };
 
 export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
+  const { deleteCurrentRecipe } = useCurrentRecipe();
   const insets = useSafeAreaInsets();
 
   const handleCancel = () => {
@@ -22,6 +24,28 @@ export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
       pathname: `./edit/[id]`,
       params: { id },
     });
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Supprimer la recette",
+      "Êtes-vous sûr de vouloir supprimer cet recette ?",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: async () => {
+            await deleteCurrentRecipe();
+            router.back();
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   return (
@@ -37,6 +61,9 @@ export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
       </TouchableOpacity>
       <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>
         <Image source={require("@/assets/images/pen.png")} style={styles.editButtonImage} />
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.deleteButton, { top: insets.top }]} onPress={handleDelete}>
+        <Ionicons name="trash-bin-outline" size={14} color={colors.alert} />
       </TouchableOpacity>
     </View>
   );
@@ -63,7 +90,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     position: "absolute",
-    right: 20,
+    right: 64,
     backgroundColor: colors.white,
     borderRadius: 24,
     padding: 10,
@@ -71,5 +98,12 @@ const styles = StyleSheet.create({
   editButtonImage: {
     width: 14,
     height: 14,
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 20,
+    backgroundColor: colors.white,
+    borderRadius: 24,
+    padding: 10,
   },
 });

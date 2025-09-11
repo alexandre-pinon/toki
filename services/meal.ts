@@ -1,5 +1,6 @@
 import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
 import type { RecipeType } from "@/types/recipe/recipe-type";
+import { useCallback, useMemo } from "react";
 
 export type MealWithRecipe = {
   id: string;
@@ -16,7 +17,7 @@ export type MealWithRecipe = {
 };
 
 export function useMealService() {
-  const getUpcomingMeals = async (userId: string): Promise<MealWithRecipe[]> => {
+  const getUpcomingMeals = useCallback(async (userId: string): Promise<MealWithRecipe[]> => {
     const today = Temporal.Now.plainDateISO().toString();
 
     const meals = getDbResponseDataOrThrow(
@@ -56,9 +57,7 @@ export function useMealService() {
         imageUrl: meal.recipes.image_url ?? undefined,
       },
     }));
-  };
+  }, []);
 
-  return {
-    getUpcomingMeals,
-  };
+  return useMemo(() => ({ getUpcomingMeals }), [getUpcomingMeals]);
 }
