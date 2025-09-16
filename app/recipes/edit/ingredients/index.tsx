@@ -2,7 +2,7 @@ import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
 import { useFormRecipe } from "@/contexts/FormRecipeContext";
-import { useIngredientService } from "@/services/ingredient";
+import { searchIngredient } from "@/services/ingredient";
 import { colors, typography } from "@/theme";
 import { Ingredient } from "@/types/ingredient";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
   const { setFormCurrentIngredient } = useFormRecipe();
-  const { searchIngredient } = useIngredientService();
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +41,7 @@ export default function RecipeEditIngredientScreen() {
     };
 
     performSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm, searchIngredient]);
+  }, [debouncedSearchTerm]);
 
   const displaySearchResults = () => {
     if (isLoading) {

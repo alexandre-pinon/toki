@@ -2,6 +2,7 @@ import { CustomErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { RecipeListProvider } from "@/contexts/RecipeListContext";
 import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
+import { UpcomingMealsProvider } from "@/contexts/UpcomingMealsContext";
 import { ErrorBoundaryProps, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -35,6 +36,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="recipes" options={{ headerShown: false }} />
+        <Stack.Screen name="meals" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );
@@ -49,7 +51,9 @@ export default function RootLayout() {
     <AuthProvider>
       <ShoppingListProvider>
         <RecipeListProvider>
-          <RootLayoutNav />
+          <UpcomingMealsProvider>
+            <RootLayoutNav />
+          </UpcomingMealsProvider>
         </RecipeListProvider>
       </ShoppingListProvider>
     </AuthProvider>

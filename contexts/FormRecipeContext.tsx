@@ -1,5 +1,5 @@
 import { RecipeTabName } from "@/components/RecipeTabs";
-import { useRecipeService } from "@/services/recipe";
+import { upsertRecipe } from "@/services/recipe";
 import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 import {
   createContext,
@@ -39,7 +39,6 @@ type FormRecipeProviderProps = PropsWithChildren & {
 export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
-  const { upsertRecipe } = useRecipeService();
   const { recipe, ingredients, instructions } = initialRecipeValues;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,7 +64,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
     } finally {
       setIsLoading(false);
     }
-  }, [formRecipe, formIngredients, formInstructions, upsertRecipe, refetchCurrentRecipe, refetchRecipes]);
+  }, [formRecipe, formIngredients, formInstructions, refetchCurrentRecipe, refetchRecipes]);
 
   const contextValue = useMemo(
     () => ({

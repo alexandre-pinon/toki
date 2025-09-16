@@ -1,10 +1,12 @@
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RecipeList } from "@/components/RecipeList";
 import { createMeal } from "@/services/meal";
+import { colors, typography } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddMealScreen() {
   const { mealDate } = useLocalSearchParams<{ mealDate: string }>();
@@ -19,7 +21,7 @@ export default function AddMealScreen() {
         servings,
       });
       router.push({
-        pathname: "meals/[id]",
+        pathname: "./meals/[id]",
         params: { id },
       });
     } finally {
@@ -28,15 +30,27 @@ export default function AddMealScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <RecipeList onPressRecipe={addMeal} />
-      <LoadingOverlay visible={isLoading} />
-    </SafeAreaView>
+    <>
+      <Stack.Screen
+        options={{
+          headerTitleStyle: typography.header,
+          headerTitle: "Nouveau repas",
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+        }}
+      />
+      <SafeAreaView style={styles.container}>
+        <RecipeList onPressRecipe={addMeal} />
+        <LoadingOverlay visible={isLoading} />
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
 });

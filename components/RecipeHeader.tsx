@@ -1,18 +1,18 @@
-import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Alert, Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RecipeHeaderProps = {
-  imageUrl?: string;
   id: string;
+  onDelete: () => void;
+  imageUrl?: string;
+  showEdit?: boolean;
 };
 
-export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
-  const { deleteCurrentRecipe } = useCurrentRecipe();
+export function RecipeHeader({ id, onDelete, imageUrl, showEdit }: RecipeHeaderProps) {
   const insets = useSafeAreaInsets();
 
   const handleCancel = () => {
@@ -26,28 +26,6 @@ export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
     });
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Supprimer la recette",
-      "Êtes-vous sûr de vouloir supprimer cet recette ?",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-        },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: async () => {
-            await deleteCurrentRecipe();
-            router.back();
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-  };
-
   return (
     <View style={styles.imageContainer}>
       <Image
@@ -59,10 +37,12 @@ export function RecipeHeader({ imageUrl, id }: RecipeHeaderProps) {
       <TouchableOpacity style={[styles.backButton, { top: insets.top }]} onPress={handleCancel}>
         <Ionicons name="chevron-back" size={14} color={colors.black} />
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>
-        <Image source={require("@/assets/images/pen.png")} style={styles.editButtonImage} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.deleteButton, { top: insets.top }]} onPress={handleDelete}>
+      {showEdit && (
+        <TouchableOpacity style={[styles.editButton, { top: insets.top }]} onPress={handleEdit}>
+          <Image source={require("@/assets/images/pen.png")} style={styles.editButtonImage} />
+        </TouchableOpacity>
+      )}
+      <TouchableOpacity style={[styles.deleteButton, { top: insets.top }]} onPress={onDelete}>
         <Ionicons name="trash-bin-outline" size={14} color={colors.alert} />
       </TouchableOpacity>
     </View>

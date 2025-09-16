@@ -2,21 +2,22 @@ import { colors, commonStyles, typography } from "@/theme";
 import type { MealWithRecipe } from "@/types/menu/meal";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type MealCardProps = {
   meal: MealWithRecipe;
+  onPress: () => void;
 };
 
-export function MealCard({ meal }: MealCardProps) {
+export function MealCard({ meal, onPress }: MealCardProps) {
   return (
-    <View style={styles.mealCard}>
+    <TouchableOpacity onPress={onPress} style={styles.mealCard}>
       <Image source={meal.recipe.imageUrl} style={styles.mealImage} contentFit="cover" transition={200} />
       <View style={styles.mealContent}>
         <Text style={[typography.subtitle, styles.mealTitle]}>{meal.recipe.name}</Text>
         <Text style={[typography.subtext, styles.mealType]}>{mapRecipeTypeToName(meal.recipe.type)}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

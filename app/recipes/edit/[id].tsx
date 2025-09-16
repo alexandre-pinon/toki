@@ -1,6 +1,7 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RecipeTabs } from "@/components/RecipeTabs";
+import { ServingsInput } from "@/components/ServingsInput";
 import { SwipeableItem } from "@/components/SwipeableItem";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
 import { useFormRecipe } from "@/contexts/FormRecipeContext";
@@ -189,20 +190,10 @@ export default function RecipeEditScreen() {
                 {formRecipe.servings} personne{formRecipe.servings > 1 ? "s" : ""}
               </Text>
             </View>
-            <View style={styles.servingsControls}>
-              <TouchableOpacity
-                onPress={() => setFormRecipe((prev) => ({ ...prev, servings: Math.max(1, prev.servings - 1) }))}
-                style={styles.servingsButton}
-              >
-                <Ionicons name="remove" size={20} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setFormRecipe((prev) => ({ ...prev, servings: prev.servings + 1 }))}
-                style={styles.servingsButton}
-              >
-                <Ionicons name="add" size={20} />
-              </TouchableOpacity>
-            </View>
+            <ServingsInput
+              onTapPlus={() => setFormRecipe((prev) => ({ ...prev, servings: Math.max(1, prev.servings - 1) }))}
+              onTapMinus={() => setFormRecipe((prev) => ({ ...prev, servings: prev.servings + 1 }))}
+            />
           </View>
         </View>
 
@@ -355,17 +346,6 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     marginRight: 12,
-  },
-  servingsControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  servingsButton: {
-    padding: 4,
-    marginHorizontal: 4,
-    backgroundColor: colors.gray50,
-    borderRadius: 99,
   },
   timersRow: {
     flexDirection: "row",

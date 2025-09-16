@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useRecipeService } from "@/services/recipe";
+import { getRecipes, upsertRecipe } from "@/services/recipe";
 import { createEmptyRecipeData, type Recipe } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
@@ -15,7 +15,6 @@ const RecipeListContext = createContext<RecipeListContextType | null>(null);
 
 export const RecipeListProvider = ({ children }: PropsWithChildren) => {
   const { session } = useAuth();
-  const { getRecipes, upsertRecipe } = useRecipeService();
   const [isLoading, setIsLoading] = useState(false);
   const [isAddRecipeLoading, setIsAddRecipeLoading] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -33,7 +32,7 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user.id, getRecipes]);
+  }, [session?.user.id]);
 
   const createNewRecipe = useCallback(async () => {
     try {
@@ -45,7 +44,7 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsAddRecipeLoading(false);
     }
-  }, [upsertRecipe, getUserRecipes]);
+  }, [getUserRecipes]);
 
   useEffect(() => {
     getUserRecipes();

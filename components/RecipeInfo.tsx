@@ -1,17 +1,22 @@
 import { colors, typography } from "@/theme";
+import { Meal } from "@/types/menu/meal";
 import { getTotalTime, Recipe } from "@/types/recipe/recipe";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
-import { formatDuration, formatLastTimeDone } from "@/utils/date";
+import { formatDuration, formatLastTimeDone, mapPlainDateToDayName } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { Pill } from "./Pill";
+import { ServingsInput } from "./ServingsInput";
 
 type RecipeInfoProps = {
   recipe: Recipe;
+  meal?: Meal;
+  incrementServings?: () => void;
+  decrementServings?: () => void;
 };
 
-export function RecipeInfo({ recipe }: RecipeInfoProps) {
+export function RecipeInfo({ recipe, meal, incrementServings, decrementServings }: RecipeInfoProps) {
   const timerImages = [
     require("@/assets/images/clock.png"),
     require("@/assets/images/ingredient_preparation.png"),
@@ -25,6 +30,13 @@ export function RecipeInfo({ recipe }: RecipeInfoProps) {
     { icon: "alarm-outline", label: formatDuration(recipe.restTime) },
     { icon: "restaurant-outline", label: formatDuration(recipe.cookingTime) },
   ];
+
+  const displayServings = () => {
+    if (meal) {
+      return `${meal.servings} personne${meal.servings > 1 ? "s" : ""}`;
+    }
+    return `${recipe.servings} personne${recipe.servings > 1 ? "s" : ""}`;
+  };
 
   return (
     <View style={styles.mainInfoContainer}>
@@ -40,27 +52,25 @@ export function RecipeInfo({ recipe }: RecipeInfoProps) {
         Dernière fois faite : {formatLastTimeDone(recipe.lastTimeDone)}
       </Text>
 
-      <View style={styles.typeRow}>
-        <Pill
-          style={{
-            backgroundColor: colors.contrast50,
-            borderRadius: 12,
-            paddingHorizontal: 10,
-            paddingVertical: 4,
-          }}
-          textStyle={{ fontWeight: "200" }}
-        >
+      <View style={styles.tagsRow}>
+        <Pill style={styles.tagPill} textStyle={{ fontWeight: "200" }}>
           {mapRecipeTypeToName(recipe.type)}
         </Pill>
+        {meal && (
+          <Pill style={styles.tagPill} textStyle={{ fontWeight: "200" }}>
+            {mapPlainDateToDayName(meal.date)}
+          </Pill>
+        )}
       </View>
 
       <View style={styles.servingsRow}>
         <View style={styles.servingsTextContainer}>
           <Image source={require("@/assets/images/servings.png")} style={styles.servingsImage} />
-          <Text style={typography.subtitle}>
-            {recipe.servings} personne{recipe.servings > 1 ? "s" : ""}
-          </Text>
+          <Text style={typography.subtitle}>{displayServings()}</Text>
         </View>
+        {meal && incrementServings && decrementServings && (
+          <ServingsInput onTapPlus={incrementServings} onTapMinus={decrementServings} />
+        )}
       </View>
 
       <View style={styles.timersRow}>
@@ -105,10 +115,17 @@ const styles = StyleSheet.create({
     color: colors.gray600,
     paddingHorizontal: 24,
   },
-  typeRow: {
+  tagsRow: {
     flexDirection: "row",
     marginBottom: 16,
     paddingHorizontal: 24,
+    columnGap: 8,
+  },
+  tagPill: {
+    backgroundColor: colors.contrast50,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   servingsRow: {
     flexDirection: "row",

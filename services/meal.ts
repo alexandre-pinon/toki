@@ -71,7 +71,10 @@ export const getMealById = async (id: string): Promise<Meal> => {
 };
 
 export const updateServings = async (id: string, servings: number): Promise<Meal> => {
-  const dbMeal = getDbResponseDataOrThrow(await supabase.from("meals").update({ servings }).select("*").single());
+  console.log("updateServings", { id, servings });
+  const dbMeal = getDbResponseDataOrThrow(
+    await supabase.from("meals").update({ servings }).eq("id", id).select("*").single(),
+  );
 
   //TODO: handle shopping list items update
 

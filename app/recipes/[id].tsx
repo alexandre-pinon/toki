@@ -6,12 +6,13 @@ import { RecipeInstructionList } from "@/components/RecipeInstructionList";
 import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
 import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
+import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeDetailsScreen() {
-  const { currentRecipe, isLoading } = useCurrentRecipe();
+  const { currentRecipe, deleteCurrentRecipe, isLoading } = useCurrentRecipe();
   const [tab, setTab] = useState<RecipeTabName>("ingredients");
 
   if (isLoading || !currentRecipe) return <Loader />;
@@ -27,10 +28,32 @@ export default function RecipeDetailsScreen() {
     }
   };
 
+  const onDelete = () => {
+    Alert.alert(
+      "Supprimer la recette",
+      "Êtes-vous sûr de vouloir supprimer cette recette ?",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: async () => {
+            await deleteCurrentRecipe();
+            router.back();
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView>
-        <RecipeHeader imageUrl={recipe.imageUrl} id={recipe.id} />
+        <RecipeHeader id={recipe.id} onDelete={onDelete} imageUrl={recipe.imageUrl} showEdit />
         <RecipeInfo recipe={recipe} />
         <RecipeTabs tab={tab} setTab={setTab} />
         <View style={styles.tabsContainer}>{displayActiveTab()}</View>

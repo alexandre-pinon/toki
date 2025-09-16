@@ -1,4 +1,4 @@
-import { useRecipeService } from "@/services/recipe";
+import { deleteRecipe, getRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useRecipeList } from "./RecipeListContext";
@@ -17,7 +17,6 @@ type CurrentRecipeProviderProps = PropsWithChildren & {
 };
 export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderProps) => {
   const { refetchRecipes } = useRecipeList();
-  const { getRecipeById, deleteRecipe } = useRecipeService();
   const [isLoading, setIsLoading] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState<RecipeDetails | null>(null);
 
@@ -29,7 +28,7 @@ export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderPro
     } finally {
       setIsLoading(false);
     }
-  }, [id, getRecipeById]);
+  }, [id]);
 
   const deleteCurrentRecipe = useCallback(async () => {
     try {
@@ -39,7 +38,7 @@ export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderPro
     } finally {
       setIsLoading(false);
     }
-  }, [id, deleteRecipe, refetchRecipes]);
+  }, [id, refetchRecipes]);
 
   useEffect(() => {
     getCurrentRecipe();

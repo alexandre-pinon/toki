@@ -1,7 +1,13 @@
-import { useShoppingListService } from "@/services/shopping-list";
+import {
+  addShoppingListItem,
+  deleteShoppingListItem,
+  getShoppingListItems,
+  setCheckedShoppingListItems,
+  updateShoppingListItem,
+} from "@/services/shopping-list";
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
 import type { ShoppingListSection } from "@/types/shopping/shopping-list";
-import { type ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useAuth } from "./AuthContext";
 
@@ -22,27 +28,9 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
   const [sections, setSections] = useState<ShoppingListSection[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    getShoppingListItems,
-    addShoppingListItem,
-    updateShoppingListItem,
-    setCheckedShoppingListItems,
-    deleteShoppingListItem,
-  } = useShoppingListService();
   const { session } = useAuth();
 
-  useEffect(() => {
-    if (!session) return;
-    loadShoppingList(session.user.id);
-  }, [session]);
-
-  const handleError = (err: unknown, message: string) => {
-    const error = err instanceof Error ? err : new Error(message);
-    setError(error);
-    Alert.alert("Error", message);
-  };
-
-  const loadShoppingList = async (userId: string, options?: { skipLoading: boolean }) => {
+  const loadShoppingList = useCallback(async (userId: string, options?: { skipLoading: boolean }) => {
     try {
       setIsLoading(!options?.skipLoading);
       const items = await getShoppingListItems(userId);
@@ -53,7 +41,18 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  const handleError = (err: unknown, message: string) => {
+    const error = err instanceof Error ? err : new Error(message);
+    setError(error);
+    Alert.alert("Error", message);
   };
+
+  useEffect(() => {
+    if (!session) return;
+    loadShoppingList(session.user.id);
+  }, [session, loadShoppingList]);
 
   const addItem = async (item: Omit<ShoppingItem, "id">) => {
     try {

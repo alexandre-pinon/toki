@@ -1,6 +1,6 @@
-import { useMeals } from "@/hooks/useMeals";
+import { useUpcomingMeals } from "@/contexts/UpcomingMealsContext";
 import { colors, typography } from "@/theme";
-import type { MealWithRecipe } from "@/types/menu/meal";
+import type { Meal, MealWithRecipe } from "@/types/menu/meal";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -17,15 +17,18 @@ type SectionData = {
   date: Temporal.PlainDate;
 };
 
-export function MealList() {
-  const { meals, isLoading, error } = useMeals();
+type MealListProps = {
+  onPressMeal: (meal: Meal) => void;
+};
+export function MealList({ onPressMeal }: MealListProps) {
+  const { upcomingMeals, isLoading } = useUpcomingMeals();
   const [sectionData, setSectionData] = useState<SectionData[]>([]);
 
   useEffect(() => {
-    const mealsByDate = groupMealsByDate(meals);
+    const mealsByDate = groupMealsByDate(upcomingMeals);
     const sections = createMealSections(mealsByDate);
     setSectionData(sections);
-  }, [meals]);
+  }, [upcomingMeals]);
 
   if (isLoading) {
     return <Loader />;
@@ -33,7 +36,7 @@ export function MealList() {
 
   const handleAddMeal = (mealDate: Temporal.PlainDate) => {
     router.push({
-      pathname: "../recipes",
+      pathname: "../add-meal",
       params: { mealDate: mealDate.toJSON() },
     });
   };
@@ -42,7 +45,7 @@ export function MealList() {
     <SectionList
       sections={sectionData}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <MealCard meal={item} />}
+      renderItem={({ item }) => <MealCard meal={item} onPress={() => onPressMeal(item)} />}
       renderSectionHeader={({ section }) => (
         <View style={styles.dayHeader}>
           <Text style={[typography.body, styles.dayName]}>{section.day}</Text>
