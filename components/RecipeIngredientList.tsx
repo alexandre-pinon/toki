@@ -5,9 +5,10 @@ import { StyleSheet, Text, View } from "react-native";
 
 type RecipeTabsProps = {
   ingredients: Omit<RecipeIngredient, "recipeId" | "ingredientId">[];
+  quantityCoefficient?: number;
 };
 
-export function RecipeIngredientList({ ingredients }: RecipeTabsProps) {
+export function RecipeIngredientList({ ingredients, quantityCoefficient }: RecipeTabsProps) {
   if (ingredients.length === 0) {
     return <Text style={[typography.body, styles.noDataText]}>Aucun ingrédient disponible</Text>;
   }
@@ -20,7 +21,7 @@ export function RecipeIngredientList({ ingredients }: RecipeTabsProps) {
           <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
           {(ingredient.quantity || ingredient.unit) && (
             <Text style={[typography.body, styles.ingredientSubtext]}>
-              {formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
+              {formatQuantityAndUnit(ingredient.quantity, ingredient.unit, quantityCoefficient)}
             </Text>
           )}
         </View>

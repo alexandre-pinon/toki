@@ -1,5 +1,6 @@
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RecipeList } from "@/components/RecipeList";
+import { useUpcomingMeals } from "@/contexts/UpcomingMealsContext";
 import { createMeal } from "@/services/meal";
 import { colors, typography } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
@@ -9,6 +10,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddMealScreen() {
+  const { refetchUpcomingMeals } = useUpcomingMeals();
   const { mealDate } = useLocalSearchParams<{ mealDate: string }>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,7 +22,8 @@ export default function AddMealScreen() {
         date: Temporal.PlainDate.from(mealDate),
         servings,
       });
-      router.push({
+      await refetchUpcomingMeals();
+      router.replace({
         pathname: "./meals/[id]",
         params: { id },
       });

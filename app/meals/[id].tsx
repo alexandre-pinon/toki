@@ -23,7 +23,12 @@ export default function MealScreen() {
   const displayActiveTab = () => {
     switch (tab) {
       case "ingredients":
-        return <RecipeIngredientList ingredients={ingredients} />;
+        return (
+          <RecipeIngredientList
+            ingredients={ingredients}
+            quantityCoefficient={currentMeal.servings / currentRecipe.recipe.servings}
+          />
+        );
       case "instructions":
         return <RecipeInstructionList instructions={instructions} />;
     }

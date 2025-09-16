@@ -52,15 +52,17 @@ export const mapUnitTypeToName = (unitType?: UnitType, plural: boolean = false):
   }
 };
 
-export const formatQuantityAndUnit = (quantity?: number, unit?: UnitType): string => {
+export const formatQuantityAndUnit = (quantity?: number, unit?: UnitType, maybeCoefficient?: number): string => {
   if (!quantity && !unit) return "";
   if (!quantity) return mapUnitTypeToName(unit);
-  if (!unit) return decimalToFraction(quantity);
 
-  const isPlural = quantity > 1 || quantity === 0;
+  const quantityWithCoef = quantity * (maybeCoefficient ?? 1);
+  if (!unit) return decimalToFraction(quantityWithCoef);
+
+  const isPlural = quantityWithCoef > 1 || quantityWithCoef === 0;
   const unitName = mapUnitTypeToName(unit, isPlural);
   const space = shouldAddSpaceBeforeUnit(unit) ? " " : "";
-  const formattedQuantity = decimalToFraction(quantity);
+  const formattedQuantity = decimalToFraction(quantityWithCoef);
 
   return `${formattedQuantity}${space}${unitName}`;
 };
