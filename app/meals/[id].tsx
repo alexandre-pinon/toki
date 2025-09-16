@@ -4,17 +4,16 @@ import { RecipeInfo } from "@/components/RecipeInfo";
 import { RecipeIngredientList } from "@/components/RecipeIngredientList";
 import { RecipeInstructionList } from "@/components/RecipeInstructionList";
 import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
-import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function RecipeDetailsScreen() {
-  const { currentRecipe, isLoading } = useCurrentRecipe();
-  const [tab, setTab] = useState<RecipeTabName>("ingredients");
+export default function MealScreen() {
+  const { currentMeal, isLoading } = useCurrentMeal();
+  const [tab, setTab] = useState<RecipeTabName>("instructions");
 
-  if (isLoading || !currentRecipe) return <Loader />;
+  if (isLoading || !currentMeal) return <Loader />;
 
   const { recipe, ingredients, instructions } = currentRecipe;
 

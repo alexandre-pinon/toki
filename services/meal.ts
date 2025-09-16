@@ -1,30 +1,22 @@
-import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
-import type { RecipeType } from "@/types/recipe/recipe-type";
-import { useCallback, useMemo } from "react";
+import { DBRow, getDbResponseDataOrThrow, OmitDBTimestamps, supabase } from "@/lib/supabase";
+import { Meal, MealCreateData, MealWithRecipe } from "@/types/menu/meal";
 
-export type MealWithRecipe = {
-  id: string;
-  recipeId: string;
-  date: Temporal.PlainDate;
-  servings: number;
-  userId: string;
-  recipe: {
-    id: string;
-    name: string;
-    type: RecipeType;
-    imageUrl?: string;
-  };
-};
+const fromDatabaseToDomain = (dbMeal: OmitDBTimestamps<DBRow<"meals">>): Meal => ({
+  id: dbMeal.id,
+  recipeId: dbMeal.recipe_id,
+  date: Temporal.PlainDate.from(dbMeal.date),
+  servings: dbMeal.servings,
+  userId: dbMeal.user_id,
+});
 
-export function useMealService() {
-  const getUpcomingMeals = useCallback(async (userId: string): Promise<MealWithRecipe[]> => {
-    const today = Temporal.Now.plainDateISO().toString();
+export const getUpcomingMeals = async (userId: string): Promise<MealWithRecipe[]> => {
+  const today = Temporal.Now.plainDateISO().toString();
 
-    const meals = getDbResponseDataOrThrow(
-      await supabase
-        .from("meals")
-        .select(
-          `
+  const dbMeals = getDbResponseDataOrThrow(
+    await supabase
+      .from("meals")
+      .select(
+        `
         id,
         recipe_id,
         date,
@@ -37,27 +29,55 @@ export function useMealService() {
           image_url
         )
       `,
-        )
-        .eq("user_id", userId)
-        .gte("date", today)
-        .order("date")
-        .order("recipes(name)"),
-    );
+      )
+      .eq("user_id", userId)
+      .gte("date", today)
+      .order("date")
+      .order("recipes(name)"),
+  );
 
-    return meals.map((meal) => ({
-      id: meal.id,
-      recipeId: meal.recipe_id,
-      date: Temporal.PlainDate.from(meal.date),
-      servings: meal.servings,
-      userId: meal.user_id,
-      recipe: {
-        id: meal.recipes.id,
-        name: meal.recipes.name,
-        type: meal.recipes.type,
-        imageUrl: meal.recipes.image_url ?? undefined,
-      },
-    }));
-  }, []);
+  return dbMeals.map((dbMeal) => ({
+    ...fromDatabaseToDomain(dbMeal),
+    recipe: {
+      id: dbMeal.recipes.id,
+      name: dbMeal.recipes.name,
+      type: dbMeal.recipes.type,
+      imageUrl: dbMeal.recipes.image_url ?? undefined,
+    },
+  }));
+};
 
-  return useMemo(() => ({ getUpcomingMeals }), [getUpcomingMeals]);
-}
+export const createMeal = async (data: MealCreateData): Promise<Meal> => {
+  const dbMeal = getDbResponseDataOrThrow(
+    await supabase
+      .from("meals")
+      .insert({
+        recipe_id: data.recipeId,
+        date: data.date.toString(),
+        servings: data.servings,
+        updated_at: Temporal.Now.plainDateTimeISO().toString(),
+      })
+      .select("*")
+      .single(),
+  );
+
+  return fromDatabaseToDomain(dbMeal);
+};
+
+export const getMealById = async (id: string): Promise<Meal> => {
+  const dbMeal = getDbResponseDataOrThrow(await supabase.from("meals").select("*").eq("id", id).single());
+
+  return fromDatabaseToDomain(dbMeal);
+};
+
+export const updateServings = async (id: string, servings: number): Promise<Meal> => {
+  const dbMeal = getDbResponseDataOrThrow(await supabase.from("meals").update({ servings }).select("*").single());
+
+  //TODO: handle shopping list items update
+
+  return fromDatabaseToDomain(dbMeal);
+};
+
+export const deleteMeal = async (id: string): Promise<void> => {
+  getDbResponseDataOrThrow(await supabase.from("meals").delete().eq("id", id));
+};

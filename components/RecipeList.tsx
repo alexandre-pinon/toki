@@ -3,14 +3,16 @@ import { colors, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
-import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Loader } from "./Loader";
 import { RecipeCard } from "./RecipeCard";
 import { SearchBar } from "./SearchBar";
 
-export function RecipeList() {
+type RecipeListProps = {
+  onPressRecipe: (recipe: Recipe) => void;
+};
+export function RecipeList({ onPressRecipe }: RecipeListProps) {
   const { recipes, isLoading } = useRecipeList();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,12 +51,7 @@ export function RecipeList() {
       {filteredRecipes.length > 0 ? (
         <FlatList
           data={filteredRecipes}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              onPress={() => router.push({ pathname: "../recipes/[id]", params: { id: item.id } })}
-            />
-          )}
+          renderItem={({ item }) => <RecipeCard recipe={item} onPress={() => onPressRecipe(item)} />}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
         />

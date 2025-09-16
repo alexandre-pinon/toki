@@ -37,3 +37,7 @@ export const getStorageResponseDataOrThrow = <T>(response: StorageResponse<T>): 
   }
   return data;
 };
+
+export type OmitDBTimestamps<T> = Omit<T, "created_at" | "updated_at">;
+type DBTables = Database["public"]["Tables"];
+export type DBRow<T extends keyof DBTables> = DBTables[T]["Row"];

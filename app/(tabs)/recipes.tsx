@@ -36,7 +36,9 @@ export default function RecipesScreen() {
         }}
       />
       <SafeAreaView style={styles.container}>
-        <RecipeList />
+        <RecipeList
+          onPressRecipe={(recipe) => router.push({ pathname: "../recipes/[id]", params: { id: recipe.id } })}
+        />
       </SafeAreaView>
     </View>
   );

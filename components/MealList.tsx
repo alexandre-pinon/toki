@@ -1,9 +1,10 @@
 import { useMeals } from "@/hooks/useMeals";
-import type { MealWithRecipe } from "@/services/meal";
 import { colors, typography } from "@/theme";
+import type { MealWithRecipe } from "@/types/menu/meal";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { SectionList, StyleSheet, Text, View } from "react-native";
+import { SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import "temporal-polyfill/global";
 import { Loader } from "./Loader";
 import { MealCard } from "./MealCard";
@@ -12,7 +13,8 @@ type SectionData = {
   title: string;
   data: MealWithRecipe[];
   day: string;
-  date: string;
+  dateString: string;
+  date: Temporal.PlainDate;
 };
 
 export function MealList() {
@@ -29,6 +31,13 @@ export function MealList() {
     return <Loader />;
   }
 
+  const handleAddMeal = (mealDate: Temporal.PlainDate) => {
+    router.push({
+      pathname: "../recipes",
+      params: { mealDate: mealDate.toJSON() },
+    });
+  };
+
   return (
     <SectionList
       sections={sectionData}
@@ -37,13 +46,13 @@ export function MealList() {
       renderSectionHeader={({ section }) => (
         <View style={styles.dayHeader}>
           <Text style={[typography.body, styles.dayName]}>{section.day}</Text>
-          <Text style={[typography.body, styles.dayDate]}>{section.date}</Text>
+          <Text style={[typography.body, styles.dayDate]}>{section.dateString}</Text>
         </View>
       )}
-      renderSectionFooter={() => (
-        <View style={styles.sectionFooter}>
+      renderSectionFooter={({ section }) => (
+        <TouchableOpacity onPress={() => handleAddMeal(section.date)} style={styles.sectionFooter}>
           <Text style={styles.addMeal}>+ Ajouter un repas</Text>
-        </View>
+        </TouchableOpacity>
       )}
       contentContainerStyle={styles.listContent}
       showsVerticalScrollIndicator={false}
@@ -79,7 +88,8 @@ function createMealSections(mealsByDate: Record<string, MealWithRecipe[]>): Sect
       title: mapPlainDateToDayName(date),
       data: dayMeals,
       day: mapPlainDateToDayName(date),
-      date: mapPlainDateToLocaleString(date),
+      dateString: mapPlainDateToLocaleString(date),
+      date,
     });
   }
 
