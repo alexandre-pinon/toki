@@ -191,8 +191,8 @@ export default function RecipeEditScreen() {
               </Text>
             </View>
             <ServingsInput
-              onTapPlus={() => setFormRecipe((prev) => ({ ...prev, servings: Math.max(1, prev.servings - 1) }))}
-              onTapMinus={() => setFormRecipe((prev) => ({ ...prev, servings: prev.servings + 1 }))}
+              onTapMinus={() => setFormRecipe((prev) => ({ ...prev, servings: Math.max(1, prev.servings - 1) }))}
+              onTapPlus={() => setFormRecipe((prev) => ({ ...prev, servings: prev.servings + 1 }))}
             />
           </View>
         </View>

@@ -13,6 +13,7 @@ import {
 } from "react";
 import { useCurrentRecipe } from "./CurrentRecipeContext";
 import { useRecipeList } from "./RecipeListContext";
+import { useShoppingList } from "./ShoppingListContext";
 
 type FormRecipeContextType = {
   formRecipe: RecipeUpsertData["recipe"];
@@ -37,6 +38,7 @@ type FormRecipeProviderProps = PropsWithChildren & {
   initialRecipeValues: RecipeDetails;
 };
 export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
+  const { loadShoppingList } = useShoppingList();
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
   const { recipe, ingredients, instructions } = initialRecipeValues;
@@ -59,12 +61,11 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
         ingredients: formIngredients,
         instructions: formInstructions,
       });
-      await refetchCurrentRecipe();
-      await refetchRecipes();
+      await Promise.all([refetchCurrentRecipe(), refetchRecipes(), loadShoppingList()]);
     } finally {
       setIsLoading(false);
     }
-  }, [formRecipe, formIngredients, formInstructions, refetchCurrentRecipe, refetchRecipes]);
+  }, [formRecipe, formIngredients, formInstructions, refetchCurrentRecipe, refetchRecipes, loadShoppingList]);
 
   const contextValue = useMemo(
     () => ({

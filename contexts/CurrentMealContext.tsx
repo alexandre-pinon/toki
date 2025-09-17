@@ -54,8 +54,7 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
   const decrementServings = useCallback(() => {
     setCurrentMeal((prev) => {
       if (!prev) return null;
-      if (prev.servings <= 1) return prev;
-      return { ...prev, servings: prev.servings - 1 };
+      return { ...prev, servings: Math.max(1, prev.servings - 1) };
     });
     if (currentMeal && currentMeal.servings > 1) {
       setServingsPendingUpdates((prev) => [...prev, "decrement"]);

@@ -85,7 +85,10 @@ const commonFractions = [
 ];
 
 const decimalToFraction = (decimal: number): string => {
-  if (decimal >= 1) return decimal.toString();
+  if (Number.isInteger(decimal)) return decimal.toString();
+  const decimalWithTwoDigits = decimal.toFixed(2);
+  if (decimalWithTwoDigits.at(-1) === "0") return decimal.toFixed(1);
+  if (decimal >= 1) return decimalWithTwoDigits;
 
   const closest = commonFractions.reduce((prev, curr) => {
     return Math.abs(curr.decimal - decimal) < Math.abs(prev.decimal - decimal) ? curr : prev;
@@ -95,5 +98,5 @@ const decimalToFraction = (decimal: number): string => {
     return closest.fraction;
   }
 
-  return decimal.toString();
+  return decimalWithTwoDigits;
 };
