@@ -20,7 +20,6 @@ export function ShoppingListItem({
   earliestMealDate,
   checked,
   isLastItem,
-  userId,
 }: ShoppingItemProps) {
   const { setChecked, deleteItem } = useShoppingList();
   const [isCheckLoading, setIsCheckLoading] = useState(false);
@@ -38,7 +37,7 @@ export function ShoppingListItem({
           text: "Supprimer",
           style: "destructive",
           onPress: () => {
-            deleteItem(ids[0], userId);
+            deleteItem(ids[0]);
           },
         },
       ],
@@ -55,7 +54,7 @@ export function ShoppingListItem({
 
   const handleCheck = async () => {
     setIsCheckLoading(true);
-    await setChecked(ids, !checked, userId);
+    await setChecked(ids, !checked);
     setIsCheckLoading(false);
   };
 

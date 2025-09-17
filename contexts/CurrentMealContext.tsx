@@ -3,6 +3,7 @@ import { getRecipeById } from "@/services/recipe";
 import { Meal } from "@/types/menu/meal";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useShoppingList } from "./ShoppingListContext";
 import { useUpcomingMeals } from "./UpcomingMealsContext";
 
 type CurrentMealContextType = {
@@ -20,6 +21,7 @@ type CurrentMealProviderProps = PropsWithChildren & {
   id: string;
 };
 export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) => {
+  const { loadShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMeal, setCurrentMeal] = useState<Meal | null>(null);
@@ -64,11 +66,11 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
     try {
       setIsLoading(true);
       await deleteMeal(id);
-      await refetchUpcomingMeals();
+      await Promise.all([refetchUpcomingMeals(), loadShoppingList()]);
     } finally {
       setIsLoading(false);
     }
-  }, [id, refetchUpcomingMeals]);
+  }, [id, refetchUpcomingMeals, loadShoppingList]);
 
   const processServingsUpdates = useCallback(async () => {
     if (!currentMeal || !(servingsPendingUpdates.length > 0) || isProcessingServingsUpdate) {
@@ -88,7 +90,9 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
       setServingsPendingUpdates((prev) => prev.slice(1));
       setIsProcessingServingsUpdate(false);
     }
-  }, [currentMeal, isProcessingServingsUpdate, servingsPendingUpdates]);
+
+    await loadShoppingList();
+  }, [currentMeal, isProcessingServingsUpdate, servingsPendingUpdates, loadShoppingList]);
 
   useEffect(() => {
     getMealWithRecipe();
