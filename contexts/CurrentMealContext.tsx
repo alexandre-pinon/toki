@@ -1,7 +1,7 @@
 import { deleteMeal, getMealById, updateServings } from "@/services/meal";
 import { getRecipeById } from "@/services/recipe";
-import { Meal } from "@/types/menu/meal";
 import { RecipeDetails } from "@/types/recipe/recipe";
+import { Meal } from "@/types/weekly-meals/meal";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useShoppingList } from "./ShoppingListContext";
 import { useUpcomingMeals } from "./UpcomingMealsContext";

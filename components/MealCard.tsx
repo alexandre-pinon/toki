@@ -1,6 +1,6 @@
 import { colors, commonStyles, typography } from "@/theme";
-import type { MealWithRecipe } from "@/types/menu/meal";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
+import type { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { Image } from "expo-image";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

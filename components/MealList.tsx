@@ -1,6 +1,6 @@
 import { useUpcomingMeals } from "@/contexts/UpcomingMealsContext";
 import { colors, typography } from "@/theme";
-import type { Meal, MealWithRecipe } from "@/types/menu/meal";
+import type { Meal, MealWithRecipe } from "@/types/weekly-meals/meal";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";

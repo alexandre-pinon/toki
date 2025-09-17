@@ -21,7 +21,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="menu"
+        name="weekly-meals"
         options={{
           title: "Menu",
           headerTitle: "Repas de la semaine",

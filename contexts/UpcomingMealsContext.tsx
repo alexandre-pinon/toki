@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { getUpcomingMeals } from "@/services/meal";
-import { MealWithRecipe } from "@/types/menu/meal";
+import { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type UpcomingMealsContextType = {

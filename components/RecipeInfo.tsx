@@ -1,7 +1,7 @@
 import { colors, typography } from "@/theme";
-import { Meal } from "@/types/menu/meal";
 import { getTotalTime, Recipe } from "@/types/recipe/recipe";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
+import { Meal } from "@/types/weekly-meals/meal";
 import { formatDuration, formatLastTimeDone, mapPlainDateToDayName } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";

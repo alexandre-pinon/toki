@@ -1,5 +1,5 @@
 import { DBRow, getDbResponseDataOrThrow, OmitDBTimestamps, supabase } from "@/lib/supabase";
-import { Meal, MealCreateData, MealWithRecipe } from "@/types/menu/meal";
+import { Meal, MealCreateData, MealWithRecipe } from "@/types/weekly-meals/meal";
 
 const fromDatabaseToDomain = (dbMeal: OmitDBTimestamps<DBRow<"meals">>): Meal => ({
   id: dbMeal.id,
