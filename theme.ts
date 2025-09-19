@@ -85,4 +85,5 @@ export const commonStyles = {
     backgroundColor: Platform.OS === "ios" ? "transparent" : colors.white,
   },
   boxShadow: "3px 4px 30px 0px rgba(47, 47, 47, 0.075)",
+  activeBoxShadow: "3px 4px 30px 0px rgba(230, 108, 41, 0.15)",
 };

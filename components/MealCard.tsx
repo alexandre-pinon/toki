@@ -2,22 +2,22 @@ import { colors, commonStyles, typography } from "@/theme";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import type { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { Image } from "expo-image";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type MealCardProps = {
   meal: MealWithRecipe;
-  onPress: () => void;
+  isDragged?: boolean;
 };
 
-export function MealCard({ meal, onPress }: MealCardProps) {
+export function MealCard({ meal, isDragged }: MealCardProps) {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.mealCard}>
+    <View style={[styles.mealCard, { boxShadow: isDragged ? commonStyles.activeBoxShadow : commonStyles.boxShadow }]}>
       <Image source={meal.recipe.imageUrl} style={styles.mealImage} contentFit="cover" transition={200} />
       <View style={styles.mealContent}>
         <Text style={[typography.subtitle, styles.mealTitle]}>{meal.recipe.name}</Text>
         <Text style={[typography.subtext, styles.mealType]}>{mapRecipeTypeToName(meal.recipe.type)}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.white,
     borderRadius: 12,
-    boxShadow: commonStyles.boxShadow,
   },
   mealImage: {
     width: 70,

@@ -75,7 +75,13 @@ export const updateServings = async (id: string, servings: number): Promise<Meal
     await supabase.from("meals").update({ servings }).eq("id", id).select("*").single(),
   );
 
-  //TODO: handle shopping list items update
+  return fromDatabaseToDomain(dbMeal);
+};
+
+export const updateDate = async (id: string, date: Temporal.PlainDate): Promise<Meal> => {
+  const dbMeal = getDbResponseDataOrThrow(
+    await supabase.from("meals").update({ date: date.toString() }).eq("id", id).select("*").single(),
+  );
 
   return fromDatabaseToDomain(dbMeal);
 };
