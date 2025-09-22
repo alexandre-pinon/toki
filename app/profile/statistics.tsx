@@ -1,13 +1,14 @@
 import { StatisticsContent } from "@/components/StatisticsContent";
 import { colors, typography } from "@/theme";
 import { Stack } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileStatisticsScreen() {
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Stack.Screen
+        name="statistics"
         options={{
           title: "Statistiques",
           headerTitleStyle: typography.header,
@@ -16,19 +17,14 @@ export default function ProfileStatisticsScreen() {
           headerTintColor: colors.black,
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <StatisticsContent />
-      </SafeAreaView>
-    </View>
+      <StatisticsContent />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
 });

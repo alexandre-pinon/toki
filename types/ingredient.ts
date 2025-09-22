@@ -5,3 +5,8 @@ export type Ingredient = {
   name: string;
   category: ShoppingItemCategory;
 };
+
+export type IngredientListSection = {
+  title: ShoppingItemCategory;
+  data: Ingredient[];
+};

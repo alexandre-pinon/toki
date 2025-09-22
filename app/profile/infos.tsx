@@ -17,7 +17,7 @@ export default function ProfileInfosScreen() {
   const lastName = nameParts.slice(1).join(" ") || "";
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Stack.Screen
         options={{
           title: "Informations",
@@ -27,59 +27,54 @@ export default function ProfileInfosScreen() {
           headerTintColor: colors.black,
         }}
       />
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <View style={styles.avatarWrapper}>
-          <AvatarIcon size={120} />
+      <View style={styles.avatarWrapper}>
+        <AvatarIcon size={120} />
+      </View>
+      <View style={styles.form}>
+        <View style={styles.inputGroup}>
+          <Text style={[typography.body, styles.label]}>Nom</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Entrez votre nom"
+            placeholderTextColor={colors.gray}
+            autoCapitalize="words"
+            value={lastName}
+          />
         </View>
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={[typography.body, styles.label]}>Nom</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Entrez votre nom"
-              placeholderTextColor={colors.gray}
-              autoCapitalize="words"
-              value={lastName}
-            />
-          </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={[typography.body, styles.label]}>Prénom</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Entrez votre prénom"
-              placeholderTextColor={colors.gray}
-              autoCapitalize="words"
-              value={firstName}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={[typography.body, styles.label]}>Email</Text>
-            <TextInput
-              style={[styles.input, styles.inputReadOnly]}
-              placeholder="Entrez votre email"
-              placeholderTextColor={colors.gray}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={userEmail}
-              editable={false}
-            />
-          </View>
+        <View style={styles.inputGroup}>
+          <Text style={[typography.body, styles.label]}>Prénom</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Entrez votre prénom"
+            placeholderTextColor={colors.gray}
+            autoCapitalize="words"
+            value={firstName}
+          />
         </View>
-      </SafeAreaView>
-    </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={[typography.body, styles.label]}>Email</Text>
+          <TextInput
+            style={[styles.input, styles.inputReadOnly]}
+            placeholder="Entrez votre email"
+            placeholderTextColor={colors.gray}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={userEmail}
+            editable={false}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   avatarWrapper: {
     alignItems: "center",

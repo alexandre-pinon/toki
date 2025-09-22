@@ -1,3 +1,4 @@
+import { GroceriesIcon } from "@/components/icons/GroceriesIcon";
 import { InfoIcon } from "@/components/icons/InfoIcon";
 import { LogoutIcon } from "@/components/icons/LogoutIcon";
 import { StatisticIcon } from "@/components/icons/StatisticIcon";
@@ -31,6 +32,12 @@ export default function ProfileScreen() {
           icon={InfoIcon}
           title="Informations"
           onPress={() => router.push("/profile/infos")}
+          showBorder
+        />
+        <ProfileMenuItem
+          icon={GroceriesIcon}
+          title="Ingrédients"
+          onPress={() => router.push("/profile/ingredients")}
           showBorder
         />
         <ProfileMenuItem

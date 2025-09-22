@@ -1,5 +1,6 @@
 import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, commonStyles, typography } from "@/theme";
+import { router } from "expo-router";
 import { useMemo } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ArrowTopBottomIcon } from "./icons/ArrowTopBottomIcon";
@@ -20,6 +21,13 @@ export function StatisticsContent() {
     );
   }
 
+  const handleRecipePress = (recipeId: string) => {
+    router.push({
+      pathname: "../../recipes/[id]",
+      params: { id: recipeId },
+    });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <View style={styles.card}>
@@ -34,7 +42,7 @@ export function StatisticsContent() {
         </View>
         {top3.map((recipe) => (
           <View style={styles.recipeCardWrapper} key={recipe.id}>
-            <RecipeCard recipe={recipe} />
+            <RecipeCard onPress={() => handleRecipePress(recipe.id)} recipe={recipe} />
           </View>
         ))}
       </View>
@@ -46,7 +54,7 @@ export function StatisticsContent() {
         </View>
         {bottom3.map((recipe) => (
           <View style={styles.recipeCardWrapper} key={recipe.id}>
-            <RecipeCard recipe={recipe} />
+            <RecipeCard onPress={() => handleRecipePress(recipe.id)} recipe={recipe} />
           </View>
         ))}
       </View>
