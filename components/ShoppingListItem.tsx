@@ -66,7 +66,7 @@ export function ShoppingListItem({
             <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : (
-          <Checkbox style={styles.checkbox} value={checked} onValueChange={handleCheck} color={colors.primary} />
+          <Checkbox style={styles.checkbox} value={checked} onValueChange={handleCheck} color={colors.primary300} />
         )}
 
         <UnderlinedListItem

@@ -26,7 +26,7 @@ function RootLayoutNav() {
     if (!session && !inAuthGroup) {
       router.replace("/auth");
     } else if (session && inAuthGroup) {
-      router.replace("/(tabs)");
+      router.replace("/weekly-meals");
     }
   }, [session, segments, isMounted, router]);
 

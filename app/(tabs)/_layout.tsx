@@ -3,53 +3,66 @@ import { ProfileIcon } from "@/components/icons/ProfileIcon";
 import { RecipeIcon } from "@/components/icons/RecipeIcon";
 import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
 import { colors } from "@/theme";
+import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
+import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
+import { StyleSheet } from "react-native";
+
+type Tab = {
+  name: string;
+  title: string;
+  headerTitle?: string;
+  tabBarIcon: BottomTabNavigationOptions["tabBarIcon"];
+};
+const TABS: Tab[] = [
+  {
+    name: "weekly-meals",
+    title: "Menu",
+    headerTitle: "Repas de la semaine",
+    tabBarIcon: MenuIcon,
+  },
+  {
+    name: "recipes",
+    title: "Recettes",
+    tabBarIcon: RecipeIcon,
+  },
+  {
+    name: "shopping-list",
+    title: "Courses",
+    headerTitle: "Liste de courses",
+    tabBarIcon: ShoppingCartIcon,
+  },
+  {
+    name: "profile",
+    title: "Profile",
+    tabBarIcon: ProfileIcon,
+  },
+];
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.gray,
         tabBarStyle: {
-          backgroundColor: colors.white,
-          borderTopColor: colors.gray300,
+          position: "absolute",
           paddingTop: 10,
-          opacity: 0.9,
-          backdropFilter: "blur(10px)",
         },
+        tabBarBackground: () => (
+          <BlurView
+            intensity={30}
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              overflow: "hidden",
+              backgroundColor: "transparent",
+            }}
+          />
+        ),
       }}
     >
-      <Tabs.Screen
-        name="weekly-meals"
-        options={{
-          title: "Menu",
-          headerTitle: "Repas de la semaine",
-          tabBarIcon: ({ color, size }) => <MenuIcon color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="recipes"
-        options={{
-          title: "Recettes",
-          tabBarIcon: ({ color, size }) => <RecipeIcon color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Courses",
-          headerTitle: "Liste de courses",
-          tabBarIcon: ({ color, size }) => <ShoppingCartIcon color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => <ProfileIcon color={color} size={size} />,
-        }}
-      />
+      {TABS.map(({ name, title, headerTitle, tabBarIcon }) => (
+        <Tabs.Screen key={`tab-${name}`} name={name} options={{ title, headerTitle, tabBarIcon }} />
+      ))}
     </Tabs>
   );
 }

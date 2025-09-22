@@ -13,7 +13,7 @@ export default function WeeklyMealsScreen() {
           headerShadowVisible: false,
         }}
       />
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={["top"]}>
         <MealList onPressMeal={(meal) => router.push({ pathname: "../meals/[id]", params: { id: meal.id } })} />
       </SafeAreaView>
     </View>
