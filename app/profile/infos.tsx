@@ -1,6 +1,6 @@
+import { AvatarIcon } from "@/components/icons/AvatarIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { colors, typography } from "@/theme";
-import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,12 +29,7 @@ export default function ProfileInfosScreen() {
       />
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <View style={styles.avatarWrapper}>
-          <Image
-            source={require("@/assets/images/avatar_placeholder.png")}
-            style={styles.avatarImage}
-            contentFit="cover"
-            transition={200}
-          />
+          <AvatarIcon size={120} />
         </View>
         <View style={styles.form}>
           <View style={styles.inputGroup}>
