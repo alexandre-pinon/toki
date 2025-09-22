@@ -5,7 +5,7 @@ import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date"
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import DraggableFlatList, { DragEndParams, RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 import "temporal-polyfill/global";
 import { Loader } from "./Loader";
 import { MealCard } from "./MealCard";
@@ -17,12 +17,7 @@ type MealListItem =
       meal: MealWithRecipe;
     }
   | {
-      type: "header";
-      key: string;
-      date: Temporal.PlainDate;
-    }
-  | {
-      type: "footer";
+      type: "divider";
       key: string;
       date: Temporal.PlainDate;
     };
@@ -33,6 +28,9 @@ type MealListProps = {
 export function MealList({ onPressMeal }: MealListProps) {
   const { upcomingMeals, updateMealDate, refetchUpcomingMeals, isLoading } = useUpcomingMeals();
   const [mealListItems, setMealListItems] = useState<MealListItem[]>([]);
+
+  const today = Temporal.Now.plainDateISO();
+  const lastMealDay = today.add({ days: Number(process.env.EXPO_PUBLIC_MEAL_LIST_DAYS) });
 
   useEffect(() => {
     const mealsByDate = groupMealsByDate(upcomingMeals);
@@ -51,27 +49,52 @@ export function MealList({ onPressMeal }: MealListProps) {
     });
   };
 
+  const onDragEnd = async ({ data, from, to }: DragEndParams<MealListItem>) => {
+    if (from === to) return;
+    const previousItems = [...mealListItems];
+    const droppedItem = data[to];
+    const replacedItem = previousItems[to];
+    const replacedItemDate = replacedItem.type === "meal" ? replacedItem.meal.date : replacedItem.date;
+    const targetDate =
+      from > to && replacedItem.type === "divider" ? replacedItemDate.subtract({ days: 1 }) : replacedItemDate;
+
+    if (droppedItem.type !== "meal") {
+      console.error("Invalid dropped item: ", droppedItem);
+      Alert.alert("Invalid dropped item");
+      await refetchUpcomingMeals();
+      return;
+    }
+
+    setMealListItems(data);
+    if (targetDate.equals(droppedItem.meal.date)) {
+      console.log("No need to update date. Skipping");
+      return;
+    }
+
+    try {
+      await updateMealDate(droppedItem.meal.id, targetDate);
+    } catch (error) {
+      console.error("Error updating meal date:", error);
+      Alert.alert("Error updating meal date. Please try again later");
+      setMealListItems(previousItems);
+    }
+  };
+
   const renderItem = ({ item, drag, isActive }: RenderItemParams<MealListItem>) => {
     const getItemToRender = () => {
       switch (item.type) {
-        case "header":
-          return (
-            <View style={styles.dayHeader}>
-              <Text style={[typography.body, styles.dayName]}>{mapPlainDateToDayName(item.date)}</Text>
-              <Text style={[typography.body, styles.dayDate]}>{mapPlainDateToLocaleString(item.date)}</Text>
-            </View>
-          );
         case "meal":
           return (
             <View style={styles.mealContainer}>
               <MealCard meal={item.meal} isDragged={isActive} />
             </View>
           );
-        case "footer":
+        case "divider":
           return (
-            <TouchableOpacity onPress={() => handleAddMeal(item.date)} style={styles.sectionFooter}>
-              <Text style={styles.addMeal}>+ Ajouter un repas</Text>
-            </TouchableOpacity>
+            <>
+              <SectionFooter onPress={() => handleAddMeal(item.date)} />
+              <SectionHeader date={item.date} />
+            </>
           );
       }
     };
@@ -97,46 +120,27 @@ export function MealList({ onPressMeal }: MealListProps) {
       contentContainerStyle={styles.listContent}
       showsVerticalScrollIndicator={false}
       data={mealListItems}
-      onDragEnd={async ({ data, from, to }) => {
-        if (from === to) return;
-        const previousItems = [...mealListItems];
-        const droppedItem = data[to];
-        const replacedItem = previousItems[to];
-        const targetDate = replacedItem.type === "meal" ? replacedItem.meal.date : replacedItem.date;
-
-        if (droppedItem.type !== "meal") {
-          console.error("Invalid dropped item: ", droppedItem);
-          Alert.alert("Invalid dropped item");
-          await refetchUpcomingMeals();
-          return;
-        }
-
-        if ((to > from && replacedItem.type === "footer") || (from > to && replacedItem.type === "header")) {
-          console.error("Invalid drop location: ", droppedItem);
-          Alert.alert("Invalid drop location");
-          await refetchUpcomingMeals();
-          return;
-        }
-
-        setMealListItems(data);
-        if (targetDate.equals(droppedItem.meal.date)) {
-          console.log("No need to update date. Skipping");
-          return;
-        }
-
-        try {
-          await updateMealDate(droppedItem.meal.id, targetDate);
-        } catch (error) {
-          console.error("Error updating meal date:", error);
-          Alert.alert("Error updating meal date. Please try again later");
-          setMealListItems(previousItems);
-        }
-      }}
+      onDragEnd={onDragEnd}
       keyExtractor={(item) => item.key}
       renderItem={renderItem}
+      ListHeaderComponent={<SectionHeader date={today} />}
+      ListFooterComponent={<SectionFooter onPress={() => handleAddMeal(lastMealDay)} />}
     />
   );
 }
+
+const SectionHeader = ({ date }: { date: Temporal.PlainDate }) => (
+  <View style={styles.dayHeader}>
+    <Text style={[typography.body, styles.dayName]}>{mapPlainDateToDayName(date)}</Text>
+    <Text style={[typography.body, styles.dayDate]}>{mapPlainDateToLocaleString(date)}</Text>
+  </View>
+);
+
+const SectionFooter = ({ onPress }: { onPress: () => void }) => (
+  <TouchableOpacity onPress={onPress} style={styles.sectionFooter}>
+    <Text style={styles.addMeal}>+ Ajouter un repas</Text>
+  </TouchableOpacity>
+);
 
 function groupMealsByDate(meals: MealWithRecipe[]): Record<string, MealWithRecipe[]> {
   return meals.reduce(
@@ -161,22 +165,20 @@ function createMealListItems(mealsByDate: Record<string, MealWithRecipe[]>): Mea
     const dateKey = date.toString();
     const dayMeals = mealsByDate[dateKey] || [];
 
-    mealListItems.push({
-      type: "header",
-      key: `header-${dateKey}`,
-      date,
-    });
+    if (i > 0) {
+      mealListItems.push({
+        type: "divider",
+        key: `divider-${dateKey}`,
+        date,
+      });
+    }
+
     dayMeals.forEach((dayMeal) => {
       mealListItems.push({
         type: "meal",
         key: dayMeal.id,
         meal: dayMeal,
       });
-    });
-    mealListItems.push({
-      type: "footer",
-      key: `footer-${dateKey}`,
-      date,
     });
   }
 
