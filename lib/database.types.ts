@@ -182,10 +182,12 @@ export type Database = {
           checked: boolean
           created_at: string
           id: string
+          ingredient_id: string | null
           meal_date: string | null
           meal_id: string | null
           name: string
           quantity: number | null
+          recipe_id: string | null
           unit: Database["public"]["Enums"]["unit_type"] | null
           updated_at: string
           user_id: string
@@ -195,10 +197,12 @@ export type Database = {
           checked?: boolean
           created_at?: string
           id?: string
+          ingredient_id?: string | null
           meal_date?: string | null
           meal_id?: string | null
           name: string
           quantity?: number | null
+          recipe_id?: string | null
           unit?: Database["public"]["Enums"]["unit_type"] | null
           updated_at: string
           user_id?: string
@@ -208,20 +212,36 @@ export type Database = {
           checked?: boolean
           created_at?: string
           id?: string
+          ingredient_id?: string | null
           meal_date?: string | null
           meal_id?: string | null
           name?: string
           quantity?: number | null
+          recipe_id?: string | null
           unit?: Database["public"]["Enums"]["unit_type"] | null
           updated_at?: string
           user_id?: string
         }
         Relationships: [
           {
+            foreignKeyName: "shopping_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "shopping_items_meal_id_fkey"
             columns: ["meal_id"]
             isOneToOne: false
             referencedRelation: "meals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
             referencedColumns: ["id"]
           },
         ]
@@ -238,7 +258,6 @@ export type Database = {
           quantity: number | null
           unit: Database["public"]["Enums"]["unit_type"] | null
           user_id: string | null
-          week_day: number | null
         }
         Relationships: []
       }

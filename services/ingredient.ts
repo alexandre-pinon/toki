@@ -5,6 +5,7 @@ import { byShoppingItemCategoryOrder, ShoppingItemCategory } from "@/types/shopp
 const fromDatabaseToDomain = (dbIngredient: OmitDBTimestamps<DBRow<"ingredients">>): Ingredient => ({
   id: dbIngredient.id,
   name: dbIngredient.name,
+  nameNormalized: dbIngredient.name_normalized,
   category: dbIngredient.category ?? "other",
 });
 
@@ -19,7 +20,9 @@ export const searchIngredient = async (searchTerm: string): Promise<Ingredient[]
 
 export const getIngredientSections = async (): Promise<IngredientListSection[]> => {
   //FIXME: paginate result somehow
-  const ingredients = getDbResponseDataOrThrow(await supabase.from("ingredients").select("*").limit(1000));
+  const ingredients = getDbResponseDataOrThrow(
+    await supabase.from("ingredients").select("*").limit(1000).order("name_normalized"),
+  );
 
   const ingredientsByCategory = ingredients.map(fromDatabaseToDomain).reduce(
     (acc, item) => {
@@ -38,4 +41,23 @@ export const getIngredientSections = async (): Promise<IngredientListSection[]> 
       data: items,
     }))
     .sort((a, b) => byShoppingItemCategoryOrder(a.title, b.title));
+};
+
+export const upsertIngredient = async (ingredient: Ingredient): Promise<Ingredient> => {
+  const result = getDbResponseDataOrThrow(
+    await supabase
+      .from("ingredients")
+      .upsert({
+        id: ingredient.id,
+        name: ingredient.name,
+        name_normalized: ingredient.nameNormalized,
+        category: ingredient.category,
+        updated_at: Temporal.Now.plainDateTimeISO().toString(),
+      })
+      .select("*")
+      .single(),
+  );
+  console.log({ result });
+
+  return fromDatabaseToDomain(result);
 };

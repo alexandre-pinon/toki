@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { RecipeListProvider } from "@/contexts/RecipeListContext";
 import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
 import { UpcomingMealsProvider } from "@/contexts/UpcomingMealsContext";
-import { colors, typography } from "@/theme";
 import { ErrorBoundaryProps, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -38,16 +37,7 @@ function RootLayoutNav() {
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="recipes" options={{ headerShown: false }} />
         <Stack.Screen name="meals" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="profile/ingredients"
-          options={{
-            title: "Ingrédients",
-            headerTitleStyle: typography.header,
-            headerShadowVisible: false,
-            headerBackButtonDisplayMode: "minimal",
-            headerTintColor: colors.black,
-          }}
-        />
+        <Stack.Screen name="profile/ingredients" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

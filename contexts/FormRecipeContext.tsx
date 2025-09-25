@@ -29,7 +29,7 @@ type FormRecipeContextType = {
   activeTab: RecipeTabName;
   setActiveTab: Dispatch<SetStateAction<FormRecipeContextType["activeTab"]>>;
   isLoading: boolean;
-  upsertRecipe: (callBack?: () => void) => void;
+  upsertRecipe: () => void;
 };
 
 const FormRecipeContext = createContext<FormRecipeContextType | null>(null);

@@ -1,16 +1,51 @@
-import { IngredientListItem } from "@/components/IngredientListItem";
 import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { ShoppingItemCategorySectionHeader } from "@/components/ShoppingItemCategorySectionHeader";
+import { UnderlinedListItem } from "@/components/UnderlinedListItem";
+import { useFormIngredient } from "@/contexts/FormIngredientContext";
 import { useIngredientList } from "@/contexts/IngredientListContext";
 import { colors } from "@/theme";
-import { useState } from "react";
-import { SectionList, StyleSheet, View } from "react-native";
+import { Ingredient, IngredientListSection } from "@/types/ingredient";
+import { useDebounce } from "@uidotdev/usehooks";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { SectionList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileIngredientsScreen() {
   const { isLoading, ingredientSections } = useIngredientList();
+  const { setFormIngredient } = useFormIngredient();
+  const [filteredIngredientSections, setFilteredIngredientSections] =
+    useState<IngredientListSection[]>(ingredientSections);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const handlePressIngredient = (ingredient: Ingredient) => {
+    setFormIngredient(ingredient);
+    router.push({ pathname: "./ingredients/edit" });
+  };
+
+  useEffect(() => {
+    const filterIngredientSections = async (query: string) => {
+      if (query.length === 0) {
+        setFilteredIngredientSections(ingredientSections);
+        return;
+      }
+
+      const filtered = [...ingredientSections]
+        .map((section) => ({
+          title: section.title,
+          data: section.data.filter((ingredient) =>
+            ingredient.nameNormalized.includes(debouncedSearchTerm.toLowerCase()),
+          ),
+        }))
+        .filter((section) => section.data.length > 0);
+
+      setFilteredIngredientSections(filtered);
+    };
+
+    filterIngredientSections(debouncedSearchTerm);
+  }, [debouncedSearchTerm, ingredientSections]);
 
   const displaySearchResults = () => {
     if (isLoading) {
@@ -19,11 +54,11 @@ export default function ProfileIngredientsScreen() {
 
     return (
       <SectionList
-        sections={ingredientSections}
+        sections={filteredIngredientSections}
         renderItem={({ item, section, index }) => (
-          <View style={styles.ingredientItemContainer}>
-            <IngredientListItem {...item} isLastItem={index === section.data.length - 1} />
-          </View>
+          <TouchableOpacity onPress={() => handlePressIngredient(item)} style={styles.ingredientItemContainer}>
+            <UnderlinedListItem title={item.name} isLastItem={index === section.data.length - 1} />
+          </TouchableOpacity>
         )}
         renderSectionHeader={({ section: { title } }) => <ShoppingItemCategorySectionHeader category={title} />}
         keyExtractor={(item) => item.id}
