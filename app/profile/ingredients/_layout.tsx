@@ -30,7 +30,7 @@ const ProfileIngredientsStack = () => {
 
   const handleSave = () => {
     upsertIngredient();
-    router.push({ pathname: "./" });
+    router.dismissTo({ pathname: "./" });
   };
 
   return (

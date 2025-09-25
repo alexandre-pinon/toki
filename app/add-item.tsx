@@ -88,7 +88,7 @@ export default function AddItemScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["bottom"]}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
           title: "Nouvel article",
@@ -113,7 +113,7 @@ export default function AddItemScreen() {
                   (!name.trim() || isLoading) && styles.saveButtonTextDisabled,
                 ]}
               >
-                Ajouter
+                Valider
               </Text>
             </TouchableOpacity>
           ),

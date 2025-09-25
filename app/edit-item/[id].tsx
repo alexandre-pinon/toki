@@ -110,7 +110,7 @@ export default function EditItemScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["bottom"]}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
           title: "Modifier l'article",
@@ -137,7 +137,7 @@ export default function EditItemScreen() {
                   (!name.trim() || isLoading) && styles.saveButtonTextDisabled,
                 ]}
               >
-                Enregistrer
+                Valider
               </Text>
             </TouchableOpacity>
           ),
