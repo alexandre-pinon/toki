@@ -1,3 +1,4 @@
+import { uuid } from "expo-modules-core";
 import { ShoppingItemCategory } from "./shopping/shopping-item-category";
 
 export type Ingredient = {
@@ -10,4 +11,13 @@ export type Ingredient = {
 export type IngredientListSection = {
   title: ShoppingItemCategory;
   data: Ingredient[];
+};
+
+export const createEmptyIngredient = (): Ingredient => {
+  return {
+    id: uuid.v4(),
+    name: "",
+    nameNormalized: "",
+    category: "other",
+  };
 };

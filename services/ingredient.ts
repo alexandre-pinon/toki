@@ -57,7 +57,6 @@ export const upsertIngredient = async (ingredient: Ingredient): Promise<Ingredie
       .select("*")
       .single(),
   );
-  console.log({ result });
 
   return fromDatabaseToDomain(result);
 };

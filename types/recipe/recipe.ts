@@ -46,7 +46,7 @@ export const createEmptyRecipeData = (): RecipeUpsertData => {
   return {
     recipe: {
       id: uuid.v4(),
-      name: "New recipe",
+      name: "Nouvelle recette",
       type: "main",
       servings: 4,
     },
