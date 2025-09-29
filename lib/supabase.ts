@@ -1,13 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageError } from "@supabase/storage-js";
-import { createClient, PostgrestSingleResponse } from "@supabase/supabase-js";
+import { createClient, PostgrestError, PostgrestSingleResponse } from "@supabase/supabase-js";
 import type { Database } from "./database.types.ts";
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("Missing Supabase environment variables");
+  throw new Error("Missing Supabase environment variables");
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -22,8 +22,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 export const getDbResponseDataOrThrow = <T>(response: PostgrestSingleResponse<T>): T => {
   const { data, error } = response;
   if (error) {
-    console.error(error);
-    throw error;
+    console.warn(error);
+    throw new PostgrestError(error);
   }
   return data;
 };
@@ -32,8 +32,8 @@ type StorageResponse<T> = { data: T; error: null } | { data: null; error: Storag
 export const getStorageResponseDataOrThrow = <T>(response: StorageResponse<T>): T => {
   const { data, error } = response;
   if (error) {
-    console.error(error);
-    throw error;
+    console.warn(error);
+    throw new StorageError(error.message);
   }
   return data;
 };

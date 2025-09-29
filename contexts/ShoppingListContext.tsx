@@ -8,12 +8,10 @@ import {
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
 import type { ShoppingListSection } from "@/types/shopping/shopping-list";
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Alert } from "react-native";
 import { useAuth } from "./AuthContext";
 
 type ShoppingListContextType = {
   sections: ShoppingListSection[];
-  error: Error | null;
   isLoading: boolean;
   loadShoppingList: () => Promise<void>;
   setChecked: (ids: string[], checked: boolean) => Promise<void>;
@@ -26,7 +24,6 @@ const ShoppingListContext = createContext<ShoppingListContextType | undefined>(u
 
 export function ShoppingListProvider({ children }: { children: ReactNode }) {
   const [sections, setSections] = useState<ShoppingListSection[]>([]);
-  const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { session } = useAuth();
 
@@ -41,21 +38,12 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(!options?.skipLoading);
         const items = await getShoppingListItems(session.user.id);
         setSections(items);
-        setError(null);
-      } catch (err) {
-        handleError(err, "Failed to load shopping list");
       } finally {
         setIsLoading(false);
       }
     },
     [session?.user.id],
   );
-
-  const handleError = (err: unknown, message: string) => {
-    const error = err instanceof Error ? err : new Error(message);
-    setError(error);
-    Alert.alert("Error", message);
-  };
 
   useEffect(() => {
     loadShoppingList();
@@ -67,9 +55,6 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await addShoppingListItem(item);
         await loadShoppingList();
-        setError(null);
-      } catch (err) {
-        handleError(err, "Failed to add item");
       } finally {
         setIsLoading(false);
       }
@@ -79,13 +64,8 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
 
   const setChecked = useCallback(
     async (ids: string[], checked: boolean) => {
-      try {
-        await setCheckedShoppingListItems(ids, checked);
-        await loadShoppingList({ skipLoading: true });
-        setError(null);
-      } catch (err) {
-        handleError(err, "Failed to update item");
-      }
+      await setCheckedShoppingListItems(ids, checked);
+      await loadShoppingList({ skipLoading: true });
     },
     [loadShoppingList],
   );
@@ -96,9 +76,6 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await updateShoppingListItem(id, item);
         await loadShoppingList();
-        setError(null);
-      } catch (err) {
-        handleError(err, "Failed to edit item");
       } finally {
         setIsLoading(false);
       }
@@ -112,9 +89,6 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await deleteShoppingListItem(id);
         await loadShoppingList();
-        setError(null);
-      } catch (err) {
-        handleError(err, "Failed to delete item");
       } finally {
         setIsLoading(false);
       }
@@ -125,7 +99,6 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(() => {
     return {
       sections,
-      error,
       isLoading,
       loadShoppingList,
       setChecked,
@@ -133,7 +106,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
       addItem,
       editItem,
     };
-  }, [addItem, editItem, deleteItem, error, isLoading, loadShoppingList, sections, setChecked]);
+  }, [addItem, editItem, deleteItem, isLoading, loadShoppingList, sections, setChecked]);
 
   return <ShoppingListContext.Provider value={contextValue}>{children}</ShoppingListContext.Provider>;
 }

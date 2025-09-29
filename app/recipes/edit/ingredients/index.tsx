@@ -31,10 +31,6 @@ export default function RecipeEditIngredientScreen() {
       try {
         const searchResults = await searchIngredient(query);
         setResults(searchResults);
-      } catch (error) {
-        console.error("Search error:", error);
-        setResults([]);
-        throw new Error("Error searching ingredients");
       } finally {
         setIsLoading(false);
       }

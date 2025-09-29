@@ -58,14 +58,10 @@ export function MealList({ onPressMeal }: MealListProps) {
     const targetDate =
       from > to && replacedItem.type === "divider" ? replacedItemDate.subtract({ days: 1 }) : replacedItemDate;
 
-    if (droppedItem.type !== "meal") {
-      console.error("Invalid dropped item: ", droppedItem);
-      Alert.alert("Invalid dropped item");
-      await refetchUpcomingMeals();
-      return;
-    }
+    if (droppedItem.type !== "meal") return;
 
     setMealListItems(data);
+
     if (targetDate.equals(droppedItem.meal.date)) {
       console.log("No need to update date. Skipping");
       return;
@@ -73,9 +69,8 @@ export function MealList({ onPressMeal }: MealListProps) {
 
     try {
       await updateMealDate(droppedItem.meal.id, targetDate);
-    } catch (error) {
-      console.error("Error updating meal date:", error);
-      Alert.alert("Error updating meal date. Please try again later");
+    } catch {
+      Alert.alert("Erreur", "Impossible de mettre à jour la date de ce repas, veuillez réessayer plus tard.");
       setMealListItems(previousItems);
     }
   };

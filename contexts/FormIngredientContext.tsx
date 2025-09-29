@@ -1,5 +1,6 @@
 import { upsertIngredient } from "@/services/ingredient";
 import { Ingredient } from "@/types/ingredient";
+import { PostgrestError } from "@supabase/supabase-js";
 import {
   createContext,
   Dispatch,
@@ -10,6 +11,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { Alert } from "react-native";
 import { useIngredientList } from "./IngredientListContext";
 
 type FormIngredientContextType = {
@@ -33,8 +35,13 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
 
     try {
       setIsLoading(true);
-      await upsertIngredient(formIngredient);
+      await upsertIngredient({ ...formIngredient, name: formIngredient.name.toLowerCase() });
       await refetchIngredients();
+    } catch (error) {
+      if (error instanceof PostgrestError && error.code === "23505") {
+        return Alert.alert(`L'ingrédient '${formIngredient.name}' existe déjà`);
+      }
+      throw error;
     } finally {
       setIsLoading(false);
     }

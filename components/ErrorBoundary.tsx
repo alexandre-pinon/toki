@@ -8,10 +8,10 @@ export function CustomErrorBoundary({ error, retry }: ErrorBoundaryProps) {
       <Text style={[typography.header, styles.errorText]}>{error.message}</Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.retryButton} onPress={retry}>
-          <Text style={[typography.subtitle, styles.retryButtonText]}>Retry</Text>
+          <Text style={[typography.subtitle, styles.retryButtonText]}>Réessayer</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.goBackButton} onPress={() => router.back()}>
-          <Text style={[typography.subtitle, styles.goBackButtonText]}>Go Back</Text>
+          <Text style={[typography.subtitle, styles.goBackButtonText]}>Revenir en arrière</Text>
         </TouchableOpacity>
       </View>
     </View>
