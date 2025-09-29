@@ -16,7 +16,7 @@ type Tab = {
 };
 const TABS: Tab[] = [
   {
-    name: "weekly-meals",
+    name: "index",
     title: "Menu",
     headerTitle: "Repas de la semaine",
     tabBarIcon: MenuIcon,
