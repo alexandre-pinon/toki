@@ -46,9 +46,17 @@ export default function RecipeEditIngredientQuantityScreen() {
   const onChangeQuantity = (value: string) => {
     setQuantityString(value);
 
+    if (value === "") {
+      setFormCurrentIngredient((prev) => {
+        if (!prev) return null;
+        const { quantity, ...prevWithoutQuantity } = prev;
+        return prevWithoutQuantity;
+      });
+      return;
+    }
+
     const quantity = Number.parseFloat(value);
     if (Number.isNaN(quantity)) return;
-
     setFormCurrentIngredient((prev) => {
       if (!prev) return null;
       return { ...prev, quantity };

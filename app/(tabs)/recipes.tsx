@@ -1,8 +1,10 @@
 import { RecipeList } from "@/components/RecipeList";
 import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
+import { Recipe } from "@/types/recipe/recipe";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
+import { useCallback } from "react";
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,6 +18,10 @@ export default function RecipesScreen() {
       params: { id: newRecipeId },
     });
   };
+
+  const handlePressRecipe = useCallback((recipe: Recipe) => {
+    router.push({ pathname: "../recipes/[id]", params: { id: recipe.id } });
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -36,9 +42,7 @@ export default function RecipesScreen() {
         }}
       />
       <SafeAreaView style={styles.container}>
-        <RecipeList
-          onPressRecipe={(recipe) => router.push({ pathname: "../recipes/[id]", params: { id: recipe.id } })}
-        />
+        <RecipeList onPressRecipe={handlePressRecipe} />
       </SafeAreaView>
     </View>
   );
