@@ -14,7 +14,14 @@ type RecipeCardProps = {
 export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.container}>
-      <Image source={recipe.imageUrl} style={styles.image} contentFit="cover" transition={200} />
+      <Image
+        source={recipe.imageUrl}
+        style={styles.image}
+        placeholder={require("@/assets/images/meal_placeholder.jpg")}
+        placeholderContentFit="cover"
+        contentFit="cover"
+        transition={200}
+      />
       <View style={styles.content}>
         <Text style={[typography.subtitle, styles.title]}>{recipe.name}</Text>
         <Text style={typography.subtext}>{recipe.lastTimeDone ? recipe.lastTimeDone.toLocaleString() : "-"}</Text>

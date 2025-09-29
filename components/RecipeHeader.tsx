@@ -2,7 +2,7 @@ import { colors } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RecipeHeaderProps = {
@@ -31,6 +31,8 @@ export function RecipeHeader({ id, onDelete, imageUrl, showEdit }: RecipeHeaderP
       <Image
         source={imageUrl ? { uri: imageUrl } : undefined}
         style={styles.image}
+        placeholder={require("@/assets/images/meal_placeholder.jpg")}
+        placeholderContentFit="cover"
         contentFit="cover"
         transition={200}
       />
@@ -49,17 +51,13 @@ export function RecipeHeader({ id, onDelete, imageUrl, showEdit }: RecipeHeaderP
   );
 }
 
-const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   imageContainer: {
-    width: "100%",
-    height: width * 0.65,
     position: "relative",
     backgroundColor: colors.gray100,
   },
   image: {
-    width: "100%",
-    height: "100%",
+    height: 255,
   },
   backButton: {
     position: "absolute",

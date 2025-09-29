@@ -131,7 +131,7 @@ export default function RecipeEditScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 9],
       quality: 1,
     });
 
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   imageContainer: {
-    height: 200,
+    height: 255,
     borderWidth: 2,
     borderColor: colors.primary,
     borderStyle: "dashed",

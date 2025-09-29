@@ -24,7 +24,11 @@ export function BottomSheetPicker({ visible, title, options, onSelect, onClose, 
       return;
     }
 
-    visible ? showAnimation() : hideAnimation(onClose);
+    if (visible) {
+      showAnimation();
+    } else {
+      hideAnimation(onClose);
+    }
     isVisible.current = visible;
   }, [visible, showAnimation, hideAnimation, onClose]);
 
@@ -104,12 +108,9 @@ const styles = StyleSheet.create({
   pickerTitle: {
     fontWeight: "600",
   },
-  pickerCancelButton: {
-    width: 80,
-  },
+  pickerCancelButton: {},
   pickerDoneButton: {
-    width: 80,
-    alignItems: "flex-end",
+    paddingHorizontal: 12,
   },
   picker: {
     height: 200,

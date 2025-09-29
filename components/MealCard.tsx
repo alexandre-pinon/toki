@@ -12,7 +12,14 @@ type MealCardProps = {
 export function MealCard({ meal, isDragged }: MealCardProps) {
   return (
     <View style={[styles.mealCard, { boxShadow: isDragged ? commonStyles.activeBoxShadow : commonStyles.boxShadow }]}>
-      <Image source={meal.recipe.imageUrl} style={styles.mealImage} contentFit="cover" transition={200} />
+      <Image
+        source={meal.recipe.imageUrl}
+        style={styles.mealImage}
+        placeholder={require("@/assets/images/meal_placeholder.jpg")}
+        placeholderContentFit="cover"
+        contentFit="cover"
+        transition={200}
+      />
       <View style={styles.mealContent}>
         <Text style={[typography.subtitle, styles.mealTitle]}>{meal.recipe.name}</Text>
         <Text style={[typography.subtext, styles.mealType]}>{mapRecipeTypeToName(meal.recipe.type)}</Text>
