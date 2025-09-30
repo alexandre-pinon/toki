@@ -19,6 +19,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.5.2",
     "@react-navigation/native": "^7.1.6",
+    "@supabase/storage-js": "^2.12.2",
     "@supabase/supabase-js": "^2.50.2",
     "@uidotdev/usehooks": "^2.4.1",
     "base64-arraybuffer": "^1.0.2",
