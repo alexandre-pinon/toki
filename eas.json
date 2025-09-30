@@ -10,21 +10,24 @@
       "environment": "development",
       "env": {
         "APP_PROFILE": "dev"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
       "environment": "preview",
       "env": {
         "APP_PROFILE": "preview"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
       "environment": "production",
       "env": {
         "APP_PROFILE": "prod"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {

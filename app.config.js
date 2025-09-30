@@ -12,6 +12,14 @@ export default ({ config }) => {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
 
+    // used by eas updates
+    updates: {
+      url: "https://u.expo.dev/0405d06b-39b8-4e1b-9ecf-8d18b75fd7ef",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
+
     ios: {
       supportsTablet: true,
       config: {
