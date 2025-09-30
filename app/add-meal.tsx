@@ -19,16 +19,13 @@ export default function AddMealScreen() {
   const addMeal = async ({ id: recipeId, servings }: Recipe) => {
     try {
       setIsLoading(true);
-      const { id } = await createMeal({
+      await createMeal({
         recipeId,
         date: Temporal.PlainDate.from(mealDate),
         servings,
       });
       await Promise.all([refetchUpcomingMeals(), loadShoppingList()]);
-      router.replace({
-        pathname: "./meals/[id]",
-        params: { id },
-      });
+      router.dismissTo({ pathname: "./" });
     } finally {
       setIsLoading(false);
     }

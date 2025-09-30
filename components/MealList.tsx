@@ -26,7 +26,7 @@ type MealListProps = {
   onPressMeal: (meal: Meal) => void;
 };
 export function MealList({ onPressMeal }: MealListProps) {
-  const { upcomingMeals, updateMealDate, refetchUpcomingMeals, isLoading } = useUpcomingMeals();
+  const { upcomingMeals, updateMealDate, isLoading } = useUpcomingMeals();
   const [mealListItems, setMealListItems] = useState<MealListItem[]>([]);
 
   const today = Temporal.Now.plainDateISO();
@@ -87,7 +87,7 @@ export function MealList({ onPressMeal }: MealListProps) {
         case "divider":
           return (
             <>
-              <SectionFooter onPress={() => handleAddMeal(item.date)} />
+              <SectionFooter onPress={() => handleAddMeal(item.date.subtract({ days: 1 }))} />
               <SectionHeader date={item.date} />
             </>
           );

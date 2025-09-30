@@ -39,13 +39,8 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
 
   const updateMealDate = useCallback(
     async (id: string, date: Temporal.PlainDate) => {
-      try {
-        // setIsLoading(true);
-        await updateDate(id, date);
-        await Promise.all([getUserUpcomingMeals({ skipLoading: true }), loadShoppingList()]);
-      } finally {
-        // setIsLoading(false);
-      }
+      await updateDate(id, date);
+      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), loadShoppingList()]);
     },
     [getUserUpcomingMeals, loadShoppingList],
   );

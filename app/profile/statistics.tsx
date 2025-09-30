@@ -8,7 +8,6 @@ export default function ProfileStatisticsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Stack.Screen
-        name="statistics"
         options={{
           title: "Statistiques",
           headerTitleStyle: typography.header,
