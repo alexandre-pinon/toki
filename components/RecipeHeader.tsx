@@ -16,7 +16,7 @@ export function RecipeHeader({ id, onDelete, imageUrl, showEdit }: RecipeHeaderP
   const insets = useSafeAreaInsets();
 
   const handleCancel = () => {
-    router.back();
+    router.dismissTo({ pathname: ".." });
   };
 
   const handleEdit = () => {

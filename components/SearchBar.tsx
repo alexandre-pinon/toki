@@ -21,6 +21,11 @@ export const SearchBar = ({ query, filters, autoFocus }: SearchBarProps) => {
           autoFocus={autoFocus ?? false}
         />
 
+        {query.value.length > 0 && (
+          <TouchableOpacity style={styles.clearButton} onPress={() => query.set("")}>
+            <Ionicons name="close" size={20} color={colors.gray} />
+          </TouchableOpacity>
+        )}
         {filters && (
           <TouchableOpacity style={styles.filterButton} onPress={() => filters.set(!filters.value)}>
             <Ionicons name="filter" size={20} color={colors.gray} />
@@ -56,4 +61,5 @@ const styles = StyleSheet.create({
   filterButton: {
     paddingLeft: 12,
   },
+  clearButton: {},
 });

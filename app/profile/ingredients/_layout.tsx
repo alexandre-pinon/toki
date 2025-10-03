@@ -44,13 +44,13 @@ const ProfileIngredientsStack = () => {
           headerBackButtonDisplayMode: "minimal",
           headerTintColor: colors.black,
           headerLeft: () => (
-            <TouchableOpacity onPress={handleCancel} disabled={isLoading}>
+            <TouchableOpacity onPress={handleCancel} disabled={isLoading} style={styles.headerButton}>
               <Ionicons name="chevron-back" size={28} />
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity onPress={handleAdd} style={styles.actionButton}>
-              <Ionicons name="add" size={24} color={colors.primary} />
+            <TouchableOpacity onPress={handleAdd} style={styles.headerButton}>
+              <Ionicons name="add" size={28} color={colors.primary} />
             </TouchableOpacity>
           ),
         }}
@@ -89,6 +89,9 @@ const ProfileIngredientsStack = () => {
 };
 
 const styles = StyleSheet.create({
+  headerButton: {
+    marginLeft: 3,
+  },
   actionButton: {
     paddingHorizontal: 8,
   },

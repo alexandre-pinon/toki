@@ -41,7 +41,7 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
   } = useFormRecipe();
 
   const handleCancel = () => {
-    router.dismissTo({ pathname: "./[id]", params: { id: formRecipe.id } });
+    router.dismissTo({ pathname: "../[id]", params: { id: formRecipe.id } });
   };
 
   const handleSave = () => {

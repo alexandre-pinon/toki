@@ -98,9 +98,8 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray200,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 10,
+    padding: 12,
     fontSize: 12,
   },
   categorySelector: {
@@ -109,9 +108,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray200,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 12,
   },
   categoryText: {
     fontSize: 12,

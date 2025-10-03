@@ -9,7 +9,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
@@ -84,7 +84,9 @@ export default function RecipeEditIngredientScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <SearchBar query={{ value: searchTerm, set: setSearchTerm }} autoFocus />
-      {displaySearchResults()}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.content}>
+        {displaySearchResults()}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -99,6 +101,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 12,
+  },
+  content: {
+    flex: 1,
   },
   image: {
     width: 80,

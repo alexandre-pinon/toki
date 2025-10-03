@@ -388,9 +388,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray200,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 12,
   },
   typeText: {
     fontSize: 12,
