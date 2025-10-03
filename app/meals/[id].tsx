@@ -59,7 +59,7 @@ export default function MealScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView>
-        <RecipeHeader id={recipe.id} onDelete={onDelete} imageUrl={recipe.imageUrl} />
+        <RecipeHeader id={recipe.id} imageUrl={recipe.imageUrl} />
         <RecipeInfo
           recipe={recipe}
           meal={currentMeal}

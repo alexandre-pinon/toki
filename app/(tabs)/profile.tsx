@@ -5,6 +5,7 @@ import { StatisticIcon } from "@/components/icons/StatisticIcon";
 import { ProfileMenuItem } from "@/components/ProfileMenuItem";
 import { useAuth } from "@/contexts/AuthContext";
 import { colors, typography } from "@/theme";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +17,7 @@ export default function ProfileScreen() {
     const success = await signOut();
     if (success) {
       router.replace("/auth");
+      Image.clearDiskCache();
     }
   };
 

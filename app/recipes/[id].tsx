@@ -53,7 +53,7 @@ export default function RecipeDetailsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView>
-        <RecipeHeader id={recipe.id} onDelete={onDelete} imageUrl={recipe.imageUrl} showEdit />
+        <RecipeHeader id={recipe.id} imageUrl={recipe.imageUrl} />
         <RecipeInfo recipe={recipe} />
         <RecipeTabs tab={tab} setTab={setTab} />
         <View style={styles.tabsContainer}>{displayActiveTab()}</View>

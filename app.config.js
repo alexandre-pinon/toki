@@ -50,9 +50,9 @@ export default ({ config }) => {
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
-          imageWidth: 200,
-          resizeMode: "contain",
+          image: "./assets/images/toki_splash_screen.png",
+          imageWidth: 172,
+          resizeMode: "cover",
           backgroundColor: "#ffffff",
         },
       ],

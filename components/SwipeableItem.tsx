@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type SwipeableItemProps = PropsWithChildren & {
-  onEdit: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
   disabled?: boolean;
 };
@@ -15,7 +15,9 @@ export const SwipeableItem = ({ onEdit, onDelete, disabled, children }: Swipeabl
 
   const onPressEdit = () => {
     swipeableRef.current?.close();
-    onEdit();
+    if (onEdit) {
+      onEdit();
+    }
   };
 
   const onPressDelete = () => {
@@ -28,9 +30,11 @@ export const SwipeableItem = ({ onEdit, onDelete, disabled, children }: Swipeabl
   const renderRightActions = () => {
     return (
       <View style={styles.actions}>
-        <TouchableOpacity onPress={onPressEdit} style={styles.editAction}>
-          <Ionicons name="pencil-outline" size={24} color="white" />
-        </TouchableOpacity>
+        {onEdit && (
+          <TouchableOpacity onPress={onPressEdit} style={styles.editAction}>
+            <Ionicons name="pencil-outline" size={24} color="white" />
+          </TouchableOpacity>
+        )}
         {onDelete && (
           <TouchableOpacity onPress={onPressDelete} style={styles.deleteAction}>
             <Ionicons name="trash-outline" size={24} color="white" />
