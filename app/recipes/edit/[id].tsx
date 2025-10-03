@@ -171,7 +171,12 @@ export default function RecipeEditScreen() {
         <View style={styles.section}>
           <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
             {formRecipe.imageUrl ? (
-              <Image source={{ uri: formRecipe.imageUrl }} style={styles.recipeImage} contentFit="cover" />
+              <Image
+                source={{ uri: formRecipe.imageUrl }}
+                style={styles.recipeImage}
+                contentFit="cover"
+                cachePolicy="none"
+              />
             ) : (
               <View style={styles.imagePlaceholder}>
                 <Ionicons name="camera-outline" size={32} color={colors.gray400} />

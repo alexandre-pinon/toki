@@ -6,8 +6,9 @@ type SearchBarProps = {
   query: { value: string; set: (query: string) => void };
   filters?: { value: boolean; set: (show: boolean) => void };
   autoFocus?: boolean;
+  autoCorrect?: boolean;
 };
-export const SearchBar = ({ query, filters, autoFocus }: SearchBarProps) => {
+export const SearchBar = ({ query, filters, autoFocus, autoCorrect }: SearchBarProps) => {
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
@@ -19,6 +20,7 @@ export const SearchBar = ({ query, filters, autoFocus }: SearchBarProps) => {
           onChangeText={query.set}
           placeholderTextColor={colors.gray}
           autoFocus={autoFocus ?? false}
+          autoCorrect={autoCorrect ?? false}
         />
 
         {query.value.length > 0 && (

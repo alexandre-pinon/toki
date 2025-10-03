@@ -2,7 +2,7 @@ import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
 import type { Recipe, RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
 import { byShoppingItemCategoryOrder } from "@/types/shopping/shopping-item-category";
 import mime from "mime";
-import { removeImage, uploadImage } from "./image";
+import { refreshImageCache, removeImage, uploadImage } from "./image";
 
 export const getRecipes = async (userId: string): Promise<Recipe[]> => {
   const recipes = getDbResponseDataOrThrow(
@@ -84,6 +84,12 @@ export const upsertRecipe = async ({ recipe, ingredients, instructions }: Recipe
     const filePath = `recipes/${recipe.id}.${mime.getExtension(recipe.imageType)}`;
     const uploadedImagePath = await uploadImage(recipe.imageUrl, filePath, recipe.imageType);
     recipe.imageUrl = uploadedImagePath;
+    setTimeout(
+      () => {
+        refreshImageCache(uploadedImagePath);
+      },
+      5 * 60 * 1000, // 5 minutes
+    );
   }
 
   getDbResponseDataOrThrow(

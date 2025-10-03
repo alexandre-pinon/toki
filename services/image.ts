@@ -1,5 +1,6 @@
 import { getStorageResponseDataOrThrow, supabase } from "@/lib/supabase";
 import { File } from "expo-file-system";
+import { Image } from "expo-image";
 
 const BUCKET_NAME = "toki-images";
 
@@ -19,4 +20,12 @@ export const uploadImage = async (uri: string, path: string, mimeType: string): 
 
 export const removeImage = async (path: string): Promise<void> => {
   getStorageResponseDataOrThrow(await supabase.storage.from(BUCKET_NAME).remove([path]));
+};
+
+export const refreshImageCache = async (uri: string): Promise<void> => {
+  const cachedImagePath = await Image.getCachePathAsync(uri);
+  if (cachedImagePath) {
+    new File(cachedImagePath).delete();
+    await Image.prefetch(uri, "disk");
+  }
 };
