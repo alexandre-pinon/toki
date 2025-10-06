@@ -1,19 +1,22 @@
 import { useRecipeList } from "@/contexts/RecipeListContext";
-import { colors, typography } from "@/theme";
+import { colors, commonStyles, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
-import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
+import Animated, { SlideInLeft, SlideOutLeft } from "react-native-reanimated";
 import { Loader } from "./Loader";
 import { RecipeCard } from "./RecipeCard";
 import { SearchBar } from "./SearchBar";
+import { SwipeableItem } from "./SwipeableItem";
 
 type RecipeListProps = {
   onPressRecipe: (recipe: Recipe) => void;
 };
 export function RecipeList({ onPressRecipe }: RecipeListProps) {
-  const { recipes, isLoading } = useRecipeList();
+  const { recipes, deleteUserRecipe, isLoading } = useRecipeList();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<RecipeType | "all">("all");
@@ -33,6 +36,50 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
     setFilteredRecipes(filtered);
   }, [recipes, searchQuery, selectedType]);
 
+  const handleDeleteRecipe = useCallback(
+    (recipeId: string, swipeable?: SwipeableMethods) => {
+      Alert.alert(
+        "Supprimer la recette",
+        "Êtes-vous sûr de vouloir supprimer cette recette ?",
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+            onPress: () => {
+              swipeable?.close();
+            },
+          },
+          {
+            text: "Supprimer",
+            style: "destructive",
+            onPress: async () => {
+              await deleteUserRecipe(recipeId);
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+    },
+    [deleteUserRecipe],
+  );
+
+  const renderItem = ({ item }: ListRenderItemInfo<Recipe>) => {
+    return (
+      <Animated.View
+        style={[styles.recipeContainer, { boxShadow: commonStyles.boxShadow }]}
+        entering={SlideInLeft}
+        exiting={SlideOutLeft}
+      >
+        <SwipeableItem
+          onDelete={(swipeable) => handleDeleteRecipe(item.id, swipeable)}
+          actionsStyles={{ borderRadius: 12 }}
+        >
+          <RecipeCard recipe={item} onPress={() => onPressRecipe(item)} />
+        </SwipeableItem>
+      </Animated.View>
+    );
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -51,7 +98,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
       {filteredRecipes.length > 0 ? (
         <FlatList
           data={filteredRecipes}
-          renderItem={({ item }) => <RecipeCard recipe={item} onPress={() => onPressRecipe(item)} />}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
         />
@@ -107,6 +154,9 @@ const FilterBar = ({ selectedType, setSelectedType }: FilterBarProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  recipeContainer: {
+    borderRadius: 12,
   },
   centerContainer: {
     flex: 1,

@@ -1,10 +1,9 @@
-import { deleteMeal, getMealById, updateServings } from "@/services/meal";
+import { getMealById, updateServings } from "@/services/meal";
 import { getRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { Meal } from "@/types/weekly-meals/meal";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useShoppingList } from "./ShoppingListContext";
-import { useUpcomingMeals } from "./UpcomingMealsContext";
 
 type CurrentMealContextType = {
   currentMeal: Meal | null;
@@ -12,7 +11,6 @@ type CurrentMealContextType = {
   isLoading: boolean;
   incrementServings: () => void;
   decrementServings: () => void;
-  deleteCurrentMeal: () => Promise<void>;
 };
 
 const CurrentMealContext = createContext<CurrentMealContextType | null>(null);
@@ -22,7 +20,6 @@ type CurrentMealProviderProps = PropsWithChildren & {
 };
 export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) => {
   const { loadShoppingList } = useShoppingList();
-  const { refetchUpcomingMeals } = useUpcomingMeals();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMeal, setCurrentMeal] = useState<Meal | null>(null);
   const [currentRecipe, setCurrentRecipe] = useState<RecipeDetails | null>(null);
@@ -61,16 +58,6 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
     }
   }, [currentMeal]);
 
-  const deleteCurrentMeal = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      await deleteMeal(id);
-      await Promise.all([refetchUpcomingMeals(), loadShoppingList()]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, refetchUpcomingMeals, loadShoppingList]);
-
   const processServingsUpdates = useCallback(async () => {
     if (!currentMeal || !(servingsPendingUpdates.length > 0) || isProcessingServingsUpdate) {
       return;
@@ -108,9 +95,8 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
       isLoading,
       incrementServings,
       decrementServings,
-      deleteCurrentMeal,
     };
-  }, [currentMeal, currentRecipe, isLoading, incrementServings, decrementServings, deleteCurrentMeal]);
+  }, [currentMeal, currentRecipe, isLoading, incrementServings, decrementServings]);
 
   return <CurrentMealContext.Provider value={contextValue}>{children}</CurrentMealContext.Provider>;
 };

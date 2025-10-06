@@ -51,11 +51,11 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ShoppingListProvider>
-        <RecipeListProvider>
-          <UpcomingMealsProvider>
+        <UpcomingMealsProvider>
+          <RecipeListProvider>
             <RootLayoutNav />
-          </UpcomingMealsProvider>
-        </RecipeListProvider>
+          </RecipeListProvider>
+        </UpcomingMealsProvider>
       </ShoppingListProvider>
     </AuthProvider>
   );

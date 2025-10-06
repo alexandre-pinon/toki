@@ -6,13 +6,12 @@ import { RecipeInstructionList } from "@/components/RecipeInstructionList";
 import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
 import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { colors } from "@/theme";
-import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeDetailsScreen() {
-  const { currentRecipe, deleteCurrentRecipe, isLoading } = useCurrentRecipe();
+  const { currentRecipe, isLoading } = useCurrentRecipe();
   const [tab, setTab] = useState<RecipeTabName>("ingredients");
 
   if (isLoading || !currentRecipe) return <Loader />;
@@ -26,28 +25,6 @@ export default function RecipeDetailsScreen() {
       case "instructions":
         return <RecipeInstructionList instructions={instructions} />;
     }
-  };
-
-  const onDelete = () => {
-    Alert.alert(
-      "Supprimer la recette",
-      "Êtes-vous sûr de vouloir supprimer cette recette ?",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-        },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: async () => {
-            await deleteCurrentRecipe();
-            router.back();
-          },
-        },
-      ],
-      { cancelable: true },
-    );
   };
 
   return (

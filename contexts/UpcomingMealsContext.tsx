@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { getUpcomingMeals, updateDate } from "@/services/meal";
+import { deleteMeal, getUpcomingMeals, updateDate } from "@/services/meal";
 import { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useShoppingList } from "./ShoppingListContext";
@@ -9,6 +9,7 @@ type UpcomingMealsContextType = {
   isLoading: boolean;
   refetchUpcomingMeals: (options?: { skipLoading: boolean }) => Promise<void>;
   updateMealDate: (id: string, date: Temporal.PlainDate) => Promise<void>;
+  deleteUpcomingMeal: (id: string) => Promise<void>;
 };
 
 const UpcomingMealsContext = createContext<UpcomingMealsContextType | null>(null);
@@ -45,6 +46,14 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
     [getUserUpcomingMeals, loadShoppingList],
   );
 
+  const deleteUpcomingMeal = useCallback(
+    async (id: string) => {
+      await deleteMeal(id);
+      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), loadShoppingList()]);
+    },
+    [getUserUpcomingMeals, loadShoppingList],
+  );
+
   useEffect(() => {
     getUserUpcomingMeals();
   }, [getUserUpcomingMeals]);
@@ -55,8 +64,9 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
       isLoading,
       refetchUpcomingMeals: getUserUpcomingMeals,
       updateMealDate,
+      deleteUpcomingMeal,
     }),
-    [upcomingMeals, isLoading, getUserUpcomingMeals, updateMealDate],
+    [upcomingMeals, isLoading, getUserUpcomingMeals, updateMealDate, deleteUpcomingMeal],
   );
 
   return <UpcomingMealsContext.Provider value={contextValue}>{children}</UpcomingMealsContext.Provider>;

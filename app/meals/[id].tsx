@@ -6,14 +6,12 @@ import { RecipeInstructionList } from "@/components/RecipeInstructionList";
 import { RecipeTabName, RecipeTabs } from "@/components/RecipeTabs";
 import { useCurrentMeal } from "@/contexts/CurrentMealContext";
 import { colors } from "@/theme";
-import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MealScreen() {
-  const { currentMeal, currentRecipe, incrementServings, decrementServings, deleteCurrentMeal, isLoading } =
-    useCurrentMeal();
+  const { currentMeal, currentRecipe, incrementServings, decrementServings, isLoading } = useCurrentMeal();
   const [tab, setTab] = useState<RecipeTabName>("instructions");
 
   if (isLoading || !currentMeal || !currentRecipe) return <Loader />;
@@ -32,28 +30,6 @@ export default function MealScreen() {
       case "instructions":
         return <RecipeInstructionList instructions={instructions} />;
     }
-  };
-
-  const onDelete = () => {
-    Alert.alert(
-      "Supprimer le repas",
-      "Êtes-vous sûr de vouloir supprimer ce repas ?",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-        },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: async () => {
-            await deleteCurrentMeal();
-            router.back();
-          },
-        },
-      ],
-      { cancelable: true },
-    );
   };
 
   return (

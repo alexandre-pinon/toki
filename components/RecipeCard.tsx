@@ -1,4 +1,4 @@
-import { colors, commonStyles, typography } from "@/theme";
+import { colors, typography } from "@/theme";
 import type { Recipe } from "@/types/recipe/recipe";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 12,
     flexDirection: "row",
-    boxShadow: commonStyles.boxShadow,
   },
   image: {
     width: 130,

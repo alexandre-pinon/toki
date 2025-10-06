@@ -1,4 +1,4 @@
-import { colors, commonStyles, typography } from "@/theme";
+import { colors, typography } from "@/theme";
 import { mapRecipeTypeToName } from "@/types/recipe/recipe-type";
 import type { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { Image } from "expo-image";
@@ -6,12 +6,11 @@ import { StyleSheet, Text, View } from "react-native";
 
 type MealCardProps = {
   meal: MealWithRecipe;
-  isDragged?: boolean;
 };
 
-export function MealCard({ meal, isDragged }: MealCardProps) {
+export function MealCard({ meal }: MealCardProps) {
   return (
-    <View style={[styles.mealCard, { boxShadow: isDragged ? commonStyles.activeBoxShadow : commonStyles.boxShadow }]}>
+    <View style={[styles.mealCard]}>
       <Image
         source={meal.recipe.imageUrl}
         style={styles.mealImage}

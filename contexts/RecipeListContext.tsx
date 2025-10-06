@@ -1,38 +1,46 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { getRecipes, upsertRecipe } from "@/services/recipe";
+import { deleteRecipe, getRecipes, upsertRecipe } from "@/services/recipe";
 import { createEmptyRecipeData, type Recipe } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useShoppingList } from "./ShoppingListContext";
+import { useUpcomingMeals } from "./UpcomingMealsContext";
 
 type RecipeListContextType = {
   recipes: Recipe[];
   isLoading: boolean;
   isAddRecipeLoading: boolean;
-  refetchRecipes: () => Promise<void>;
+  refetchRecipes: (options?: { skipLoading: boolean }) => Promise<void>;
   createNewRecipe: () => Promise<{ newRecipeId: string }>;
+  deleteUserRecipe: (id: string) => Promise<void>;
 };
 
 const RecipeListContext = createContext<RecipeListContextType | null>(null);
 
 export const RecipeListProvider = ({ children }: PropsWithChildren) => {
+  const { loadShoppingList } = useShoppingList();
+  const { refetchUpcomingMeals } = useUpcomingMeals();
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isAddRecipeLoading, setIsAddRecipeLoading] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
-  const getUserRecipes = useCallback(async () => {
-    if (!session?.user.id) {
-      setRecipes([]);
-      return;
-    }
+  const getUserRecipes = useCallback(
+    async (options?: { skipLoading: boolean }) => {
+      if (!session?.user.id) {
+        setRecipes([]);
+        return;
+      }
 
-    try {
-      setIsLoading(true);
-      const recipes = await getRecipes(session.user.id);
-      setRecipes(recipes);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [session?.user.id]);
+      try {
+        setIsLoading(!options?.skipLoading);
+        const recipes = await getRecipes(session.user.id);
+        setRecipes(recipes);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [session?.user.id],
+  );
 
   const createNewRecipe = useCallback(async () => {
     try {
@@ -46,6 +54,14 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
     }
   }, [getUserRecipes]);
 
+  const deleteUserRecipe = useCallback(
+    async (id: string) => {
+      await deleteRecipe(id);
+      await Promise.all([getUserRecipes({ skipLoading: true }), refetchUpcomingMeals(), loadShoppingList()]);
+    },
+    [getUserRecipes, refetchUpcomingMeals, loadShoppingList],
+  );
+
   useEffect(() => {
     getUserRecipes();
   }, [getUserRecipes]);
@@ -57,8 +73,9 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
       isAddRecipeLoading,
       refetchRecipes: getUserRecipes,
       createNewRecipe,
+      deleteUserRecipe,
     }),
-    [recipes, isLoading, isAddRecipeLoading, getUserRecipes, createNewRecipe],
+    [recipes, isLoading, isAddRecipeLoading, getUserRecipes, createNewRecipe, deleteUserRecipe],
   );
 
   return <RecipeListContext.Provider value={contextValue}>{children}</RecipeListContext.Provider>;

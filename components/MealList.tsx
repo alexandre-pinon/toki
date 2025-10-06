@@ -1,14 +1,17 @@
 import { useUpcomingMeals } from "@/contexts/UpcomingMealsContext";
-import { colors, typography } from "@/theme";
+import { colors, commonStyles, typography } from "@/theme";
 import type { Meal, MealWithRecipe } from "@/types/weekly-meals/meal";
 import { mapPlainDateToDayName, mapPlainDateToLocaleString } from "@/utils/date";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import DraggableFlatList, { DragEndParams, RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
+import { SlideOutLeft } from "react-native-reanimated";
 import "temporal-polyfill/global";
 import { Loader } from "./Loader";
 import { MealCard } from "./MealCard";
+import { SwipeableItem } from "./SwipeableItem";
 
 type MealListItem =
   | {
@@ -26,7 +29,7 @@ type MealListProps = {
   onPressMeal: (meal: Meal) => void;
 };
 export function MealList({ onPressMeal }: MealListProps) {
-  const { upcomingMeals, updateMealDate, isLoading } = useUpcomingMeals();
+  const { upcomingMeals, updateMealDate, deleteUpcomingMeal, isLoading } = useUpcomingMeals();
   const [mealListItems, setMealListItems] = useState<MealListItem[]>([]);
 
   const today = Temporal.Now.plainDateISO();
@@ -47,6 +50,25 @@ export function MealList({ onPressMeal }: MealListProps) {
       pathname: "../add-meal",
       params: { mealDate: mealDate.toJSON() },
     });
+  };
+
+  const handleDeleteMeal = (mealId: string, swipeable?: SwipeableMethods) => {
+    Alert.alert("Supprimer le repas", "Êtes-vous sûr de vouloir supprimer ce repas ?", [
+      {
+        text: "Annuler",
+        style: "cancel",
+        onPress: () => {
+          swipeable?.close();
+        },
+      },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: async () => {
+          await deleteUpcomingMeal(mealId);
+        },
+      },
+    ]);
   };
 
   const onDragEnd = async ({ data, from, to }: DragEndParams<MealListItem>) => {
@@ -81,7 +103,19 @@ export function MealList({ onPressMeal }: MealListProps) {
         case "meal":
           return (
             <View style={styles.mealContainer}>
-              <MealCard meal={item.meal} isDragged={isActive} />
+              <View
+                style={{
+                  borderRadius: 12,
+                  boxShadow: isActive ? commonStyles.activeBoxShadow : commonStyles.boxShadow,
+                }}
+              >
+                <SwipeableItem
+                  onDelete={(swipeable) => handleDeleteMeal(item.meal.id, swipeable)}
+                  actionsStyles={{ borderRadius: 12 }}
+                >
+                  <MealCard meal={item.meal} />
+                </SwipeableItem>
+              </View>
             </View>
           );
         case "divider":
@@ -118,6 +152,7 @@ export function MealList({ onPressMeal }: MealListProps) {
       onDragEnd={onDragEnd}
       keyExtractor={(item) => item.key}
       renderItem={renderItem}
+      itemExitingAnimation={SlideOutLeft}
       ListHeaderComponent={<SectionHeader date={today} />}
       ListFooterComponent={<SectionFooter onPress={() => handleAddMeal(lastMealDay)} />}
     />
@@ -206,6 +241,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   mealContainer: {
+    borderRadius: 12,
     paddingVertical: 6,
   },
   sectionFooter: {
