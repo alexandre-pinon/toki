@@ -2,6 +2,7 @@ import { Loader } from "@/components/Loader";
 import { CurrentRecipeProvider, useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { FormRecipeProvider, useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
+import { Ionicons } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
@@ -49,6 +50,13 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
     router.dismissTo({ pathname: "./[id]", params: { id: formRecipe.id } });
   };
 
+  const handleAddIngredient = () => {
+    router.push({
+      pathname: "/profile/ingredients/edit",
+      params: { recipeId: formRecipe.id },
+    });
+  };
+
   return (
     <Stack>
       <Stack.Screen name="[id]" options={{ headerShown: false }} />
@@ -78,6 +86,11 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
           headerShadowVisible: false,
           headerBackButtonDisplayMode: "minimal",
           headerTintColor: colors.black,
+          headerRight: () => (
+            <TouchableOpacity onPress={handleAddIngredient} style={styles.addButton}>
+              <Ionicons name="add" size={24} color={colors.primary} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <Stack.Screen
@@ -155,6 +168,9 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
 const styles = StyleSheet.create({
   actionButton: {
     paddingHorizontal: 8,
+  },
+  addButton: {
+    paddingHorizontal: 6,
   },
   cancelButtonText: {
     color: colors.gray,

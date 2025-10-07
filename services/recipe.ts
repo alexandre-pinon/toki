@@ -95,7 +95,7 @@ export const upsertRecipe = async ({ recipe, ingredients, instructions }: Recipe
   getDbResponseDataOrThrow(
     await supabase.from("recipes").upsert({
       id: recipe.id,
-      name: recipe.name,
+      name: recipe.name.trim(),
       type: recipe.type,
       image_url: recipe.imageUrl,
       preparation_time: recipe.preparationTime,

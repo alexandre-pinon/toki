@@ -61,8 +61,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   addButtonIcon: {
-    height: 24,
-    width: 24,
     marginRight: 8,
   },
   loadingContainer: {

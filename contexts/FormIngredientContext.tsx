@@ -1,5 +1,5 @@
 import { upsertIngredient } from "@/services/ingredient";
-import { Ingredient } from "@/types/ingredient";
+import { createEmptyIngredient, Ingredient } from "@/types/ingredient";
 import { PostgrestError } from "@supabase/supabase-js";
 import {
   createContext,
@@ -8,6 +8,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -35,7 +36,7 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
 
     try {
       setIsLoading(true);
-      await upsertIngredient({ ...formIngredient, name: formIngredient.name.toLowerCase() });
+      await upsertIngredient({ ...formIngredient, name: formIngredient.name.trim().toLowerCase() });
       await refetchIngredients();
     } catch (error) {
       if (error instanceof PostgrestError && error.code === "23505") {
@@ -46,6 +47,11 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
       setIsLoading(false);
     }
   }, [formIngredient, refetchIngredients]);
+
+  useEffect(() => {
+    if (formIngredient) return;
+    setFormIngredient(createEmptyIngredient());
+  }, [formIngredient]);
 
   const contextValue = useMemo(
     () => ({

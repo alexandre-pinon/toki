@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   searchInputContainer: {
+    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
