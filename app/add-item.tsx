@@ -35,7 +35,7 @@ export default function AddItemScreen() {
 
     await addItem({
       name: name.trim().toLowerCase(),
-      quantity: quantity ? Number.parseFloat(quantity) : 1,
+      quantity: quantity !== undefined ? Number.parseFloat(quantity) : quantity,
       unit,
       checked: false,
       category,

@@ -22,9 +22,8 @@ export default function EditItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const item = sections.flatMap((s) => s.data).find((item) => item.ids[0] === id);
 
-  //FIXME: display error screen with a button to go back to the list
   if (!item) {
-    return null;
+    throw new Error("Cet article ne semble plus exister dans votre liste de courses");
   }
 
   const [name, setName] = useState(item.name);
@@ -49,7 +48,7 @@ export default function EditItemScreen() {
 
     await editItem(id, {
       name: name.trim().toLowerCase(),
-      quantity: quantity ? Number.parseFloat(quantity) : undefined,
+      quantity: quantity !== undefined ? Number.parseFloat(quantity) : quantity,
       unit,
       checked: item.checked,
       category,
