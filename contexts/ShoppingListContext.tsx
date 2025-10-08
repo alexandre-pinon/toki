@@ -11,8 +11,10 @@ import { type ReactNode, createContext, useCallback, useContext, useEffect, useM
 import { useAuth } from "./AuthContext";
 
 type ShoppingListContextType = {
-  sections: ShoppingListSection[];
+  showedSections: ShoppingListSection[];
   isLoading: boolean;
+  showCheckedItems: boolean;
+  toggleCheckedItemsSwitch: () => void;
   loadShoppingList: () => Promise<void>;
   setChecked: (ids: string[], checked: boolean) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
@@ -23,9 +25,27 @@ type ShoppingListContextType = {
 const ShoppingListContext = createContext<ShoppingListContextType | undefined>(undefined);
 
 export function ShoppingListProvider({ children }: { children: ReactNode }) {
+  const [showCheckedItems, setShowCheckedItems] = useState(false);
   const [sections, setSections] = useState<ShoppingListSection[]>([]);
+  const [showedSections, setShowedSections] = useState<ShoppingListSection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { session } = useAuth();
+
+  useEffect(() => {
+    if (showCheckedItems) {
+      setShowedSections(sections);
+    } else {
+      setShowedSections(
+        sections
+          .map((section) => ({ title: section.title, data: section.data.filter((item) => !item.checked) }))
+          .filter((section) => section.data.length > 0),
+      );
+    }
+  }, [sections, showCheckedItems]);
+
+  const toggleCheckedItemsSwitch = useCallback(() => {
+    setShowCheckedItems((prev) => !prev);
+  }, []);
 
   const loadShoppingList = useCallback(
     async (options?: { skipLoading: boolean }) => {
@@ -98,15 +118,27 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
 
   const contextValue = useMemo(() => {
     return {
-      sections,
+      showedSections,
       isLoading,
       loadShoppingList,
       setChecked,
       deleteItem,
       addItem,
       editItem,
+      showCheckedItems,
+      toggleCheckedItemsSwitch,
     };
-  }, [addItem, editItem, deleteItem, isLoading, loadShoppingList, sections, setChecked]);
+  }, [
+    addItem,
+    editItem,
+    deleteItem,
+    isLoading,
+    loadShoppingList,
+    showedSections,
+    setChecked,
+    showCheckedItems,
+    toggleCheckedItemsSwitch,
+  ]);
 
   return <ShoppingListContext.Provider value={contextValue}>{children}</ShoppingListContext.Provider>;
 }
