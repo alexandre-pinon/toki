@@ -3,14 +3,17 @@ import { useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
 import { mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
 import { isUnitType, mapUnitTypeToName, UnitType, unitTypes } from "@/types/unit-type";
+import { capitalize, safeParseOptionalInt } from "@/utils/string";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientQuantityScreen() {
-  const { formCurrentIngredient, setFormCurrentIngredient } = useFormRecipe();
+  const { index } = useLocalSearchParams<{ index?: string }>();
+  const { formRecipe, formCurrentIngredient, setFormCurrentIngredient, setFormIngredients } = useFormRecipe();
 
   const [showPicker, setShowPicker] = useState(false);
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
@@ -63,14 +66,55 @@ export default function RecipeEditIngredientQuantityScreen() {
     });
   };
 
+  const handleSaveRecipeIngredient = () => {
+    if (!formCurrentIngredient) return;
+
+    setFormIngredients((prev) => {
+      const maybeIndex = safeParseOptionalInt(index);
+      if (maybeIndex) {
+        return [...prev.slice(0, maybeIndex), formCurrentIngredient, ...prev.slice(maybeIndex + 1)];
+      }
+
+      const indexToReplace = prev.findIndex(
+        (ingredient) => ingredient.ingredientId === formCurrentIngredient.ingredientId,
+      );
+
+      if (indexToReplace === -1) {
+        return [...prev, formCurrentIngredient];
+      }
+
+      return [...prev.slice(0, indexToReplace), formCurrentIngredient, ...prev.slice(indexToReplace + 1)];
+    });
+
+    router.dismissTo({
+      pathname: "../[id]",
+      params: { id: formRecipe.id },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerTitleStyle: typography.header,
+          headerTitle: "Quantité",
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+          headerRight: () => (
+            <TouchableOpacity onPress={handleSaveRecipeIngredient} style={styles.actionButton}>
+              <Text style={[typography.subtitle, styles.saveButtonText]}>Valider</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
       <View style={styles.titleContainer}>
         <Image
           source={mapShoppingItemCategoryToImageSource(formCurrentIngredient?.category ?? "other")}
           style={styles.ingredientIcon}
         />
-        <Text style={[typography.bodyLarge, styles.ingredientName]}>{formCurrentIngredient?.name ?? "ingrédient"}</Text>
+        <Text style={[typography.bodyLarge]}>{capitalize(formCurrentIngredient?.name ?? "ingrédient")}</Text>
       </View>
 
       <View style={styles.inputsContainer}>
@@ -126,9 +170,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  ingredientName: {
-    textTransform: "capitalize",
-  },
   inputsContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -163,5 +204,11 @@ const styles = StyleSheet.create({
   },
   pickerButtonPlaceholder: {
     color: colors.gray,
+  },
+  actionButton: {
+    paddingHorizontal: 8,
+  },
+  saveButtonText: {
+    color: colors.primary,
   },
 });

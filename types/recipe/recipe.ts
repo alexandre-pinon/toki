@@ -16,6 +16,8 @@ export type Recipe = {
   userId: string;
 };
 
+export type RecipeTimeFields = keyof Pick<Recipe, "preparationTime" | "cookingTime" | "restTime">;
+
 export type RecipeDetails = {
   recipe: Recipe;
   ingredients: RecipeIngredient[];
@@ -30,6 +32,8 @@ export type RecipeIngredient = {
   name: Ingredient["name"];
   category: Ingredient["category"];
 };
+
+export type FormRecipeIngredient = Omit<RecipeIngredient, "recipeId" | "ingredientId"> & { ingredientId?: string };
 
 export type RecipeUpsertData = {
   recipe: Omit<Recipe, "timesDone" | "lastTimeDone" | "userId"> & { imageType?: string };

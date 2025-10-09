@@ -65,16 +65,24 @@ export default function RecipeEditScreen() {
           <>
             {formIngredients.map((ingredient, index) => (
               <SwipeableItem
-                key={ingredient.ingredientId}
+                key={`${formRecipe.id}-${ingredient.name}`}
                 onEdit={() => {
-                  setFormCurrentIngredient(ingredient);
-                  router.push({ pathname: "./ingredients/quantity" });
+                  if (ingredient.ingredientId) {
+                    setFormCurrentIngredient({ ...ingredient, ingredientId: ingredient.ingredientId });
+                    router.push({ pathname: "./ingredients/quantity" });
+                  } else {
+                    router.push({
+                      pathname: "./ingredients",
+                      params: { index, name: ingredient.name, quantity: ingredient.quantity, unit: ingredient.unit },
+                    });
+                  }
                 }}
                 onDelete={() => setFormIngredients((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)])}
               >
                 <View style={styles.listItemContainer}>
                   <UnderlinedListItem
                     title={ingredient.name}
+                    withTitleIcon={!ingredient.ingredientId}
                     subTitle={formatQuantityAndUnit(ingredient.quantity, ingredient.unit)}
                     isLastItem={index === formIngredients.length - 1}
                   />
@@ -149,6 +157,10 @@ export default function RecipeEditScreen() {
     }
   };
 
+  const handlePressImportRecipe = () => {
+    router.push({ pathname: "./import" });
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <ScrollView style={styles.scrollView}>
@@ -158,13 +170,18 @@ export default function RecipeEditScreen() {
             <Image source={require("@/assets/images/pen_color.png")} style={styles.sectionIcon} />
             <Text style={[typography.subtitle]}>Nom</Text>
           </View>
-          <TextInput
-            style={styles.nameInput}
-            value={formRecipe.name}
-            onChangeText={(name) => setFormRecipe((prev) => ({ ...prev, name }))}
-            placeholder="Nom de la recette"
-            placeholderTextColor={colors.gray400}
-          />
+          <View style={styles.nameInputRow}>
+            <TextInput
+              style={styles.nameInput}
+              value={formRecipe.name}
+              onChangeText={(name) => setFormRecipe((prev) => ({ ...prev, name }))}
+              placeholder="Nom de la recette"
+              placeholderTextColor={colors.gray400}
+            />
+            <TouchableOpacity style={styles.importIconContainer} onPress={handlePressImportRecipe}>
+              <Ionicons name="cloud-download-outline" size={24} color={colors.gray} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Recipe Image */}
@@ -304,17 +321,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
+  nameInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   sectionIcon: {
     width: 20,
     height: 20,
     marginRight: 8,
   },
   nameInput: {
+    flexGrow: 1,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.gray200,
     borderRadius: 10,
     padding: 12,
     fontSize: 12,
+  },
+  importIconContainer: {
+    paddingHorizontal: 16,
   },
   imageContainer: {
     height: 255,

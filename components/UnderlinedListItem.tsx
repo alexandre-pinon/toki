@@ -1,21 +1,32 @@
 import { colors, typography } from "@/theme";
+import { capitalize } from "@/utils/string";
+import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { Pill } from "./Pill";
 
 type UnderlinedListItemProps = {
   title: string;
+  withTitleIcon?: boolean;
   subTitle?: string;
   isLastItem?: boolean;
   checked?: boolean;
   tag?: string;
 };
 
-export function UnderlinedListItem({ title, subTitle, isLastItem, checked, tag }: UnderlinedListItemProps) {
+export function UnderlinedListItem({
+  title,
+  withTitleIcon,
+  subTitle,
+  isLastItem,
+  checked,
+  tag,
+}: UnderlinedListItemProps) {
   return (
     <View style={[styles.itemContent, !isLastItem && styles.itemContentWithBorder]}>
       <View style={styles.itemContentLeft}>
         <View style={styles.titleRow}>
-          <Text style={[typography.body, styles.itemTitle, checked && styles.itemTitleChecked]}>{title}</Text>
+          <Text style={[typography.body, checked && styles.itemTitleChecked]}>{capitalize(title)}</Text>
+          {withTitleIcon && <Image source={require("@/assets/images/warning.png")} style={styles.titleIcon} />}
         </View>
         {subTitle && <Text style={[typography.subtext, checked && styles.itemSubtitleChecked]}>{subTitle}</Text>}
       </View>
@@ -40,9 +51,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.gray300,
   },
-  itemTitle: {
-    textTransform: "capitalize",
-  },
   itemTitleChecked: {
     textDecorationLine: "line-through",
     color: colors.gray,
@@ -53,6 +61,10 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 8,
+  },
+  titleIcon: {
+    width: 12,
+    height: 12,
   },
 });

@@ -3,3 +3,31 @@ export const capitalize = (value: string): string => {
 
   return `${value[0].toUpperCase()}${value.slice(1)}`;
 };
+
+export const safeParseOptionalFloat = (value?: string): number | undefined => {
+  if (!value) {
+    return;
+  }
+
+  const float = parseFloat(value);
+
+  if (Number.isNaN(float)) {
+    return;
+  }
+
+  return float;
+};
+
+export const safeParseOptionalInt = (value?: string): number | undefined => {
+  if (!value) {
+    return;
+  }
+
+  const int = parseInt(value);
+
+  if (Number.isNaN(int)) {
+    return;
+  }
+
+  return int;
+};

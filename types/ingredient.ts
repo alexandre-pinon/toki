@@ -13,11 +13,12 @@ export type IngredientListSection = {
   data: Ingredient[];
 };
 
-export const createEmptyIngredient = (): Ingredient => {
+export const createIngredient = (override?: Partial<Ingredient>): Ingredient => {
   return {
     id: uuid.v4(),
     name: "",
     nameNormalized: "",
     category: "other",
+    ...override,
   };
 };

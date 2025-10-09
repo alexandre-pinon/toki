@@ -1,6 +1,7 @@
 import { colors, typography } from "@/theme";
 import { RecipeIngredient } from "@/types/recipe/recipe";
 import { formatQuantityAndUnit } from "@/types/unit-type";
+import { capitalize } from "@/utils/string";
 import { StyleSheet, Text, View } from "react-native";
 
 type RecipeTabsProps = {
@@ -18,7 +19,7 @@ export function RecipeIngredientList({ ingredients, quantityCoefficient }: Recip
       {ingredients.map((ingredient) => (
         <View key={ingredient.name} style={styles.ingredientRow}>
           <Text style={[typography.body, styles.bulletText]}>{"\u2022"}</Text>
-          <Text style={[typography.body, styles.ingredientText]}>{ingredient.name}</Text>
+          <Text style={[typography.body]}>{capitalize(ingredient.name)}</Text>
           {(ingredient.quantity || ingredient.unit) && (
             <Text style={[typography.body, styles.ingredientSubtext]}>
               {formatQuantityAndUnit(ingredient.quantity, ingredient.unit, quantityCoefficient)}
@@ -38,9 +39,6 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     fontSize: 24,
-  },
-  ingredientText: {
-    textTransform: "capitalize",
   },
   ingredientSubtext: {
     marginLeft: 4,
