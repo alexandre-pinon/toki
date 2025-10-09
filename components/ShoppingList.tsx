@@ -1,24 +1,11 @@
 import { useShoppingList } from "@/contexts/ShoppingListContext";
 import { colors, typography } from "@/theme";
-import { SectionList, StyleSheet, Switch, Text, View } from "react-native";
-import { Loader } from "./Loader";
+import { RefreshControl, SectionList, StyleSheet, Switch, Text, View } from "react-native";
 import { ShoppingItemCategorySectionHeader } from "./ShoppingItemCategorySectionHeader";
 import { ShoppingListItem } from "./ShoppingListItem";
 
 export function ShoppingList() {
-  const { isLoading, showedSections, showCheckedItems, toggleCheckedItemsSwitch } = useShoppingList();
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (showedSections.length === 0) {
-    return (
-      <View style={styles.centerContainer}>
-        <Text style={[typography.body, styles.emptyText]}>Vous n{"\&apos"}avez plus rien à acheter ! 🎉</Text>
-      </View>
-    );
-  }
+  const { isLoading, showedSections, showCheckedItems, toggleCheckedItemsSwitch, loadShoppingList } = useShoppingList();
 
   return (
     <>
@@ -28,17 +15,27 @@ export function ShoppingList() {
           value={showCheckedItems}
           onValueChange={toggleCheckedItemsSwitch}
           trackColor={{ true: colors.primary }}
+          ios_backgroundColor={colors.gray50}
         />
       </View>
-      <SectionList
-        sections={showedSections}
-        renderItem={({ item, section, index }) => (
-          <ShoppingListItem {...item} isLastItem={index === section.data.length - 1} />
-        )}
-        renderSectionHeader={({ section: { title } }) => <ShoppingItemCategorySectionHeader category={title} />}
-        keyExtractor={(item) => item.ids[0]}
-        stickySectionHeadersEnabled
-      />
+      {!isLoading && showedSections.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text style={[typography.body, styles.emptyText]}>{"Vous n'avez plus rien à acheter ! 🎉"}</Text>
+        </View>
+      ) : (
+        <SectionList
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={loadShoppingList} tintColor={colors.primary200} />
+          }
+          sections={showedSections}
+          renderItem={({ item, section, index }) => (
+            <ShoppingListItem {...item} isLastItem={index === section.data.length - 1} />
+          )}
+          renderSectionHeader={({ section: { title } }) => <ShoppingItemCategorySectionHeader category={title} />}
+          keyExtractor={(item) => item.ids[0]}
+          stickySectionHeadersEnabled
+        />
+      )}
     </>
   );
 }

@@ -4,10 +4,18 @@ import type { Recipe } from "@/types/recipe/recipe";
 import type { RecipeType } from "@/types/recipe/recipe-type";
 import { mapRecipeTypeToName, recipeTypes } from "@/types/recipe/recipe-type";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  ListRenderItemInfo,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
-import Animated, { SlideInLeft, SlideOutLeft } from "react-native-reanimated";
-import { Loader } from "./Loader";
+import Animated, { SlideInLeft } from "react-native-reanimated";
 import { RecipeCard } from "./RecipeCard";
 import { SearchBar } from "./SearchBar";
 import { SwipeableItem } from "./SwipeableItem";
@@ -16,7 +24,7 @@ type RecipeListProps = {
   onPressRecipe: (recipe: Recipe) => void;
 };
 export function RecipeList({ onPressRecipe }: RecipeListProps) {
-  const { recipes, deleteUserRecipe, isLoading } = useRecipeList();
+  const { recipes, deleteUserRecipe, isLoading, refetchRecipes } = useRecipeList();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<RecipeType | "all">("all");
@@ -65,11 +73,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
 
   const renderItem = ({ item }: ListRenderItemInfo<Recipe>) => {
     return (
-      <Animated.View
-        style={[styles.recipeContainer, { boxShadow: commonStyles.boxShadow }]}
-        entering={SlideInLeft}
-        exiting={SlideOutLeft}
-      >
+      <Animated.View style={[styles.recipeContainer, { boxShadow: commonStyles.boxShadow }]} entering={SlideInLeft}>
         <SwipeableItem
           onDelete={(swipeable) => handleDeleteRecipe(item.id, swipeable)}
           actionsStyles={{ borderRadius: 12 }}
@@ -80,14 +84,6 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
     );
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (recipes.length === 0) {
-    return <RecipePlaceholder text="Vous n'avez pas encore de recettes ! 🍳" />;
-  }
-
   return (
     <View style={styles.container}>
       <SearchBar
@@ -95,15 +91,20 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
         filters={{ value: showFilters, set: setShowFilters }}
       />
       {showFilters ? <FilterBar selectedType={selectedType} setSelectedType={setSelectedType} /> : null}
-      {filteredRecipes.length > 0 ? (
+      {!isLoading && recipes.length === 0 ? (
+        <RecipePlaceholder text="Vous n'avez pas encore de recettes ! 🍳" />
+      ) : !isLoading && filteredRecipes.length === 0 ? (
+        <RecipePlaceholder text="Aucune recette trouvée ! 🍳" />
+      ) : (
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={refetchRecipes} tintColor={colors.primary200} />
+          }
           data={filteredRecipes}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
         />
-      ) : (
-        <RecipePlaceholder text="Aucune recette trouvée ! 🍳" />
       )}
     </View>
   );

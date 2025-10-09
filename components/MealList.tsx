@@ -6,10 +6,10 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import DraggableFlatList, { DragEndParams, RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import { RefreshControl } from "react-native-gesture-handler";
 import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
 import { SlideOutLeft } from "react-native-reanimated";
 import "temporal-polyfill/global";
-import { Loader } from "./Loader";
 import { MealCard } from "./MealCard";
 import { SwipeableItem } from "./SwipeableItem";
 
@@ -29,7 +29,7 @@ type MealListProps = {
   onPressMeal: (meal: Meal) => void;
 };
 export function MealList({ onPressMeal }: MealListProps) {
-  const { upcomingMeals, updateMealDate, deleteUpcomingMeal, isLoading } = useUpcomingMeals();
+  const { upcomingMeals, updateMealDate, deleteUpcomingMeal, isLoading, refetchUpcomingMeals } = useUpcomingMeals();
   const [mealListItems, setMealListItems] = useState<MealListItem[]>([]);
 
   const today = Temporal.Now.plainDateISO();
@@ -40,10 +40,6 @@ export function MealList({ onPressMeal }: MealListProps) {
     const items = createMealListItems(mealsByDate);
     setMealListItems(items);
   }, [upcomingMeals]);
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   const handleAddMeal = (mealDate: Temporal.PlainDate) => {
     router.push({
@@ -146,6 +142,9 @@ export function MealList({ onPressMeal }: MealListProps) {
 
   return (
     <DraggableFlatList
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={refetchUpcomingMeals} tintColor={colors.primary200} />
+      }
       contentContainerStyle={styles.listContent}
       showsVerticalScrollIndicator={false}
       data={mealListItems}

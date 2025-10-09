@@ -1,4 +1,3 @@
-import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { ShoppingItemCategorySectionHeader } from "@/components/ShoppingItemCategorySectionHeader";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
@@ -9,11 +8,11 @@ import { Ingredient, IngredientListSection } from "@/types/ingredient";
 import { useDebounce } from "@uidotdev/usehooks";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity } from "react-native";
+import { RefreshControl, SectionList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileIngredientsScreen() {
-  const { isLoading, ingredientSections } = useIngredientList();
+  const { isLoading, refetchIngredients, ingredientSections } = useIngredientList();
   const { setFormIngredient } = useFormIngredient();
   const [filteredIngredientSections, setFilteredIngredientSections] =
     useState<IngredientListSection[]>(ingredientSections);
@@ -48,12 +47,11 @@ export default function ProfileIngredientsScreen() {
   }, [debouncedSearchTerm, ingredientSections]);
 
   const displaySearchResults = () => {
-    if (isLoading) {
-      return <Loader />;
-    }
-
     return (
       <SectionList
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={refetchIngredients} tintColor={colors.primary200} />
+        }
         sections={filteredIngredientSections}
         renderItem={({ item, section, index }) => (
           <TouchableOpacity onPress={() => handlePressIngredient(item)} style={styles.ingredientItemContainer}>
