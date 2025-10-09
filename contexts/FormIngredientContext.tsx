@@ -49,9 +49,8 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
   }, [formIngredient, refetchIngredients]);
 
   useEffect(() => {
-    if (formIngredient) return;
-    setFormIngredient(createEmptyIngredient());
-  }, [formIngredient]);
+    setFormIngredient((prev) => (prev ? createEmptyIngredient() : prev));
+  }, []);
 
   const contextValue = useMemo(
     () => ({

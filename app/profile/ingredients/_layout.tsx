@@ -1,6 +1,7 @@
 import { FormIngredientProvider, useFormIngredient } from "@/contexts/FormIngredientContext";
 import { IngredientListProvider } from "@/contexts/IngredientListContext";
 import { colors, typography } from "@/theme";
+import { createEmptyIngredient } from "@/types/ingredient";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -17,13 +18,16 @@ export default function ProfileIngredientsLayout() {
 
 const ProfileIngredientsStack = () => {
   const { recipeId } = useLocalSearchParams<{ recipeId?: string }>();
-  const { isLoading, formIngredient, upsertIngredient } = useFormIngredient();
+  const { isLoading, setFormIngredient, formIngredient, upsertIngredient } = useFormIngredient();
 
   const handleCancel = () => {
     router.back();
   };
 
   const handleAdd = () => {
+    if (formIngredient) {
+      setFormIngredient(createEmptyIngredient());
+    }
     router.push({ pathname: "./ingredients/edit" });
   };
 
