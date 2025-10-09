@@ -19,7 +19,7 @@ type CurrentMealProviderProps = PropsWithChildren & {
   id: string;
 };
 export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) => {
-  const { loadShoppingList } = useShoppingList();
+  const { refetchShoppingList } = useShoppingList();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMeal, setCurrentMeal] = useState<Meal | null>(null);
   const [currentRecipe, setCurrentRecipe] = useState<RecipeDetails | null>(null);
@@ -77,8 +77,8 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
       setIsProcessingServingsUpdate(false);
     }
 
-    await loadShoppingList();
-  }, [currentMeal, isProcessingServingsUpdate, servingsPendingUpdates, loadShoppingList]);
+    await refetchShoppingList();
+  }, [currentMeal, isProcessingServingsUpdate, servingsPendingUpdates, refetchShoppingList]);
 
   useEffect(() => {
     getMealWithRecipe();

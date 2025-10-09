@@ -15,7 +15,7 @@ type ShoppingListContextType = {
   isLoading: boolean;
   showCheckedItems: boolean;
   toggleCheckedItemsSwitch: () => void;
-  loadShoppingList: () => Promise<void>;
+  refetchShoppingList: () => Promise<void>;
   setChecked: (ids: string[], checked: boolean) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
   addItem: (item: Omit<ShoppingItem, "id">) => Promise<void>;
@@ -120,7 +120,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     return {
       showedSections,
       isLoading,
-      loadShoppingList,
+      refetchShoppingList: loadShoppingList,
       setChecked,
       deleteItem,
       addItem,

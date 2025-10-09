@@ -15,7 +15,7 @@ type UpcomingMealsContextType = {
 const UpcomingMealsContext = createContext<UpcomingMealsContextType | null>(null);
 
 export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
-  const { loadShoppingList } = useShoppingList();
+  const { refetchShoppingList } = useShoppingList();
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [upcomingMeals, setUpcomingMeals] = useState<MealWithRecipe[]>([]);
@@ -41,17 +41,17 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
   const updateMealDate = useCallback(
     async (id: string, date: Temporal.PlainDate) => {
       await updateDate(id, date);
-      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), loadShoppingList()]);
+      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
     },
-    [getUserUpcomingMeals, loadShoppingList],
+    [getUserUpcomingMeals, refetchShoppingList],
   );
 
   const deleteUpcomingMeal = useCallback(
     async (id: string) => {
       await deleteMeal(id);
-      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), loadShoppingList()]);
+      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
     },
-    [getUserUpcomingMeals, loadShoppingList],
+    [getUserUpcomingMeals, refetchShoppingList],
   );
 
   useEffect(() => {

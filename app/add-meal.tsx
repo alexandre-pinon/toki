@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddMealScreen() {
   const { refetchUpcomingMeals } = useUpcomingMeals();
-  const { loadShoppingList } = useShoppingList();
+  const { refetchShoppingList } = useShoppingList();
   const { mealDate } = useLocalSearchParams<{ mealDate: string }>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +24,7 @@ export default function AddMealScreen() {
         date: Temporal.PlainDate.from(mealDate),
         servings,
       });
-      await Promise.all([refetchUpcomingMeals(), loadShoppingList()]);
+      await Promise.all([refetchUpcomingMeals(), refetchShoppingList()]);
       router.dismissTo({ pathname: "./" });
     } finally {
       setIsLoading(false);

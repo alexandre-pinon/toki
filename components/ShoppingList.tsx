@@ -5,7 +5,8 @@ import { ShoppingItemCategorySectionHeader } from "./ShoppingItemCategorySection
 import { ShoppingListItem } from "./ShoppingListItem";
 
 export function ShoppingList() {
-  const { isLoading, showedSections, showCheckedItems, toggleCheckedItemsSwitch, loadShoppingList } = useShoppingList();
+  const { isLoading, showedSections, showCheckedItems, toggleCheckedItemsSwitch, refetchShoppingList } =
+    useShoppingList();
 
   return (
     <>
@@ -25,7 +26,7 @@ export function ShoppingList() {
       ) : (
         <SectionList
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={loadShoppingList} tintColor={colors.primary200} />
+            <RefreshControl refreshing={isLoading} onRefresh={refetchShoppingList} tintColor={colors.primary200} />
           }
           sections={showedSections}
           renderItem={({ item, section, index }) => (

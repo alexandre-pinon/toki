@@ -17,7 +17,7 @@ type RecipeListContextType = {
 const RecipeListContext = createContext<RecipeListContextType | null>(null);
 
 export const RecipeListProvider = ({ children }: PropsWithChildren) => {
-  const { loadShoppingList } = useShoppingList();
+  const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -57,9 +57,9 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
   const deleteUserRecipe = useCallback(
     async (id: string) => {
       await deleteRecipe(id);
-      await Promise.all([getUserRecipes({ skipLoading: true }), refetchUpcomingMeals(), loadShoppingList()]);
+      await Promise.all([getUserRecipes({ skipLoading: true }), refetchUpcomingMeals(), refetchShoppingList()]);
     },
-    [getUserRecipes, refetchUpcomingMeals, loadShoppingList],
+    [getUserRecipes, refetchUpcomingMeals, refetchShoppingList],
   );
 
   useEffect(() => {

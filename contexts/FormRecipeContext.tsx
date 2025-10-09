@@ -39,7 +39,7 @@ type FormRecipeProviderProps = PropsWithChildren & {
   initialRecipeValues: RecipeDetails;
 };
 export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
-  const { loadShoppingList } = useShoppingList();
+  const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
@@ -63,7 +63,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
         ingredients: formIngredients,
         instructions: formInstructions,
       });
-      await Promise.all([refetchCurrentRecipe(), refetchRecipes(), refetchUpcomingMeals(), loadShoppingList()]);
+      await Promise.all([refetchCurrentRecipe(), refetchRecipes(), refetchUpcomingMeals(), refetchShoppingList()]);
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +74,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
     refetchCurrentRecipe,
     refetchRecipes,
     refetchUpcomingMeals,
-    loadShoppingList,
+    refetchShoppingList,
   ]);
 
   const contextValue = useMemo(
