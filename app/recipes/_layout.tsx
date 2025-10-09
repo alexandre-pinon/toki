@@ -11,25 +11,25 @@ export default function RecipeDetailsLayout() {
 
   return (
     <CurrentRecipeProvider id={id}>
-      <RecipeDetailsStack />
+      <RecipeDetailsStack id={id} />
     </CurrentRecipeProvider>
   );
 }
 
-const RecipeDetailsStack = () => {
+const RecipeDetailsStack = ({ id }: { id: string }) => {
   const { currentRecipe, isLoading } = useCurrentRecipe();
 
-  if (isLoading || !currentRecipe) return <Loader />;
+  if (isLoading) return <Loader />;
 
   return (
-    <FormRecipeProvider initialRecipeValues={currentRecipe}>
-      <RecipeEditStack headerTitle={currentRecipe.recipe.name} />
+    <FormRecipeProvider initialRecipeValues={currentRecipe} recipeId={id}>
+      <RecipeEditStack headerTitle={currentRecipe?.recipe.name} recipeExists={!!currentRecipe} />
     </FormRecipeProvider>
   );
 };
 
-type RecipeEditStackProps = { headerTitle: string };
-const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
+type RecipeEditStackProps = { headerTitle?: string; recipeExists: boolean };
+const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) => {
   const {
     formRecipe,
     setFormIngredients,
@@ -42,7 +42,11 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
   } = useFormRecipe();
 
   const handleCancel = () => {
-    router.dismissTo({ pathname: "../[id]", params: { id: formRecipe.id } });
+    if (recipeExists) {
+      router.dismissTo({ pathname: "../[id]", params: { id: formRecipe.id } });
+    } else {
+      router.dismissTo({ pathname: ".." });
+    }
   };
 
   const handleSave = () => {
@@ -64,7 +68,7 @@ const RecipeEditStack = ({ headerTitle }: RecipeEditStackProps) => {
         name="edit/[id]"
         options={{
           headerTitleStyle: typography.header,
-          headerTitle,
+          headerTitle: headerTitle ?? "Nouvelle recette",
           headerShadowVisible: false,
           headerLeft: () => (
             <TouchableOpacity onPress={handleCancel} style={styles.actionButton} disabled={isLoading}>

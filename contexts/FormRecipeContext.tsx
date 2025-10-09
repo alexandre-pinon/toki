@@ -1,6 +1,6 @@
 import { RecipeTabName } from "@/components/RecipeTabs";
 import { upsertRecipe } from "@/services/recipe";
-import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
+import { createEmptyRecipeData, RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 import {
   createContext,
   Dispatch,
@@ -36,14 +36,15 @@ type FormRecipeContextType = {
 const FormRecipeContext = createContext<FormRecipeContextType | null>(null);
 
 type FormRecipeProviderProps = PropsWithChildren & {
-  initialRecipeValues: RecipeDetails;
+  initialRecipeValues: RecipeDetails | null;
+  recipeId: string;
 };
-export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
+export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: FormRecipeProviderProps) => {
   const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
-  const { recipe, ingredients, instructions } = initialRecipeValues;
+  const { recipe, ingredients, instructions } = initialRecipeValues ?? createEmptyRecipeData(recipeId);
   const [isLoading, setIsLoading] = useState(false);
 
   const [formRecipe, setFormRecipe] = useState<FormRecipeContextType["formRecipe"]>(recipe);

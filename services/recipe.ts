@@ -24,8 +24,10 @@ export const getRecipes = async (userId: string): Promise<Recipe[]> => {
   }));
 };
 
-export const getRecipeById = async (id: string): Promise<RecipeDetails> => {
-  const recipe = getDbResponseDataOrThrow(await supabase.from("recipes").select("*").eq("id", id).single());
+export const findRecipeById = async (id: string): Promise<RecipeDetails | null> => {
+  const recipe = getDbResponseDataOrThrow(await supabase.from("recipes").select("*").eq("id", id).maybeSingle());
+  if (!recipe) return null;
+
   const recipeIngredients = getDbResponseDataOrThrow(
     await supabase
       .from("recipes_to_ingredients")

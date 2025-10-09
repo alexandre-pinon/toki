@@ -1,5 +1,5 @@
 import { getMealById, updateServings } from "@/services/meal";
-import { getRecipeById } from "@/services/recipe";
+import { findRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { Meal } from "@/types/weekly-meals/meal";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -30,7 +30,7 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
     try {
       setIsLoading(true);
       const meal = await getMealById(id);
-      const recipe = await getRecipeById(meal.recipeId);
+      const recipe = await findRecipeById(meal.recipeId);
       setCurrentMeal(meal);
       setCurrentRecipe(recipe);
     } finally {

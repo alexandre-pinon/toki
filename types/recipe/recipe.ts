@@ -1,4 +1,3 @@
-import { uuid } from "expo-modules-core";
 import { Ingredient } from "../ingredient";
 import type { UnitType } from "../unit-type";
 import type { RecipeType } from "./recipe-type";
@@ -42,10 +41,12 @@ export const getTotalTime = (recipe: Pick<Recipe, "preparationTime" | "cookingTi
   return (recipe.preparationTime ?? 0) + (recipe.cookingTime ?? 0) + (recipe.restTime ?? 0);
 };
 
-export const createEmptyRecipeData = (): RecipeUpsertData => {
+export const createEmptyRecipeData = (
+  recipeId: string,
+): RecipeUpsertData & { ingredients: Omit<RecipeIngredient, "recipeId">[] } => {
   return {
     recipe: {
-      id: uuid.v4(),
+      id: recipeId,
       name: "Nouvelle recette",
       type: "main",
       servings: 4,
