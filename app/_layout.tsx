@@ -1,5 +1,7 @@
 import { CustomErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { FormIngredientProvider } from "@/contexts/FormIngredientContext";
+import { IngredientListProvider } from "@/contexts/IngredientListContext";
 import { RecipeListProvider } from "@/contexts/RecipeListContext";
 import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
 import { UpcomingMealsProvider } from "@/contexts/UpcomingMealsContext";
@@ -37,7 +39,6 @@ function RootLayoutNav() {
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="recipes" options={{ headerShown: false }} />
         <Stack.Screen name="meals" options={{ headerShown: false }} />
-        <Stack.Screen name="profile/ingredients" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );
@@ -53,7 +54,11 @@ export default function RootLayout() {
       <ShoppingListProvider>
         <UpcomingMealsProvider>
           <RecipeListProvider>
-            <RootLayoutNav />
+            <IngredientListProvider>
+              <FormIngredientProvider>
+                <RootLayoutNav />
+              </FormIngredientProvider>
+            </IngredientListProvider>
           </RecipeListProvider>
         </UpcomingMealsProvider>
       </ShoppingListProvider>

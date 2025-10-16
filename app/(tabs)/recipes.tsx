@@ -3,19 +3,19 @@ import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
 import { Ionicons } from "@expo/vector-icons";
+import { uuid } from "expo-modules-core";
 import { router, Stack } from "expo-router";
 import { useCallback } from "react";
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipesScreen() {
-  const { isAddRecipeLoading, createNewRecipe } = useRecipeList();
+  const { isAddRecipeLoading } = useRecipeList();
 
   const handleAddRecipe = async () => {
-    const { newRecipeId } = await createNewRecipe();
     router.push({
       pathname: "../recipes/edit/[id]",
-      params: { id: newRecipeId },
+      params: { id: uuid.v4() },
     });
   };
 

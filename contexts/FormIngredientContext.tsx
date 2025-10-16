@@ -1,5 +1,5 @@
 import { upsertIngredient } from "@/services/ingredient";
-import { createEmptyIngredient, Ingredient } from "@/types/ingredient";
+import { Ingredient } from "@/types/ingredient";
 import { PostgrestError } from "@supabase/supabase-js";
 import {
   createContext,
@@ -8,7 +8,6 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -19,7 +18,7 @@ type FormIngredientContextType = {
   formIngredient: Ingredient | null;
   setFormIngredient: Dispatch<SetStateAction<Ingredient | null>>;
   isLoading: boolean;
-  upsertIngredient: () => void;
+  upsertIngredient: () => Promise<Ingredient | null>;
 };
 
 const FormIngredientContext = createContext<FormIngredientContextType | null>(null);
@@ -32,26 +31,24 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
   const [formIngredient, setFormIngredient] = useState<Ingredient | null>(null);
 
   const upsertFormIngredient = useCallback(async () => {
-    if (!formIngredient) return;
+    if (!formIngredient) return null;
 
     try {
       setIsLoading(true);
-      await upsertIngredient({ ...formIngredient, name: formIngredient.name.trim().toLowerCase() });
+      const upserted = await upsertIngredient({ ...formIngredient, name: formIngredient.name.trim().toLowerCase() });
       await refetchIngredients();
+      setIsLoading(false);
+
+      return upserted;
     } catch (error) {
+      setIsLoading(false);
       if (error instanceof PostgrestError && error.code === "23505") {
-        return Alert.alert(`L'ingrédient '${formIngredient.name}' existe déjà`);
+        Alert.alert(`L'ingrédient '${formIngredient.name}' existe déjà`);
+        return formIngredient;
       }
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   }, [formIngredient, refetchIngredients]);
-
-  useEffect(() => {
-    if (formIngredient) return;
-    setFormIngredient(createEmptyIngredient());
-  }, [formIngredient]);
 
   const contextValue = useMemo(
     () => ({

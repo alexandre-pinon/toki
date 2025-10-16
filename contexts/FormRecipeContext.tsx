@@ -1,6 +1,13 @@
 import { RecipeTabName } from "@/components/RecipeTabs";
 import { upsertRecipe } from "@/services/recipe";
-import { RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
+import { parseMarmitonRecipe } from "@/services/recipe-parser";
+import {
+  createEmptyRecipeData,
+  FormRecipeIngredient,
+  RecipeDetails,
+  RecipeIngredient,
+  RecipeUpsertData,
+} from "@/types/recipe/recipe";
 import {
   createContext,
   Dispatch,
@@ -19,7 +26,7 @@ import { useUpcomingMeals } from "./UpcomingMealsContext";
 type FormRecipeContextType = {
   formRecipe: RecipeUpsertData["recipe"];
   setFormRecipe: Dispatch<SetStateAction<FormRecipeContextType["formRecipe"]>>;
-  formIngredients: Omit<RecipeIngredient, "recipeId">[];
+  formIngredients: FormRecipeIngredient[];
   setFormIngredients: Dispatch<SetStateAction<FormRecipeContextType["formIngredients"]>>;
   formInstructions: RecipeUpsertData["instructions"];
   setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
@@ -31,19 +38,24 @@ type FormRecipeContextType = {
   setActiveTab: Dispatch<SetStateAction<FormRecipeContextType["activeTab"]>>;
   isLoading: boolean;
   upsertRecipe: () => void;
+  areAllIngredientsValid: boolean;
+  importUrl: string;
+  setImportUrl: Dispatch<SetStateAction<string>>;
+  importRecipe: () => void;
 };
 
 const FormRecipeContext = createContext<FormRecipeContextType | null>(null);
 
 type FormRecipeProviderProps = PropsWithChildren & {
-  initialRecipeValues: RecipeDetails;
+  initialRecipeValues: RecipeDetails | null;
+  recipeId: string;
 };
-export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipeProviderProps) => {
+export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: FormRecipeProviderProps) => {
   const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
-  const { recipe, ingredients, instructions } = initialRecipeValues;
+  const { recipe, ingredients, instructions } = initialRecipeValues ?? createEmptyRecipeData(recipeId);
   const [isLoading, setIsLoading] = useState(false);
 
   const [formRecipe, setFormRecipe] = useState<FormRecipeContextType["formRecipe"]>(recipe);
@@ -54,13 +66,40 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
   const [formCurrentInstruction, setFormCurrentInstruction] =
     useState<FormRecipeContextType["formCurrentInstruction"]>(null);
   const [activeTab, setActiveTab] = useState<RecipeTabName>("ingredients");
+  const [importUrl, setImportUrl] = useState("");
+
+  const areAllIngredientsValid = useMemo(() => {
+    const ingredientsWithId = formIngredients.filter((i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId);
+    return ingredientsWithId.length === formIngredients.length;
+  }, [formIngredients]);
+
+  const importRecipe = useCallback(async () => {
+    if (!importUrl) return;
+
+    try {
+      setIsLoading(true);
+      const res = await fetch(importUrl);
+      const html = await res.text();
+      const { recipe, ingredients, instructions } = await parseMarmitonRecipe(formRecipe.id, html);
+      setFormRecipe(recipe);
+      setFormIngredients(ingredients);
+      setFormInstructions(instructions);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formRecipe.id, importUrl]);
 
   const upsertFormRecipe = useCallback(async () => {
+    const ingredientsWithId = formIngredients.filter((i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId);
+    if (ingredientsWithId.length !== formIngredients.length) {
+      return;
+    }
+
     try {
       setIsLoading(true);
       await upsertRecipe({
         recipe: formRecipe,
-        ingredients: formIngredients,
+        ingredients: ingredientsWithId,
         instructions: formInstructions,
       });
       await Promise.all([refetchCurrentRecipe(), refetchRecipes(), refetchUpcomingMeals(), refetchShoppingList()]);
@@ -93,6 +132,10 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
       setActiveTab,
       isLoading,
       upsertRecipe: upsertFormRecipe,
+      areAllIngredientsValid,
+      importUrl,
+      setImportUrl,
+      importRecipe,
     }),
     [
       formRecipe,
@@ -103,6 +146,9 @@ export const FormRecipeProvider = ({ initialRecipeValues, children }: FormRecipe
       activeTab,
       isLoading,
       upsertFormRecipe,
+      areAllIngredientsValid,
+      importUrl,
+      importRecipe,
     ],
   );
 

@@ -1,4 +1,4 @@
-import { getRecipeById } from "@/services/recipe";
+import { findRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
@@ -20,7 +20,7 @@ export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderPro
   const getCurrentRecipe = useCallback(async () => {
     try {
       setIsLoading(true);
-      const recipe = await getRecipeById(id);
+      const recipe = await findRecipeById(id);
       setCurrentRecipe(recipe);
     } finally {
       setIsLoading(false);

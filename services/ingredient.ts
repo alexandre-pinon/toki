@@ -18,6 +18,15 @@ export const searchIngredient = async (searchTerm: string): Promise<Ingredient[]
   return ingredients.map(fromDatabaseToDomain);
 };
 
+export const findIngredientByName = async (name: string): Promise<Ingredient | null> => {
+  const sanitizedSearchTerm = name.trim().toLowerCase();
+  const ingredient = getDbResponseDataOrThrow(
+    await supabase.from("ingredients").select("*").eq("name_normalized", sanitizedSearchTerm).maybeSingle(),
+  );
+
+  return ingredient ? fromDatabaseToDomain(ingredient) : null;
+};
+
 export const getIngredientSections = async (): Promise<IngredientListSection[]> => {
   //FIXME: paginate result somehow
   const ingredients = getDbResponseDataOrThrow(

@@ -102,9 +102,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.gray300,
   },
-  itemTitle: {
-    textTransform: "capitalize",
-  },
   itemTitleChecked: {
     textDecorationLine: "line-through",
     color: colors.gray,

@@ -3,10 +3,12 @@ import { ShoppingItemCategorySectionHeader } from "@/components/ShoppingItemCate
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
 import { useFormIngredient } from "@/contexts/FormIngredientContext";
 import { useIngredientList } from "@/contexts/IngredientListContext";
-import { colors } from "@/theme";
-import { Ingredient, IngredientListSection } from "@/types/ingredient";
+import { colors, typography } from "@/theme";
+import { createIngredient, Ingredient, IngredientListSection } from "@/types/ingredient";
+import { Ionicons } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
-import { router } from "expo-router";
+import { uuid } from "expo-modules-core";
+import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { RefreshControl, SectionList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,7 +23,22 @@ export default function ProfileIngredientsScreen() {
 
   const handlePressIngredient = (ingredient: Ingredient) => {
     setFormIngredient(ingredient);
-    router.push({ pathname: "./ingredients/edit" });
+    router.push({
+      pathname: "/recipes/edit/ingredients/edit",
+      params: { id: uuid.v4(), from: "profile" }, //FIXME: ideally no recipeId needed here
+    });
+  };
+
+  const handleCancel = () => {
+    router.back();
+  };
+
+  const handleAdd = () => {
+    setFormIngredient(createIngredient());
+    router.push({
+      pathname: "/recipes/edit/ingredients/edit",
+      params: { id: uuid.v4(), from: "profile" }, //FIXME: ideally no recipeId needed here
+    });
   };
 
   useEffect(() => {
@@ -67,6 +84,25 @@ export default function ProfileIngredientsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Stack.Screen
+        options={{
+          title: "Ingrédients",
+          headerTitleStyle: typography.header,
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleCancel} disabled={isLoading} style={styles.headerButton}>
+              <Ionicons name="chevron-back" size={28} />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity onPress={handleAdd} style={styles.headerButton}>
+              <Ionicons name="add" size={28} color={colors.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <SearchBar query={{ value: searchTerm, set: setSearchTerm }} />
       {displaySearchResults()}
     </SafeAreaView>
@@ -81,5 +117,8 @@ const styles = StyleSheet.create({
   },
   ingredientItemContainer: {
     paddingLeft: 24,
+  },
+  headerButton: {
+    marginLeft: 3,
   },
 });
