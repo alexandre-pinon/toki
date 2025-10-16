@@ -31,10 +31,8 @@ type RecipeEditStackProps = { headerTitle?: string; recipeExists: boolean };
 const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) => {
   const {
     formRecipe,
-    setFormIngredients,
     formInstructions,
     setFormInstructions,
-    formCurrentIngredient,
     formCurrentInstruction,
     upsertRecipe,
     isLoading,
