@@ -16,19 +16,6 @@ export const unitTypes = [
   "slice",
   "to_taste",
 ] as const;
-const frenchUnitTypes = [
-  "cuillère à café",
-  "cuillère à soupe",
-  "tasse",
-  "pièce",
-  "pincée",
-  "botte",
-  "gousse",
-  "canette",
-  "paquet",
-  "tranche",
-  "au goût",
-] as const;
 
 export const isUnitType = (value: string): value is UnitType => {
   return unitTypes.includes(value as UnitType);
