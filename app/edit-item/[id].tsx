@@ -1,7 +1,7 @@
 import { BottomSheetPicker } from "@/components/BottomSheetPicker";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { useShoppingList } from "@/contexts/ShoppingListContext";
-import { colors, commonStyles, typography } from "@/theme";
+import { colors, typography } from "@/theme";
 import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
@@ -18,9 +18,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 type PickerType = "unit" | "category" | "hide";
 
 export default function EditItemScreen() {
-  const { sections, editItem, isLoading } = useShoppingList();
+  const { showedSections, editItem, isLoading } = useShoppingList();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const item = sections.flatMap((s) => s.data).find((item) => item.ids[0] === id);
+  const item = showedSections.flatMap((s) => s.data).find((item) => item.ids[0] === id);
 
   if (!item) {
     throw new Error("Cet article ne semble plus exister dans votre liste de courses");
@@ -115,7 +115,6 @@ export default function EditItemScreen() {
           title: "Modifier l'article",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
               <Text style={[typography.subtitle, styles.cancelButton, isLoading && styles.buttonDisabled]}>
@@ -152,7 +151,6 @@ export default function EditItemScreen() {
               onChangeText={setName}
               placeholder="Ex: Pommes"
               placeholderTextColor={colors.gray}
-              autoFocus
               editable={!isLoading}
             />
           </View>

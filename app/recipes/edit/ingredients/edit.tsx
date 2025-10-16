@@ -82,8 +82,6 @@ export default function RecipeEditIngredientEditScreen() {
           title: "Ingrédient",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerBackButtonDisplayMode: "minimal",
-          headerTintColor: colors.black,
           headerLeft: () => (
             <TouchableOpacity onPress={handleCancel} style={styles.actionButton} disabled={isLoading}>
               <Text style={[typography.subtitle, styles.cancelButtonText]}>Annuler</Text>

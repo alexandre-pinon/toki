@@ -2,7 +2,7 @@ import { BottomSheetPicker } from "@/components/BottomSheetPicker";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShoppingList } from "@/contexts/ShoppingListContext";
-import { colors, commonStyles, typography } from "@/theme";
+import { colors, typography } from "@/theme";
 import type { ShoppingItemCategory } from "@/types/shopping/shopping-item-category";
 import {
   isShoppingItemCategory,
@@ -61,9 +61,17 @@ export default function AddItemScreen() {
 
   const handlePickerSelect = (value?: string) => {
     if (showPicker === "unit") {
-      value ? setUnit(isUnitType(value) ? value : undefined) : setUnit(undefined);
+      if (value && isUnitType(value)) {
+        setUnit(value);
+      } else {
+        setUnit(undefined);
+      }
     } else if (showPicker === "category") {
-      value ? setCategory(isShoppingItemCategory(value) ? value : "other") : setCategory("other");
+      if (value && isShoppingItemCategory(value)) {
+        setCategory(value);
+      } else {
+        setCategory("other");
+      }
     }
   };
 
@@ -94,7 +102,6 @@ export default function AddItemScreen() {
           title: "Nouvel article",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerStyle: commonStyles.headerStyle,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
               <Text style={[typography.body, styles.cancelButton, isLoading && styles.buttonDisabled]}>Annuler</Text>
