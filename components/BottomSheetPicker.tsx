@@ -70,7 +70,7 @@ export function BottomSheetPicker({ visible, title, options, onSelect, onClose, 
               selectedValue={selectedValue}
               onValueChange={onSelect}
               style={styles.picker}
-              itemStyle={typography.body}
+              itemStyle={[typography.body, styles.pickerText]}
             >
               {options.map((option) => (
                 <Picker.Item key={option.value} label={option.label} value={option.value} />
@@ -114,5 +114,8 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 200,
+  },
+  pickerText: {
+    color: colors.black,
   },
 });
