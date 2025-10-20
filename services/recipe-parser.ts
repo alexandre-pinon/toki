@@ -1,5 +1,6 @@
 import { FormRecipeIngredient, Recipe, RecipeTimeFields, RecipeUpsertData } from "@/types/recipe/recipe";
 import { UnitType } from "@/types/unit-type";
+import { safeParseOptionalFloat } from "@/utils/string";
 import { CheerioAPI, load } from "cheerio";
 import { Element } from "domhandler";
 import { findIngredientByName } from "./ingredient";
@@ -97,7 +98,7 @@ function parseIngredient($: CheerioAPI, element: Element): FormRecipeIngredient 
   const unit = $element.find(".unit").attr("data-unitsingular");
 
   if (!name) return null;
-  const quantity = quantityStr ? parseFloat(quantityStr) : undefined;
+  const quantity = safeParseOptionalFloat(quantityStr);
 
   return {
     name,

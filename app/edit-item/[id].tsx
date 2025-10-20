@@ -10,6 +10,7 @@ import {
 } from "@/types/shopping/shopping-item-category";
 import type { UnitType } from "@/types/unit-type";
 import { isUnitType, mapUnitTypeToName, unitTypes } from "@/types/unit-type";
+import { safeParseOptionalFloat } from "@/utils/string";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -48,7 +49,7 @@ export default function EditItemScreen() {
 
     await editItem(id, {
       name: name.trim().toLowerCase(),
-      quantity: quantity !== undefined ? Number.parseFloat(quantity) : quantity,
+      quantity: safeParseOptionalFloat(quantity),
       unit,
       checked: item.checked,
       category,

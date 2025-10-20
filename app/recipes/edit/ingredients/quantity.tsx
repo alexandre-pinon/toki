@@ -3,7 +3,7 @@ import { useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
 import { mapShoppingItemCategoryToImageSource } from "@/types/shopping/shopping-item-category";
 import { isUnitType, mapUnitTypeToName, UnitType, unitTypes } from "@/types/unit-type";
-import { capitalize, safeParseOptionalInt } from "@/utils/string";
+import { capitalize, safeParseOptionalFloat, safeParseOptionalInt } from "@/utils/string";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -58,8 +58,9 @@ export default function RecipeEditIngredientQuantityScreen() {
       return;
     }
 
-    const quantity = Number.parseFloat(value);
-    if (Number.isNaN(quantity)) return;
+    const quantity = safeParseOptionalFloat(value);
+    if (!quantity) return;
+
     setFormCurrentIngredient((prev) => {
       if (!prev) return null;
       return { ...prev, quantity };
