@@ -11,6 +11,7 @@ import {
 } from "@/types/shopping/shopping-item-category";
 import type { UnitType } from "@/types/unit-type";
 import { isUnitType, mapUnitTypeToName, unitTypes } from "@/types/unit-type";
+import { safeParseOptionalFloat } from "@/utils/string";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -35,7 +36,7 @@ export default function AddItemScreen() {
 
     await addItem({
       name: name.trim().toLowerCase(),
-      quantity: quantity !== undefined ? Number.parseFloat(quantity) : quantity,
+      quantity: safeParseOptionalFloat(quantity),
       unit,
       checked: false,
       category,

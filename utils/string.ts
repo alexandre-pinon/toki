@@ -9,7 +9,7 @@ export const safeParseOptionalFloat = (value?: string): number | undefined => {
     return;
   }
 
-  const float = parseFloat(value);
+  const float = parseFloat(value.replace(",", "."));
 
   if (Number.isNaN(float)) {
     return;
