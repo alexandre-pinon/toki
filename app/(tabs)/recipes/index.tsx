@@ -1,6 +1,6 @@
 import { RecipeList } from "@/components/RecipeList";
 import { useRecipeList } from "@/contexts/RecipeListContext";
-import { colors, typography } from "@/theme";
+import { colors } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
 import { Ionicons } from "@expo/vector-icons";
 import { uuid } from "expo-modules-core";
@@ -14,21 +14,19 @@ export default function RecipesScreen() {
 
   const handleAddRecipe = async () => {
     router.push({
-      pathname: "../recipes/edit/[id]",
+      pathname: "../../recipes/edit/[id]",
       params: { id: uuid.v4() },
     });
   };
 
   const handlePressRecipe = useCallback((recipe: Recipe) => {
-    router.push({ pathname: "../recipes/[id]", params: { id: recipe.id } });
+    router.push({ pathname: "../../recipes/[id]", params: { id: recipe.id } });
   }, []);
 
   return (
     <View style={styles.root}>
       <Stack.Screen
         options={{
-          headerTitleStyle: typography.header,
-          headerShadowVisible: false,
           headerRight: () =>
             isAddRecipeLoading ? (
               <View style={styles.loadingContainer}>

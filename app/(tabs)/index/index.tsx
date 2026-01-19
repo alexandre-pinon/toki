@@ -1,20 +1,14 @@
 import { MealList } from "@/components/MealList";
-import { colors, typography } from "@/theme";
-import { router, Stack } from "expo-router";
+import { colors } from "@/theme";
+import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function WeeklyMealsScreen() {
   return (
     <View style={styles.root}>
-      <Stack.Screen
-        options={{
-          headerTitleStyle: typography.header,
-          headerShadowVisible: false,
-        }}
-      />
       <SafeAreaView style={styles.container}>
-        <MealList onPressMeal={(meal) => router.push({ pathname: "../meals/[id]", params: { id: meal.id } })} />
+        <MealList onPressMeal={(meal) => router.push({ pathname: "../../meals/[id]", params: { id: meal.id } })} />
       </SafeAreaView>
     </View>
   );

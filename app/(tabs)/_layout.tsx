@@ -1,68 +1,48 @@
-import { MenuIcon } from "@/components/icons/MenuIcon";
-import { ProfileIcon } from "@/components/icons/ProfileIcon";
-import { RecipeIcon } from "@/components/icons/RecipeIcon";
-import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
 import { colors } from "@/theme";
-import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
-import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
+import {
+  Icon,
+  IconProps,
+  Label,
+  NativeTabs,
+} from "expo-router/unstable-native-tabs";
 
 type Tab = {
   name: string;
   title: string;
-  headerTitle?: string;
-  tabBarIcon: BottomTabNavigationOptions["tabBarIcon"];
+  sf: IconProps["sf"];
 };
 const TABS: Tab[] = [
   {
     name: "index",
     title: "Menu",
-    headerTitle: "Repas de la semaine",
-    tabBarIcon: MenuIcon,
+    sf: "fork.knife",
   },
   {
     name: "recipes",
     title: "Recettes",
-    tabBarIcon: RecipeIcon,
+    sf: { default: "folder", selected: "folder.fill" },
   },
   {
     name: "shopping-list",
     title: "Courses",
-    headerTitle: "Liste de courses",
-    tabBarIcon: ShoppingCartIcon,
+    sf: { default: "cart", selected: "cart.fill" },
   },
   {
     name: "profile",
     title: "Profile",
-    tabBarIcon: ProfileIcon,
+    sf: { default: "person", selected: "person.fill" },
   },
 ];
 
 export default function TabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarStyle: {
-          position: "absolute",
-          paddingTop: 10,
-        },
-        tabBarBackground: () => (
-          <BlurView
-            intensity={30}
-            style={{
-              ...StyleSheet.absoluteFillObject,
-              overflow: "hidden",
-              backgroundColor: "transparent",
-            }}
-          />
-        ),
-      }}
-    >
-      {TABS.map(({ name, title, headerTitle, tabBarIcon }) => (
-        <Tabs.Screen key={`tab-${name}`} name={name} options={{ title, headerTitle, tabBarIcon }} />
+    <NativeTabs>
+      {TABS.map(({ name, title, sf }) => (
+        <NativeTabs.Trigger key={`tab-${name}`} name={name} options={{}}>
+          <Label>{title}</Label>
+          <Icon sf={sf} selectedColor={colors.primary} />
+        </NativeTabs.Trigger>
       ))}
-    </Tabs>
+    </NativeTabs>
   );
 }
