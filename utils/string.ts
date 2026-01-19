@@ -32,18 +32,19 @@ export const safeParseOptionalInt = (value?: string): number | undefined => {
   return int;
 };
 
-const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
+const URL_REGEX =
+  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 
 export type TextSegment =
-  | { type: 'text'; content: string }
-  | { type: 'link'; content: string; url: string };
+  | { type: "text"; content: string }
+  | { type: "link"; content: string; url: string };
 
 export const parseTextWithLinks = (text: string): TextSegment[] => {
   const segments: TextSegment[] = [];
   const matches = Array.from(text.matchAll(URL_REGEX));
 
   if (matches.length === 0) {
-    return [{ type: 'text', content: text }];
+    return [{ type: "text", content: text }];
   }
 
   let lastIndex = 0;
@@ -55,16 +56,16 @@ export const parseTextWithLinks = (text: string): TextSegment[] => {
     // Add text before URL
     if (startIndex > lastIndex) {
       segments.push({
-        type: 'text',
-        content: text.slice(lastIndex, startIndex)
+        type: "text",
+        content: text.slice(lastIndex, startIndex),
       });
     }
 
     // Add URL segment
     segments.push({
-      type: 'link',
+      type: "link",
       content: url,
-      url: url
+      url: url,
     });
 
     lastIndex = startIndex + url.length;
@@ -73,8 +74,8 @@ export const parseTextWithLinks = (text: string): TextSegment[] => {
   // Add remaining text after last URL
   if (lastIndex < text.length) {
     segments.push({
-      type: 'text',
-      content: text.slice(lastIndex)
+      type: "text",
+      content: text.slice(lastIndex),
     });
   }
 
