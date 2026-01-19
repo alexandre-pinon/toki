@@ -41,6 +41,11 @@ export const colors = {
   contrast: "#f0e9e4",
   contrast100: "#f0e9e4",
   contrast50: "#f8f5f4",
+  systemText: "#010101",
+  neutralSurface: "#f8fafc",
+  neutralBorders: "#d3d3d3",
+  neutralTextTitle: "#0d121c",
+  neutralBackground: "#d9d9d9",
   white: "#ffffff",
   black: "#000000",
 } as const;

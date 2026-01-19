@@ -1,5 +1,6 @@
 import { colors, typography } from "@/theme";
 import { StyleSheet, Text, View } from "react-native";
+import { LinkableText } from "./LinkableText";
 
 type RecipeInstructionListProps = {
   instructions: string[];
@@ -12,7 +13,7 @@ export function RecipeInstructionList({ instructions }: RecipeInstructionListPro
         instructions.map((step, index) => (
           <View key={`recipe-instruction-step-${index + 1}`} style={styles.stepRow}>
             <Text style={[typography.bodyLarge, styles.stepTitle]}>Étape {index + 1}</Text>
-            <Text style={[typography.bodyLarge, styles.stepText]}>{step}</Text>
+            <LinkableText style={[typography.bodyLarge, styles.stepText]}>{step}</LinkableText>
           </View>
         ))
       ) : (
