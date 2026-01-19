@@ -5,7 +5,7 @@ export default ({ config }) => {
     ...config,
     name: profile === "prod" ? "Toki" : profile === "preview" ? "Toki (Preview)" : "Toki (Dev)",
     slug: "toki",
-    version: "1.0.1",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/images/toki_logo.png",
     scheme: "toki",
