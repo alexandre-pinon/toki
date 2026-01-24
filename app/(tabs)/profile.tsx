@@ -4,9 +4,9 @@ import { LogoutIcon } from "@/components/icons/LogoutIcon";
 import { StatisticIcon } from "@/components/icons/StatisticIcon";
 import { ProfileMenuItem } from "@/components/ProfileMenuItem";
 import { useAuth } from "@/contexts/AuthContext";
-import { colors } from "@/theme";
+import { colors, typography } from "@/theme";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -23,6 +23,12 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.root}>
+      <Stack.Screen
+        options={{
+          headerTitleStyle: typography.header,
+          headerShadowVisible: false,
+        }}
+      />
       <SafeAreaView style={styles.container}>
         <ProfileMenuItem
           icon={InfoIcon}
