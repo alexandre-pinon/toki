@@ -21,7 +21,6 @@ export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderPro
     try {
       setIsLoading(true);
       const recipe = await findRecipeById(id);
-      console.log("fetching current recipe", { id, isLoading, recipe });
       setCurrentRecipe(recipe);
     } finally {
       setIsLoading(false);
