@@ -1,34 +1,30 @@
 import { Loader } from "@/components/Loader";
-import { CurrentRecipeProvider, useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
+import { useCurrentRecipe } from "@/contexts/CurrentRecipeContext";
 import { FormRecipeProvider, useFormRecipe } from "@/contexts/FormRecipeContext";
 import { colors, typography } from "@/theme";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export default function RecipeEditLayout() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, returnTo } = useLocalSearchParams<{ id: string; returnTo?: string }>();
 
-  return (
-    <CurrentRecipeProvider id={id}>
-      <RecipeEditProvider id={id} />
-    </CurrentRecipeProvider>
-  );
+  return <RecipeEditProvider id={id} returnTo={returnTo} />;
 }
 
-const RecipeEditProvider = ({ id }: { id: string }) => {
+const RecipeEditProvider = ({ id, returnTo }: { id: string; returnTo?: string }) => {
   const { currentRecipe, isLoading } = useCurrentRecipe();
 
   if (isLoading) return <Loader />;
 
   return (
     <FormRecipeProvider initialRecipeValues={currentRecipe} recipeId={id}>
-      <RecipeEditStack headerTitle={currentRecipe?.recipe.name} recipeExists={!!currentRecipe} />
+      <RecipeEditStack headerTitle={currentRecipe?.recipe.name} recipeExists={!!currentRecipe} returnTo={returnTo} />
     </FormRecipeProvider>
   );
 };
 
-type RecipeEditStackProps = { headerTitle?: string; recipeExists: boolean };
-const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) => {
+type RecipeEditStackProps = { headerTitle?: string; recipeExists: boolean; returnTo?: string };
+const RecipeEditStack = ({ headerTitle, recipeExists, returnTo }: RecipeEditStackProps) => {
   const {
     formRecipe,
     formInstructions,
@@ -50,7 +46,12 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
 
   const handleSaveRecipe = () => {
     upsertRecipe();
-    router.dismissTo({ pathname: "/recipes/[id]", params: { id: formRecipe.id } });
+
+    if (returnTo === "weeklyMeals") {
+      router.dismissTo({ pathname: "/(tabs)" });
+    } else {
+      router.dismissTo({ pathname: "/recipes/[id]", params: { id: formRecipe.id } });
+    }
   };
 
   const handleImportRecipe = async () => {
