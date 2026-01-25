@@ -1,5 +1,5 @@
 import { getDbResponseDataOrThrow, supabase } from "@/lib/supabase";
-import type { Recipe, RecipeDetails, RecipeUpsertData } from "@/types/recipe/recipe";
+import type { Recipe, RecipeDetails, RecipeIngredient, RecipeUpsertData } from "@/types/recipe/recipe";
 import { byShoppingItemCategoryOrder } from "@/types/shopping/shopping-item-category";
 import mime from "mime";
 import { refreshImageCache, removeImage, uploadImage } from "./image";
@@ -154,4 +154,32 @@ export const deleteRecipe = async (id: string) => {
     const fileExtension = deletedRecipe.image_url.split(".").at(-1);
     await removeImage(`recipes/${id}.${fileExtension}`);
   }
+};
+
+export const getRecipeIngredients = async (recipeId: string): Promise<RecipeIngredient[]> => {
+  const recipeIngredients = getDbResponseDataOrThrow(
+    await supabase
+      .from("recipes_to_ingredients")
+      .select(
+        `
+        quantity,
+        unit,
+        ingredients (
+          id,
+          name,
+          category
+        )
+      `,
+      )
+      .eq("recipe_id", recipeId),
+  );
+
+  return recipeIngredients.map((item) => ({
+    recipeId,
+    ingredientId: item.ingredients.id,
+    quantity: item.quantity ?? undefined,
+    unit: item.unit ?? undefined,
+    name: item.ingredients.name,
+    category: item.ingredients.category ?? "other",
+  }));
 };
