@@ -9,10 +9,10 @@ type Props = {
   visible: boolean;
   title: string;
   options: Option[];
-  onSelect: (value?: string) => void;
+  onSelect: (value?: string | null) => void;
   onClose: () => void;
-  selectedValue?: string;
-  previousValue?: string;
+  selectedValue?: string | null;
+  previousValue?: string | null;
 };
 
 export function BottomSheetPicker({ visible, title, options, onSelect, onClose, selectedValue, previousValue }: Props) {

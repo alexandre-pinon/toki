@@ -2,6 +2,7 @@ import { CustomErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FormIngredientProvider } from "@/contexts/FormIngredientContext";
 import { IngredientListProvider } from "@/contexts/IngredientListContext";
+import { RecipeFilterProvider } from "@/contexts/RecipeFilterContext";
 import { RecipeListProvider } from "@/contexts/RecipeListContext";
 import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
 import { UpcomingMealsProvider } from "@/contexts/UpcomingMealsContext";
@@ -55,9 +56,11 @@ export default function RootLayout() {
         <UpcomingMealsProvider>
           <RecipeListProvider>
             <IngredientListProvider>
-              <FormIngredientProvider>
-                <RootLayoutNav />
-              </FormIngredientProvider>
+              <RecipeFilterProvider>
+                <FormIngredientProvider>
+                  <RootLayoutNav />
+                </FormIngredientProvider>
+              </RecipeFilterProvider>
             </IngredientListProvider>
           </RecipeListProvider>
         </UpcomingMealsProvider>

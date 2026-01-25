@@ -37,7 +37,9 @@ const RecipeEditStack = ({ headerTitle, recipeExists, returnTo }: RecipeEditStac
   } = useFormRecipe();
 
   const handleCancel = () => {
-    if (recipeExists) {
+    if (returnTo === "weeklyMeals") {
+      router.dismissTo("/(tabs)");
+    } else if (recipeExists) {
       router.dismissTo({ pathname: "/recipes/[id]", params: { id: formRecipe.id } });
     } else {
       router.dismissTo({ pathname: "/recipes" });
