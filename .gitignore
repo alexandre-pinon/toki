@@ -39,6 +39,8 @@ yarn-error.*
 app-example
 
 .env
+.env.remote
 
 ios/
 android/
+supabase/.*
