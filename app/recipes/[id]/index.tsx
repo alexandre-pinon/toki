@@ -14,7 +14,9 @@ export default function RecipeDetailsScreen() {
   const { currentRecipe, isLoading } = useCurrentRecipe();
   const [tab, setTab] = useState<RecipeTabName>("ingredients");
 
-  if (isLoading || !currentRecipe) return <Loader />;
+  const shouldDisplayLoader = isLoading || !currentRecipe;
+  console.log({ shouldDisplayLoader, isLoading, currentRecipe });
+  if (shouldDisplayLoader) return <Loader />;
 
   const { recipe, ingredients, instructions } = currentRecipe;
 

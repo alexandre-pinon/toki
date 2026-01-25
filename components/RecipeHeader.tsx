@@ -8,9 +8,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type RecipeHeaderProps = {
   id: string;
   imageUrl?: string;
+  returnTo?: "weeklyMeals";
 };
 
-export function RecipeHeader({ id, imageUrl }: RecipeHeaderProps) {
+export function RecipeHeader({ id, imageUrl, returnTo }: RecipeHeaderProps) {
   const insets = useSafeAreaInsets();
 
   const handleCancel = () => {
@@ -20,7 +21,10 @@ export function RecipeHeader({ id, imageUrl }: RecipeHeaderProps) {
   const handleEdit = () => {
     router.push({
       pathname: `/recipes/edit/[id]`,
-      params: { id },
+      params: {
+        id,
+        ...(returnTo && { returnTo }),
+      },
     });
   };
 

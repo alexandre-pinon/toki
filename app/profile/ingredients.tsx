@@ -7,7 +7,6 @@ import { colors, typography } from "@/theme";
 import { createIngredient, Ingredient, IngredientListSection } from "@/types/ingredient";
 import { Ionicons } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
-import { uuid } from "expo-modules-core";
 import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { RefreshControl, SectionList, StyleSheet, TouchableOpacity } from "react-native";
@@ -24,8 +23,7 @@ export default function ProfileIngredientsScreen() {
   const handlePressIngredient = (ingredient: Ingredient) => {
     setFormIngredient(ingredient);
     router.push({
-      pathname: "/recipes/edit/ingredients/edit",
-      params: { id: uuid.v4(), from: "profile" }, //FIXME: ideally no recipeId needed here
+      pathname: "/ingredient/edit",
     });
   };
 
@@ -36,8 +34,7 @@ export default function ProfileIngredientsScreen() {
   const handleAdd = () => {
     setFormIngredient(createIngredient());
     router.push({
-      pathname: "/recipes/edit/ingredients/edit",
-      params: { id: uuid.v4(), from: "profile" }, //FIXME: ideally no recipeId needed here
+      pathname: "/ingredient/edit",
     });
   };
 

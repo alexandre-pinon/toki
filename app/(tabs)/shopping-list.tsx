@@ -1,15 +1,16 @@
+import { ShoppingList } from "@/components/ShoppingList";
 import { colors, typography } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import "temporal-polyfill/global";
 
-export default function ShoppingListLayout() {
+export default function ShoppingListScreen() {
   return (
-    <Stack>
+    <View style={styles.root}>
       <Stack.Screen
-        name="index"
         options={{
-          title: "Liste de courses",
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
           headerRight: () => (
@@ -19,11 +20,23 @@ export default function ShoppingListLayout() {
           ),
         }}
       />
-    </Stack>
+      <SafeAreaView style={styles.container} edges={["bottom"]}>
+        <ShoppingList />
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  container: {
+    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 48,
+  },
   addButton: {
     padding: 8,
   },
