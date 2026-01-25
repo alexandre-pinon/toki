@@ -1,14 +1,9 @@
+import { CerealTag, ProteinTag } from "../ingredient";
 import type { RecipeType } from "./recipe-type";
 
-export type LastDoneFilter = "more_than_3_months" | "more_than_1_month" | "less_than_1_month";
+export const lastDoneFilters = ["more_than_3_months", "more_than_1_month", "less_than_1_month"] as const;
 
-export const lastDoneFilters: LastDoneFilter[] = ["more_than_3_months", "more_than_1_month", "less_than_1_month"];
-
-export type CerealTag = "pasta" | "rice" | "potato";
-export type ProteinTag = "beef" | "pork" | "chicken" | "fish";
-
-export const filterCerealTags: CerealTag[] = ["pasta", "rice", "potato"];
-export const filterProteinTags: ProteinTag[] = ["beef", "pork", "chicken", "fish"];
+export type LastDoneFilter = (typeof lastDoneFilters)[number];
 
 export type RecipeFilters = {
   types: RecipeType[];

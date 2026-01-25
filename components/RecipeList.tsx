@@ -7,15 +7,7 @@ import { Ingredient, IngredientTag } from "@/types/ingredient";
 import type { Recipe, RecipeIngredient } from "@/types/recipe/recipe";
 import { router } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  ListRenderItemInfo,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { SwipeableMethods } from "react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable";
 import Animated, { SlideInLeft } from "react-native-reanimated";
 import { RecipeCard } from "./RecipeCard";
@@ -32,9 +24,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
   const { ingredientSections } = useIngredientList();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [recipeIngredientsCache, setRecipeIngredientsCache] = useState<
-    Map<string, RecipeIngredient[]>
-  >(new Map());
+  const [recipeIngredientsCache, setRecipeIngredientsCache] = useState<Map<string, RecipeIngredient[]>>(new Map());
 
   // Create a map of ingredient id to ingredient for quick lookup
   const ingredientMap = useMemo(() => {
@@ -93,33 +83,22 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
   useEffect(() => {
     let filtered = [...recipes];
 
-    // Search filter
     if (searchQuery) {
-      filtered = filtered.filter((recipe) =>
-        recipe.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      filtered = filtered.filter((recipe) => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
-    // Type filter (multi-select)
     if (filters.types.length > 0) {
       filtered = filtered.filter((recipe) => filters.types.includes(recipe.type));
     }
 
-    // Cereal tag filter (multi-select)
     if (filters.cerealTags.length > 0) {
-      filtered = filtered.filter((recipe) =>
-        recipeHasIngredientTag(recipe.id, filters.cerealTags),
-      );
+      filtered = filtered.filter((recipe) => recipeHasIngredientTag(recipe.id, filters.cerealTags));
     }
 
-    // Protein tag filter (multi-select)
     if (filters.proteinTags.length > 0) {
-      filtered = filtered.filter((recipe) =>
-        recipeHasIngredientTag(recipe.id, filters.proteinTags),
-      );
+      filtered = filtered.filter((recipe) => recipeHasIngredientTag(recipe.id, filters.proteinTags));
     }
 
-    // Last done filter (single-select)
     if (filters.lastDone) {
       const now = Temporal.Now.plainDateISO();
       const threeMonthsAgo = now.subtract({ months: 3 });
@@ -128,23 +107,17 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
       switch (filters.lastDone) {
         case "more_than_3_months":
           filtered = filtered.filter(
-            (r) =>
-              !r.lastTimeDone ||
-              Temporal.PlainDate.compare(r.lastTimeDone, threeMonthsAgo) < 0,
+            (r) => !r.lastTimeDone || Temporal.PlainDate.compare(r.lastTimeDone, threeMonthsAgo) < 0,
           );
           break;
         case "more_than_1_month":
           filtered = filtered.filter(
-            (r) =>
-              !r.lastTimeDone ||
-              Temporal.PlainDate.compare(r.lastTimeDone, oneMonthAgo) < 0,
+            (r) => !r.lastTimeDone || Temporal.PlainDate.compare(r.lastTimeDone, oneMonthAgo) < 0,
           );
           break;
         case "less_than_1_month":
           filtered = filtered.filter(
-            (r) =>
-              r.lastTimeDone &&
-              Temporal.PlainDate.compare(r.lastTimeDone, oneMonthAgo) >= 0,
+            (r) => r.lastTimeDone && Temporal.PlainDate.compare(r.lastTimeDone, oneMonthAgo) >= 0,
           );
           break;
       }
@@ -157,7 +130,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
     (recipeId: string, swipeable?: SwipeableMethods) => {
       Alert.alert(
         "Supprimer la recette",
-        "Etes-vous sur de vouloir supprimer cette recette ?",
+        "Êtes-vous sûr de vouloir supprimer cette recette ?",
         [
           {
             text: "Annuler",
@@ -186,10 +159,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
 
   const renderItem = ({ item }: ListRenderItemInfo<Recipe>) => {
     return (
-      <Animated.View
-        style={[styles.recipeContainer, { boxShadow: commonStyles.boxShadow }]}
-        entering={SlideInLeft}
-      >
+      <Animated.View style={[styles.recipeContainer, { boxShadow: commonStyles.boxShadow }]} entering={SlideInLeft}>
         <SwipeableItem
           onDelete={(swipeable) => handleDeleteRecipe(item.id, swipeable)}
           actionsStyles={{ borderRadius: 12 }}
@@ -208,17 +178,13 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
         hasActiveFilters={hasActiveFilters}
       />
       {!isLoading && recipes.length === 0 ? (
-        <RecipePlaceholder text="Vous n'avez pas encore de recettes !" />
+        <RecipePlaceholder text="Vous n'avez pas encore de recettes ! 🍳" />
       ) : !isLoading && filteredRecipes.length === 0 ? (
-        <RecipePlaceholder text="Aucune recette trouvee !" />
+        <RecipePlaceholder text="Aucune recette trouvée ! 🍳" />
       ) : (
         <FlatList
           refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={refetchRecipes}
-              tintColor={colors.primary200}
-            />
+            <RefreshControl refreshing={isLoading} onRefresh={refetchRecipes} tintColor={colors.primary200} />
           }
           data={filteredRecipes}
           renderItem={renderItem}

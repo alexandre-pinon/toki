@@ -2,11 +2,10 @@ import { RecipeList } from "@/components/RecipeList";
 import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
-import { Ionicons } from "@expo/vector-icons";
 import { uuid } from "expo-modules-core";
 import { router, Stack } from "expo-router";
 import { useCallback } from "react";
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipesScreen() {
@@ -36,7 +35,7 @@ export default function RecipesScreen() {
               </View>
             ) : (
               <TouchableOpacity onPress={handleAddRecipe} style={styles.addButton}>
-                <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />
+                <Text style={[typography.body, styles.addButtonText]}>Ajouter</Text>
               </TouchableOpacity>
             ),
         }}
@@ -58,10 +57,11 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   addButton: {
-    padding: 8,
+    paddingRight: 16,
   },
-  addButtonIcon: {
-    marginRight: 8,
+  addButtonText: {
+    color: colors.primary,
+    fontWeight: 300,
   },
   loadingContainer: {
     marginRight: 16,

@@ -9,13 +9,8 @@ type FilterPillProps = {
 
 export const FilterPill = ({ label, selected, onPress }: FilterPillProps) => {
   return (
-    <TouchableOpacity
-      style={[styles.pill, selected && styles.pillSelected]}
-      onPress={onPress}
-    >
-      <Text style={[styles.pillText, selected && styles.pillTextSelected]}>
-        {label}
-      </Text>
+    <TouchableOpacity style={[styles.pill, selected && styles.pillSelected]} onPress={onPress}>
+      <Text style={[typography.subtext, styles.pillText, selected && styles.pillTextSelected]}>{label}</Text>
     </TouchableOpacity>
   );
 };
@@ -33,8 +28,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary400,
   },
   pillText: {
-    ...typography.subtext,
     color: colors.gray600,
+    fontWeight: 300,
     textTransform: "capitalize",
   },
   pillTextSelected: {

@@ -1,8 +1,7 @@
 import { ShoppingList } from "@/components/ShoppingList";
 import { colors, typography } from "@/theme";
-import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "temporal-polyfill/global";
 
@@ -15,7 +14,7 @@ export default function ShoppingListScreen() {
           headerShadowVisible: false,
           headerRight: () => (
             <TouchableOpacity onPress={() => router.push("/add-item")} style={styles.addButton}>
-              <Ionicons name="add" size={24} color={colors.primary} style={styles.addButtonIcon} />
+              <Text style={[typography.body, styles.addButtonText]}>Ajouter</Text>
             </TouchableOpacity>
           ),
         }}
@@ -38,8 +37,13 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   addButton: {
-    padding: 8,
+    paddingRight: 16,
   },
+  addButtonText: {
+    color: colors.primary,
+    fontWeight: 300,
+  },
+
   addButtonIcon: {
     marginRight: 8,
   },

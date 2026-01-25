@@ -1,9 +1,11 @@
 import { uuid } from "expo-modules-core";
 import { ShoppingItemCategory } from "./shopping/shopping-item-category";
 
-const proteinTags = ["chicken", "pork", "beef", "fish"] as const;
-const cerealTags = ["pasta", "rice", "potato"] as const;
+export const proteinTags = ["chicken", "pork", "beef", "fish"] as const;
+export const cerealTags = ["pasta", "rice", "potato"] as const;
 export const ingredientTags = [...proteinTags, ...cerealTags];
+export type CerealTag = (typeof cerealTags)[number];
+export type ProteinTag = (typeof proteinTags)[number];
 export type IngredientTag = (typeof ingredientTags)[number];
 
 export type Ingredient = {

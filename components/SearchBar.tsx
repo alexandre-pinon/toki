@@ -12,29 +12,23 @@ type SearchBarProps = {
   autoCorrect?: boolean;
 };
 
-export const SearchBar = ({
-  query,
-  onFilterPress,
-  hasActiveFilters,
-  autoFocus,
-  autoCorrect,
-}: SearchBarProps) => {
+export const SearchBar = ({ query, onFilterPress, hasActiveFilters, autoFocus, autoCorrect }: SearchBarProps) => {
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
-        <SearchIcon color={colors.gray500} size={16} />
+        <SearchIcon color={colors.black} size={16} />
         <TextInput
-          style={[styles.searchInput, typography.subtext]}
+          style={[typography.subtext, styles.searchInput]}
           placeholder="Rechercher par nom"
           value={query.value}
           onChangeText={query.set}
-          placeholderTextColor={colors.gray500}
+          placeholderTextColor={colors.gray}
           autoFocus={autoFocus ?? false}
           autoCorrect={autoCorrect ?? false}
         />
         {query.value.length > 0 && (
           <TouchableOpacity style={styles.clearButton} onPress={() => query.set("")}>
-            <Ionicons name="close" size={16} color={colors.gray500} />
+            <Ionicons name="close" size={16} color={colors.gray} />
           </TouchableOpacity>
         )}
       </View>
@@ -44,10 +38,8 @@ export const SearchBar = ({
           style={[styles.filterButton, hasActiveFilters && styles.filterButtonActive]}
           onPress={onFilterPress}
         >
-          <FilterIcon color={hasActiveFilters ? colors.white : colors.gray500} size={14} />
-          <Text style={[styles.filterText, hasActiveFilters && styles.filterTextActive]}>
-            Filtrer
-          </Text>
+          <FilterIcon color={hasActiveFilters ? colors.white : colors.black} size={14} />
+          <Text style={[styles.filterText, hasActiveFilters && styles.filterTextActive]}>Filtrer</Text>
           {hasActiveFilters && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
       )}
@@ -78,6 +70,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     color: colors.black,
+    fontWeight: 300,
   },
   clearButton: {
     padding: 2,
@@ -99,7 +92,8 @@ const styles = StyleSheet.create({
   },
   filterText: {
     ...typography.subtext,
-    color: colors.gray500,
+    color: colors.gray,
+    fontWeight: 300,
   },
   filterTextActive: {
     color: colors.white,

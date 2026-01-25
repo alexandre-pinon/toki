@@ -1,5 +1,5 @@
 import { CurrentRecipeProvider } from "@/contexts/CurrentRecipeContext";
-import { Slot, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 export default function RecipesLayout() {
   const params = useLocalSearchParams<{ id?: string }>();
@@ -12,11 +12,14 @@ export default function RecipesLayout() {
   if (recipeId) {
     return (
       <CurrentRecipeProvider id={recipeId}>
-        <Slot />
+        <Stack>
+          <Stack.Screen name="[id]/index" options={{ headerShown: false }} />
+          <Stack.Screen name="edit" options={{ headerShown: false }} />
+        </Stack>
       </CurrentRecipeProvider>
     );
   }
 
   // For routes without ID, just render children
-  return <Slot />;
+  return <Stack />;
 }

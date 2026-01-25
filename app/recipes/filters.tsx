@@ -1,50 +1,36 @@
 import { FilterPill } from "@/components/FilterPill";
 import { useRecipeFilter } from "@/contexts/RecipeFilterContext";
 import { colors, typography } from "@/theme";
-import { mapIngredientTagToName } from "@/types/ingredient";
+import { CerealTag, cerealTags, mapIngredientTagToName, ProteinTag, proteinTags } from "@/types/ingredient";
 import {
-  CerealTag,
-  filterCerealTags,
-  filterProteinTags,
-  lastDoneFilters,
+  emptyFilters,
   LastDoneFilter,
+  lastDoneFilters,
   mapLastDoneFilterToName,
-  ProteinTag,
   RecipeFilters,
 } from "@/types/recipe/recipe-filter";
 import { mapRecipeTypeToName, RecipeType, recipeTypes } from "@/types/recipe/recipe-type";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FiltersScreen() {
-  const { filters, setFilters, clearFilters } = useRecipeFilter();
+  const { filters, setFilters } = useRecipeFilter();
   const [localFilters, setLocalFilters] = useState<RecipeFilters>(filters);
 
   const toggleType = (type: RecipeType) => {
     setLocalFilters((prev) => ({
       ...prev,
-      types: prev.types.includes(type)
-        ? prev.types.filter((t) => t !== type)
-        : [...prev.types, type],
+      types: prev.types.includes(type) ? prev.types.filter((t) => t !== type) : [...prev.types, type],
     }));
   };
 
   const toggleCerealTag = (tag: CerealTag) => {
     setLocalFilters((prev) => ({
       ...prev,
-      cerealTags: prev.cerealTags.includes(tag)
-        ? prev.cerealTags.filter((t) => t !== tag)
-        : [...prev.cerealTags, tag],
+      cerealTags: prev.cerealTags.includes(tag) ? prev.cerealTags.filter((t) => t !== tag) : [...prev.cerealTags, tag],
     }));
   };
 
@@ -65,12 +51,7 @@ export default function FiltersScreen() {
   };
 
   const handleClearAll = () => {
-    setLocalFilters({
-      types: [],
-      cerealTags: [],
-      proteinTags: [],
-      lastDone: null,
-    });
+    setLocalFilters(emptyFilters);
   };
 
   const handleValidate = () => {
@@ -82,25 +63,27 @@ export default function FiltersScreen() {
     <View style={styles.root}>
       <Stack.Screen
         options={{
-          headerShown: false,
+          title: "Filtres",
+          headerTitleStyle: typography.header,
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors.black,
+          headerShown: true,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Ionicons name="chevron-back" size={24} color={colors.black} />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity onPress={handleClearAll} style={styles.clearButton}>
+              <Text style={[typography.body, styles.clearButtonText]}>Tout effacer</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color={colors.black} />
-          </TouchableOpacity>
-          <Text style={[typography.header, styles.title]}>Filtres</Text>
-          <TouchableOpacity onPress={handleClearAll} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>Tout effacer</Text>
-          </TouchableOpacity>
-        </View>
-
+      <SafeAreaView style={styles.container} edges={[]}>
         <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <FilterSection
-            icon={require("@/assets/images/servings.png")}
-            label="Type"
-          >
+          <FilterSection icon={require("@/assets/images/servings.png")} label="Type">
             <View style={styles.pillGrid}>
               {recipeTypes.map((type) => (
                 <FilterPill
@@ -113,12 +96,9 @@ export default function FiltersScreen() {
             </View>
           </FilterSection>
 
-          <FilterSection
-            icon={require("@/assets/images/cereals.png")}
-            label="Accompagnement"
-          >
+          <FilterSection icon={require("@/assets/images/cereals.png")} label="Accompagnement">
             <View style={styles.pillGrid}>
-              {filterCerealTags.map((tag) => (
+              {cerealTags.map((tag) => (
                 <FilterPill
                   key={tag}
                   label={mapIngredientTagToName(tag)}
@@ -129,12 +109,9 @@ export default function FiltersScreen() {
             </View>
           </FilterSection>
 
-          <FilterSection
-            icon={require("@/assets/images/meat.png")}
-            label="Proteine"
-          >
+          <FilterSection icon={require("@/assets/images/meat.png")} label="Protéine">
             <View style={styles.pillGrid}>
-              {filterProteinTags.map((tag) => (
+              {proteinTags.map((tag) => (
                 <FilterPill
                   key={tag}
                   label={mapIngredientTagToName(tag)}
@@ -145,10 +122,7 @@ export default function FiltersScreen() {
             </View>
           </FilterSection>
 
-          <FilterSection
-            icon={require("@/assets/images/clock.png")}
-            label="Derniere fois faites"
-          >
+          <FilterSection icon={require("@/assets/images/clock.png")} label="Dernière fois faîtes">
             <View style={styles.pillGrid}>
               {lastDoneFilters.map((filter) => (
                 <FilterPill
@@ -204,8 +178,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray100,
   },
   backButton: {
     padding: 4,
@@ -218,9 +190,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   clearButtonText: {
-    ...typography.subtext,
-    color: colors.primary400,
-    fontWeight: "500",
+    color: colors.primary,
+    fontWeight: "300",
   },
   scrollContent: {
     flex: 1,
@@ -228,8 +199,6 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray100,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -244,7 +213,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     color: colors.black,
-    fontWeight: "400",
+    fontWeight: "300",
   },
   pillGrid: {
     flexDirection: "row",
@@ -252,15 +221,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 60,
     paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray100,
   },
   validateButton: {
     backgroundColor: colors.primary400,
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 10,
+    borderRadius: 32,
     alignItems: "center",
   },
   validateButtonText: {
