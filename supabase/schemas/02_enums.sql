@@ -64,6 +64,19 @@ CREATE TYPE "public"."cuisine_type" AS ENUM (
 
 ALTER TYPE "public"."cuisine_type" OWNER TO "postgres";
 
+-- Ingredient tags for categorization
+CREATE TYPE "public"."ingredient_tag" AS ENUM (
+    'chicken',
+    'pork',
+    'beef',
+    'fish',
+    'pasta',
+    'rice',
+    'potato'
+);
+
+ALTER TYPE "public"."ingredient_tag" OWNER TO "postgres";
+
 -- Meal time categorization
 CREATE TYPE "public"."meal_type" AS ENUM (
     'breakfast',

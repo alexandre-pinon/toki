@@ -7,6 +7,7 @@ const fromDatabaseToDomain = (dbIngredient: OmitDBTimestamps<DBRow<"ingredients"
   name: dbIngredient.name,
   nameNormalized: dbIngredient.name_normalized,
   category: dbIngredient.category ?? "other",
+  tag: dbIngredient.tag,
 });
 
 export const searchIngredient = async (searchTerm: string): Promise<Ingredient[]> => {
@@ -61,6 +62,7 @@ export const upsertIngredient = async (ingredient: Ingredient): Promise<Ingredie
         name: ingredient.name,
         name_normalized: ingredient.nameNormalized,
         category: ingredient.category,
+        tag: ingredient.tag,
         updated_at: Temporal.Now.plainDateTimeISO().toString(),
       })
       .select("*")

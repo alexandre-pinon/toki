@@ -25,7 +25,6 @@ export const byShoppingItemCategoryOrder = (a: ShoppingItemCategory, b: Shopping
 export const isShoppingItemCategory = (value: string): value is ShoppingItemCategory => {
   return shoppingItemCategories.includes(value as ShoppingItemCategory);
 };
-
 export const mapShoppingItemCategoryToName = (category: ShoppingItemCategory): string => {
   switch (category) {
     case "fruits_vegetables":

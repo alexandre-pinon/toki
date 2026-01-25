@@ -7,10 +7,30 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -21,6 +41,7 @@ export type Database = {
           id: string
           name: string
           name_normalized: string
+          tag: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at: string
         }
         Insert: {
@@ -31,6 +52,7 @@ export type Database = {
           id?: string
           name: string
           name_normalized: string
+          tag?: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at: string
         }
         Update: {
@@ -41,6 +63,7 @@ export type Database = {
           id?: string
           name?: string
           name_normalized?: string
+          tag?: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at?: string
         }
         Relationships: []
@@ -327,6 +350,14 @@ export type Database = {
         | "senegalese"
         | "tanzanian"
         | "other"
+      ingredient_tag:
+        | "chicken"
+        | "pork"
+        | "beef"
+        | "fish"
+        | "pasta"
+        | "rice"
+        | "potato"
       meal_type: "breakfast" | "lunch" | "dinner" | "snack"
       recipe_type: "starter" | "main" | "side" | "dessert" | "sauce" | "drink"
       shopping_item_category:
@@ -481,6 +512,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       cuisine_type: [
@@ -545,6 +579,15 @@ export const Constants = {
         "tanzanian",
         "other",
       ],
+      ingredient_tag: [
+        "chicken",
+        "pork",
+        "beef",
+        "fish",
+        "pasta",
+        "rice",
+        "potato",
+      ],
       meal_type: ["breakfast", "lunch", "dinner", "snack"],
       recipe_type: ["starter", "main", "side", "dessert", "sauce", "drink"],
       shopping_item_category: [
@@ -579,3 +622,4 @@ export const Constants = {
     },
   },
 } as const
+

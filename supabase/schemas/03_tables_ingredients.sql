@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS "public"."ingredients" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone NOT NULL,
     "category" "public"."shopping_item_category",
+    "tag" "public"."ingredient_tag",
     "name_normalized" "text" NOT NULL
 );
 
