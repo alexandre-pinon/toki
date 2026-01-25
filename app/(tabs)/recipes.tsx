@@ -14,13 +14,13 @@ export default function RecipesScreen() {
 
   const handleAddRecipe = async () => {
     router.push({
-      pathname: "../recipes/edit/[id]",
+      pathname: "/recipes/edit/[id]",
       params: { id: uuid.v4() },
     });
   };
 
   const handlePressRecipe = useCallback((recipe: Recipe) => {
-    router.push({ pathname: "../recipes/[id]", params: { id: recipe.id } });
+    router.push({ pathname: "/recipes/[id]", params: { id: recipe.id } });
   }, []);
 
   return (

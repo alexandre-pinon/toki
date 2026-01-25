@@ -5,17 +5,17 @@ import { colors, typography } from "@/theme";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-export default function RecipeDetailsLayout() {
+export default function RecipeEditLayout() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   return (
     <CurrentRecipeProvider id={id}>
-      <RecipeDetailsStack id={id} />
+      <RecipeEditProvider id={id} />
     </CurrentRecipeProvider>
   );
 }
 
-const RecipeDetailsStack = ({ id }: { id: string }) => {
+const RecipeEditProvider = ({ id }: { id: string }) => {
   const { currentRecipe, isLoading } = useCurrentRecipe();
 
   if (isLoading) return <Loader />;
@@ -42,15 +42,15 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
 
   const handleCancel = () => {
     if (recipeExists) {
-      router.dismissTo({ pathname: "../[id]", params: { id: formRecipe.id } });
+      router.dismissTo({ pathname: "/recipes/[id]", params: { id: formRecipe.id } });
     } else {
-      router.dismissTo({ pathname: ".." });
+      router.dismissTo({ pathname: "/recipes" });
     }
   };
 
   const handleSaveRecipe = () => {
     upsertRecipe();
-    router.dismissTo({ pathname: "./[id]", params: { id: formRecipe.id } });
+    router.dismissTo({ pathname: "/recipes/[id]", params: { id: formRecipe.id } });
   };
 
   const handleImportRecipe = async () => {
@@ -60,10 +60,8 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
 
   return (
     <Stack>
-      <Stack.Screen name="[id]" options={{ headerShown: false }} />
-
       <Stack.Screen
-        name="edit/[id]"
+        name="[id]"
         options={{
           headerTitleStyle: typography.header,
           headerTitle: headerTitle ?? "Nouvelle recette",
@@ -103,7 +101,7 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
       />
 
       <Stack.Screen
-        name="edit/import"
+        name="import"
         options={{
           headerTitleStyle: typography.header,
           headerTitle: "Importer",
@@ -123,7 +121,7 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
       />
 
       <Stack.Screen
-        name="edit/instructions/index"
+        name="instructions/index"
         options={{
           headerTitleStyle: typography.header,
           headerTitle: `Étape ${(formCurrentInstruction?.index ?? formInstructions.length) + 1}`,
@@ -142,7 +140,7 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
                 ]);
 
                 router.push({
-                  pathname: "./[id]",
+                  pathname: "/recipes/edit/[id]",
                   params: { id: formRecipe.id },
                 });
               }}
@@ -160,9 +158,6 @@ const RecipeEditStack = ({ headerTitle, recipeExists }: RecipeEditStackProps) =>
 const styles = StyleSheet.create({
   actionButton: {
     paddingHorizontal: 8,
-  },
-  addButton: {
-    paddingHorizontal: 6,
   },
   cancelButtonText: {
     color: colors.gray,
