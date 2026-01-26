@@ -39,7 +39,7 @@ yarn-error.*
 app-example
 
 .env
-.env.remote
+.env.production
 
 ios/
 android/
