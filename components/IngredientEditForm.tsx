@@ -59,10 +59,13 @@ export function IngredientEditForm({ onSave, onCancel }: IngredientEditFormProps
           value: category,
         }));
       case "tag":
-        return ingredientTags.map((tag) => ({
-          label: capitalize(mapIngredientTagToName(tag)),
-          value: tag,
-        }));
+        return [
+          { label: "Aucun", value: "" },
+          ...ingredientTags.map((tag) => ({
+            label: capitalize(mapIngredientTagToName(tag)),
+            value: tag,
+          })),
+        ];
       default:
         return [];
     }
