@@ -2,6 +2,7 @@ import { getMealById, updateServings } from "@/services/meal";
 import { findRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
 import { Meal } from "@/types/weekly-meals/meal";
+import { isNetworkError } from "@/utils/network-error";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useShoppingList } from "./ShoppingListContext";
 
@@ -33,6 +34,11 @@ export const CurrentMealProvider = ({ id, children }: CurrentMealProviderProps) 
       const recipe = await findRecipeById(meal.recipeId);
       setCurrentMeal(meal);
       setCurrentRecipe(recipe);
+    } catch (error) {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      // Network errors silently ignored (offline banner informs user)
     } finally {
       setIsLoading(false);
     }

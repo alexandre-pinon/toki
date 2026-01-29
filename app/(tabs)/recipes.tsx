@@ -1,16 +1,13 @@
 import { RecipeList } from "@/components/RecipeList";
-import { useRecipeList } from "@/contexts/RecipeListContext";
 import { colors, typography } from "@/theme";
 import { Recipe } from "@/types/recipe/recipe";
 import { uuid } from "expo-modules-core";
 import { router, Stack } from "expo-router";
 import { useCallback } from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipesScreen() {
-  const { isAddRecipeLoading } = useRecipeList();
-
   const handleAddRecipe = async () => {
     router.push({
       pathname: "/recipes/edit/[id]",
@@ -28,16 +25,11 @@ export default function RecipesScreen() {
         options={{
           headerTitleStyle: typography.header,
           headerShadowVisible: false,
-          headerRight: () =>
-            isAddRecipeLoading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color={colors.primary} />
-              </View>
-            ) : (
-              <TouchableOpacity onPress={handleAddRecipe} style={styles.addButton}>
-                <Text style={[typography.body, styles.addButtonText]}>Ajouter</Text>
-              </TouchableOpacity>
-            ),
+          headerRight: () => (
+            <TouchableOpacity onPress={handleAddRecipe} style={styles.addButton}>
+              <Text style={[typography.body, styles.addButtonText]}>Ajouter</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
       <SafeAreaView style={styles.container}>

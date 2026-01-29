@@ -7,6 +7,7 @@ import {
 } from "@/services/shopping-list";
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
 import type { ShoppingListSection } from "@/types/shopping/shopping-list";
+import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
 
@@ -58,6 +59,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(!options?.skipLoading);
         const items = await getShoppingListItems(session.user.id);
         setSections(items);
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        // Network errors silently ignored (offline banner informs user)
       } finally {
         setIsLoading(false);
       }
@@ -75,6 +81,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await addShoppingListItem(item);
         await loadShoppingList();
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
       } finally {
         setIsLoading(false);
       }
@@ -84,8 +95,15 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
 
   const setChecked = useCallback(
     async (ids: string[], checked: boolean) => {
-      await setCheckedShoppingListItems(ids, checked);
-      await loadShoppingList({ skipLoading: true });
+      try {
+        await setCheckedShoppingListItems(ids, checked);
+        await loadShoppingList({ skipLoading: true });
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
+      }
     },
     [loadShoppingList],
   );
@@ -96,6 +114,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await updateShoppingListItem(id, item);
         await loadShoppingList();
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
       } finally {
         setIsLoading(false);
       }
@@ -109,6 +132,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         await deleteShoppingListItem(id);
         await loadShoppingList();
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
       } finally {
         setIsLoading(false);
       }

@@ -36,7 +36,7 @@ export default function RecipeEditScreen() {
   const [showPicker, setShowPicker] = useState(false);
   const [previousType, setPreviousType] = useState<RecipeType | undefined>();
 
-  const handlePickerSelect = (value?: string) => {
+  const handlePickerSelect = (value?: string | null) => {
     if (value && isRecipeType(value)) {
       setFormRecipe((prev) => ({ ...prev, type: value }));
     }

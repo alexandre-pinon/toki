@@ -19,9 +19,20 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
 });
 
+export class NetworkError extends Error {
+  constructor(message = "Network request failed") {
+    super(message);
+    this.name = "NetworkError";
+  }
+}
+
 export const getDbResponseDataOrThrow = <T>(response: PostgrestSingleResponse<T>): T => {
   const { data, error } = response;
   if (error) {
+    // Network errors don't have a code, real PostgrestErrors do (e.g., "PGRST116", "42P01")
+    if (!error.code) {
+      throw new NetworkError(error.message);
+    }
     console.warn(error);
     throw new PostgrestError(error);
   }

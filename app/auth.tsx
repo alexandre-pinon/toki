@@ -1,5 +1,6 @@
 import { ShoppingCartIcon } from "@/components/icons/ShoppingCartIcon";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNetwork } from "@/contexts/NetworkContext";
 import { colors, typography } from "@/theme";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { Stack } from "expo-router";
@@ -8,6 +9,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthScreen() {
   const { signInWithGoogle } = useAuth();
+  const { isConnected, isInternetReachable } = useNetwork();
+
+  const isOffline = !isConnected || !isInternetReachable;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,7 +30,8 @@ export default function AuthScreen() {
           size={GoogleSigninButton.Size.Wide}
           color={GoogleSigninButton.Color.Light}
           onPress={signInWithGoogle}
-          style={styles.button}
+          disabled={isOffline}
+          style={[styles.button, isOffline && styles.buttonDisabled]}
         />
       </View>
     </SafeAreaView>
@@ -59,5 +64,8 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     height: 48,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });

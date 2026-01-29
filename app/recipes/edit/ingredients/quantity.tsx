@@ -19,7 +19,7 @@ export default function RecipeEditIngredientQuantityScreen() {
   const [previousUnit, setPreviousUnit] = useState<UnitType | undefined>();
   const [quantityString, setQuantityString] = useState(formCurrentIngredient?.quantity?.toString() ?? "");
 
-  const handlePickerSelect = (value?: string) => {
+  const handlePickerSelect = (value?: string | null) => {
     if (value && isUnitType(value)) {
       setFormCurrentIngredient((prev) => (prev ? { ...prev, unit: value } : null));
     } else {

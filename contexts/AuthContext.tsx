@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { isNetworkError } from "@/utils/network-error";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -24,6 +25,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+    }).catch((error) => {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      // Network errors silently ignored (offline banner informs user)
     });
 
     const {

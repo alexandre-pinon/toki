@@ -1,7 +1,10 @@
 import { CustomErrorBoundary } from "@/components/ErrorBoundary";
+import { NetworkRefreshHandler } from "@/components/NetworkRefreshHandler";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FormIngredientProvider } from "@/contexts/FormIngredientContext";
 import { IngredientListProvider } from "@/contexts/IngredientListContext";
+import { NetworkProvider } from "@/contexts/NetworkContext";
 import { RecipeFilterProvider } from "@/contexts/RecipeFilterContext";
 import { RecipeListProvider } from "@/contexts/RecipeListContext";
 import { ShoppingListProvider } from "@/contexts/ShoppingListContext";
@@ -51,21 +54,25 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <ShoppingListProvider>
-        <UpcomingMealsProvider>
-          <RecipeListProvider>
-            <IngredientListProvider>
-              <RecipeFilterProvider>
-                <FormIngredientProvider>
-                  <RootLayoutNav />
-                </FormIngredientProvider>
-              </RecipeFilterProvider>
-            </IngredientListProvider>
-          </RecipeListProvider>
-        </UpcomingMealsProvider>
-      </ShoppingListProvider>
-    </AuthProvider>
+    <NetworkProvider>
+      <AuthProvider>
+        <ShoppingListProvider>
+          <UpcomingMealsProvider>
+            <RecipeListProvider>
+              <IngredientListProvider>
+                <RecipeFilterProvider>
+                  <FormIngredientProvider>
+                    <NetworkRefreshHandler />
+                    <OfflineBanner />
+                    <RootLayoutNav />
+                  </FormIngredientProvider>
+                </RecipeFilterProvider>
+              </IngredientListProvider>
+            </RecipeListProvider>
+          </UpcomingMealsProvider>
+        </ShoppingListProvider>
+      </AuthProvider>
+    </NetworkProvider>
   );
 }
 

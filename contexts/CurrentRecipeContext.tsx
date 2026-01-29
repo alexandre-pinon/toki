@@ -1,5 +1,6 @@
 import { findRecipeById } from "@/services/recipe";
 import { RecipeDetails } from "@/types/recipe/recipe";
+import { isNetworkError } from "@/utils/network-error";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type CurrentRecipeContextType = {
@@ -22,6 +23,11 @@ export const CurrentRecipeProvider = ({ id, children }: CurrentRecipeProviderPro
       setIsLoading(true);
       const recipe = await findRecipeById(id);
       setCurrentRecipe(recipe);
+    } catch (error) {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      // Network errors silently ignored (offline banner informs user)
     } finally {
       setIsLoading(false);
     }
