@@ -6,7 +6,7 @@ import { useUpcomingMeals } from "@/contexts/UpcomingMealsContext";
 import { useEffect, useRef } from "react";
 
 export function NetworkRefreshHandler() {
-  const { showReconnectedBanner } = useNetwork();
+  const { userJustReconnected } = useNetwork();
   const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
@@ -15,7 +15,7 @@ export function NetworkRefreshHandler() {
 
   useEffect(() => {
     // Refresh all data when reconnected (only once per reconnection)
-    if (showReconnectedBanner && !hasRefreshed.current) {
+    if (userJustReconnected && !hasRefreshed.current) {
       hasRefreshed.current = true;
       Promise.all([
         refetchShoppingList(),
@@ -26,10 +26,10 @@ export function NetworkRefreshHandler() {
     }
 
     // Reset the flag when banner goes away
-    if (!showReconnectedBanner) {
+    if (!userJustReconnected) {
       hasRefreshed.current = false;
     }
-  }, [showReconnectedBanner, refetchShoppingList, refetchUpcomingMeals, refetchRecipes, refetchIngredients]);
+  }, [userJustReconnected, refetchShoppingList, refetchUpcomingMeals, refetchRecipes, refetchIngredients]);
 
   return null;
 }

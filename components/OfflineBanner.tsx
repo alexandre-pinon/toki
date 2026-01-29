@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const AUTO_DISMISS_TIMEOUT = 5000; // Auto-hide offline banner after 5 seconds
 
 export function OfflineBanner() {
-  const { isConnected, isInternetReachable, showReconnectedBanner } = useNetwork();
+  const { isConnected, isInternetReachable, userJustReconnected } = useNetwork();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isVisible, setIsVisible] = useState(false);
@@ -15,7 +15,7 @@ export function OfflineBanner() {
   const dismissTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const isOffline = !isConnected || !isInternetReachable;
-  const showBanner = (isOffline && !isDismissed) || showReconnectedBanner;
+  const showBanner = (isOffline && !isDismissed) || userJustReconnected;
 
   useEffect(() => {
     // Reset dismissed state when going back online
@@ -39,7 +39,7 @@ export function OfflineBanner() {
       }).start();
 
       // Auto-dismiss offline banner after timeout
-      if (isOffline && !showReconnectedBanner) {
+      if (isOffline && !userJustReconnected) {
         dismissTimeoutRef.current = setTimeout(() => {
           setIsDismissed(true);
         }, AUTO_DISMISS_TIMEOUT);
@@ -59,14 +59,14 @@ export function OfflineBanner() {
         clearTimeout(dismissTimeoutRef.current);
       }
     };
-  }, [showBanner, isOffline, showReconnectedBanner, fadeAnim]);
+  }, [showBanner, isOffline, userJustReconnected, fadeAnim]);
 
   if (!isVisible && !showBanner) {
     return null;
   }
 
-  const backgroundColor = showReconnectedBanner && !isOffline ? colors.success : colors.alert;
-  const message = showReconnectedBanner && !isOffline ? "Connexion rétablie" : "Pas de connexion internet";
+  const backgroundColor = isOffline ? colors.alert : colors.success;
+  const message = isOffline ? "Pas de connexion internet" : "Connexion rétablie";
 
   return (
     <Animated.View
@@ -79,7 +79,7 @@ export function OfflineBanner() {
         },
       ]}
     >
-      <Text style={styles.text}>{message}</Text>
+      <Text style={[typography.subtext, styles.text]}>{message}</Text>
     </Animated.View>
   );
 }
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   text: {
-    ...typography.subtext,
     color: colors.white,
     textAlign: "center",
     fontWeight: "500",

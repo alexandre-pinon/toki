@@ -4,14 +4,14 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 type NetworkContextType = {
   isConnected: boolean;
   isInternetReachable: boolean;
-  showReconnectedBanner: boolean;
+  userJustReconnected: boolean;
 };
 
 const NetworkContext = createContext<NetworkContextType | undefined>(undefined);
 
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
   const netInfo = useNetInfo();
-  const [showReconnectedBanner, setShowReconnectedBanner] = useState(false);
+  const [userJustReconnected, setShowReconnectedBanner] = useState(false);
   const wasOffline = useRef(false);
 
   // Treat null/undefined as offline (conservative - show banner when uncertain)
@@ -19,8 +19,7 @@ export function NetworkProvider({ children }: { children: React.ReactNode }) {
   const isInternetReachable = netInfo.isInternetReachable ?? false;
 
   useEffect(() => {
-    const isDefinitivelyOnline =
-      netInfo.isConnected === true && netInfo.isInternetReachable === true;
+    const isDefinitivelyOnline = netInfo.isConnected === true && netInfo.isInternetReachable === true;
 
     // Show reconnected banner when going from definitive offline to definitive online
     if (wasOffline.current && isDefinitivelyOnline) {
@@ -39,7 +38,7 @@ export function NetworkProvider({ children }: { children: React.ReactNode }) {
   }, [netInfo.isConnected, netInfo.isInternetReachable]);
 
   return (
-    <NetworkContext.Provider value={{ isConnected, isInternetReachable, showReconnectedBanner }}>
+    <NetworkContext.Provider value={{ isConnected, isInternetReachable, userJustReconnected }}>
       {children}
     </NetworkContext.Provider>
   );
