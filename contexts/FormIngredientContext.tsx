@@ -1,5 +1,6 @@
 import { upsertIngredient } from "@/services/ingredient";
 import { Ingredient } from "@/types/ingredient";
+import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import { PostgrestError } from "@supabase/supabase-js";
 import {
   createContext,
@@ -42,6 +43,10 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
       return upserted;
     } catch (error) {
       setIsLoading(false);
+      if (isNetworkError(error)) {
+        showNetworkErrorAlert();
+        return null;
+      }
       if (error instanceof PostgrestError && error.code === "23505") {
         Alert.alert(`L'ingrédient '${formIngredient.name}' existe déjà`);
         return formIngredient;

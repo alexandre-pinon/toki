@@ -1,5 +1,6 @@
 import { getIngredientSections } from "@/services/ingredient";
 import { IngredientListSection } from "@/types/ingredient";
+import { isNetworkError } from "@/utils/network-error";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type IngredientListContextType = {
@@ -19,6 +20,11 @@ export const IngredientListProvider = ({ children }: PropsWithChildren) => {
       setIsLoading(true);
       const ingredientSections = await getIngredientSections();
       setIngredientSections(ingredientSections);
+    } catch (error) {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      // Network errors silently ignored (offline banner informs user)
     } finally {
       setIsLoading(false);
     }

@@ -4,16 +4,32 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const AUTO_DISMISS_TIMEOUT = 5000; // Auto-hide offline banner after 5 seconds
+
 export function OfflineBanner() {
   const { isConnected, isInternetReachable, showReconnectedBanner } = useNetwork();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const dismissTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const isOffline = !isConnected || !isInternetReachable;
-  const showBanner = isOffline || showReconnectedBanner;
+  const showBanner = (isOffline && !isDismissed) || showReconnectedBanner;
 
   useEffect(() => {
+    // Reset dismissed state when going back online
+    if (!isOffline) {
+      setIsDismissed(false);
+    }
+  }, [isOffline]);
+
+  useEffect(() => {
+    // Clear any existing timeout
+    if (dismissTimeoutRef.current) {
+      clearTimeout(dismissTimeoutRef.current);
+    }
+
     if (showBanner) {
       setIsVisible(true);
       Animated.timing(fadeAnim, {
@@ -21,6 +37,13 @@ export function OfflineBanner() {
         duration: 300,
         useNativeDriver: true,
       }).start();
+
+      // Auto-dismiss offline banner after timeout
+      if (isOffline && !showReconnectedBanner) {
+        dismissTimeoutRef.current = setTimeout(() => {
+          setIsDismissed(true);
+        }, AUTO_DISMISS_TIMEOUT);
+      }
     } else {
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -30,9 +53,15 @@ export function OfflineBanner() {
         setIsVisible(false);
       });
     }
-  }, [showBanner, fadeAnim]);
 
-  if (!isVisible) {
+    return () => {
+      if (dismissTimeoutRef.current) {
+        clearTimeout(dismissTimeoutRef.current);
+      }
+    };
+  }, [showBanner, isOffline, showReconnectedBanner, fadeAnim]);
+
+  if (!isVisible && !showBanner) {
     return null;
   }
 
@@ -44,7 +73,7 @@ export function OfflineBanner() {
       style={[
         styles.container,
         {
-          paddingTop: insets.top + 8,
+          paddingTop: insets.top + 4,
           backgroundColor,
           opacity: fadeAnim,
         },
@@ -61,12 +90,12 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
+    paddingBottom: 4,
+    paddingHorizontal: 12,
     zIndex: 1000,
   },
   text: {
-    ...typography.body,
+    ...typography.subtext,
     color: colors.white,
     textAlign: "center",
     fontWeight: "500",

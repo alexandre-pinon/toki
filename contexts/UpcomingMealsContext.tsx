@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { deleteMeal, getUpcomingMeals, updateDate } from "@/services/meal";
 import { MealWithRecipe } from "@/types/weekly-meals/meal";
+import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useShoppingList } from "./ShoppingListContext";
 
@@ -31,6 +32,11 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
         setIsLoading(!options?.skipLoading);
         const meals = await getUpcomingMeals(session.user.id);
         setUpcomingMeals(meals);
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        // Network errors silently ignored (offline banner informs user)
       } finally {
         setIsLoading(false);
       }
@@ -40,16 +46,30 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
 
   const updateMealDate = useCallback(
     async (id: string, date: Temporal.PlainDate) => {
-      await updateDate(id, date);
-      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+      try {
+        await updateDate(id, date);
+        await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
+      }
     },
     [getUserUpcomingMeals, refetchShoppingList],
   );
 
   const deleteUpcomingMeal = useCallback(
     async (id: string) => {
-      await deleteMeal(id);
-      await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+      try {
+        await deleteMeal(id);
+        await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error;
+        }
+        showNetworkErrorAlert();
+      }
     },
     [getUserUpcomingMeals, refetchShoppingList],
   );

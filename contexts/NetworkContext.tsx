@@ -1,4 +1,4 @@
-import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 type NetworkContextType = {
@@ -10,40 +10,33 @@ type NetworkContextType = {
 const NetworkContext = createContext<NetworkContextType | undefined>(undefined);
 
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
-  const [isConnected, setIsConnected] = useState(true);
-  const [isInternetReachable, setIsInternetReachable] = useState(true);
+  const netInfo = useNetInfo();
   const [showReconnectedBanner, setShowReconnectedBanner] = useState(false);
   const wasOffline = useRef(false);
 
+  // Treat null/undefined as offline (conservative - show banner when uncertain)
+  const isConnected = netInfo.isConnected ?? false;
+  const isInternetReachable = netInfo.isInternetReachable ?? false;
+
   useEffect(() => {
-    const handleNetworkChange = (state: NetInfoState) => {
-      const connected = state.isConnected ?? false;
-      const reachable = state.isInternetReachable ?? false;
+    const isDefinitivelyOnline =
+      netInfo.isConnected === true && netInfo.isInternetReachable === true;
 
-      setIsConnected(connected);
-      setIsInternetReachable(reachable);
+    // Show reconnected banner when going from definitive offline to definitive online
+    if (wasOffline.current && isDefinitivelyOnline) {
+      setShowReconnectedBanner(true);
+      setTimeout(() => {
+        setShowReconnectedBanner(false);
+      }, 2000);
+    }
 
-      // If we were offline and now we're back online, show reconnected banner
-      if (wasOffline.current && connected && reachable) {
-        setShowReconnectedBanner(true);
-        setTimeout(() => {
-          setShowReconnectedBanner(false);
-        }, 2000);
-      }
-
-      // Track offline state for next change
-      wasOffline.current = !connected || !reachable;
-    };
-
-    const unsubscribe = NetInfo.addEventListener(handleNetworkChange);
-
-    // Get initial state
-    NetInfo.fetch().then(handleNetworkChange);
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    // Only mark as "was definitely offline" when we get explicit false (not null)
+    if (netInfo.isConnected === false || netInfo.isInternetReachable === false) {
+      wasOffline.current = true;
+    } else if (isDefinitivelyOnline) {
+      wasOffline.current = false;
+    }
+  }, [netInfo.isConnected, netInfo.isInternetReachable]);
 
   return (
     <NetworkContext.Provider value={{ isConnected, isInternetReachable, showReconnectedBanner }}>

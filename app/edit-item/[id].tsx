@@ -73,7 +73,7 @@ export default function EditItemScreen() {
     setShowPicker("hide");
   };
 
-  const handlePickerSelect = (value?: string) => {
+  const handlePickerSelect = (value?: string | null) => {
     if (showPicker === "unit") {
       if (value && isUnitType(value)) {
         setUnit(value);

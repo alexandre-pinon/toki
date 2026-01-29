@@ -1,4 +1,5 @@
 import { CustomErrorBoundary } from "@/components/ErrorBoundary";
+import { NetworkRefreshHandler } from "@/components/NetworkRefreshHandler";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FormIngredientProvider } from "@/contexts/FormIngredientContext";
@@ -61,6 +62,7 @@ export default function RootLayout() {
               <IngredientListProvider>
                 <RecipeFilterProvider>
                   <FormIngredientProvider>
+                    <NetworkRefreshHandler />
                     <OfflineBanner />
                     <RootLayoutNav />
                   </FormIngredientProvider>

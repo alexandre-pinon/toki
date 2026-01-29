@@ -8,6 +8,7 @@ import {
   RecipeIngredient,
   RecipeUpsertData,
 } from "@/types/recipe/recipe";
+import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import {
   createContext,
   Dispatch,
@@ -84,6 +85,11 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
       setFormRecipe(recipe);
       setFormIngredients(ingredients);
       setFormInstructions(instructions);
+    } catch (error) {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      showNetworkErrorAlert();
     } finally {
       setIsLoading(false);
     }
@@ -103,6 +109,11 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
         instructions: formInstructions,
       });
       await Promise.all([refetchCurrentRecipe(), refetchRecipes(), refetchUpcomingMeals(), refetchShoppingList()]);
+    } catch (error) {
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+      showNetworkErrorAlert();
     } finally {
       setIsLoading(false);
     }
