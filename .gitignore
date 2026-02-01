@@ -46,3 +46,4 @@ android/
 supabase/.*
 
 .mcp.json
+docs/
