@@ -2,7 +2,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { deleteRecipe, getRecipes } from "@/services/recipe";
 import { type Recipe } from "@/types/recipe/recipe";
 import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
-import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useShoppingList } from "./ShoppingListContext";
 import { useUpcomingMeals } from "./UpcomingMealsContext";
 
@@ -24,7 +32,7 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
 
   const getUserRecipes = useCallback(
     async (options?: { skipLoading: boolean }) => {
-      if (!session?.user.id) {
+      if (!session) {
         setRecipes([]);
         return;
       }
@@ -42,14 +50,18 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
         setIsLoading(false);
       }
     },
-    [session?.user.id],
+    [session],
   );
 
   const deleteUserRecipe = useCallback(
     async (id: string) => {
       try {
         await deleteRecipe(id);
-        await Promise.all([getUserRecipes({ skipLoading: true }), refetchUpcomingMeals(), refetchShoppingList()]);
+        await Promise.all([
+          getUserRecipes({ skipLoading: true }),
+          refetchUpcomingMeals(),
+          refetchShoppingList(),
+        ]);
       } catch (error) {
         if (!isNetworkError(error)) {
           throw error;
@@ -74,7 +86,11 @@ export const RecipeListProvider = ({ children }: PropsWithChildren) => {
     [recipes, isLoading, getUserRecipes, deleteUserRecipe],
   );
 
-  return <RecipeListContext.Provider value={contextValue}>{children}</RecipeListContext.Provider>;
+  return (
+    <RecipeListContext.Provider value={contextValue}>
+      {children}
+    </RecipeListContext.Provider>
+  );
 };
 
 export const useRecipeList = () => {

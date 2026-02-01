@@ -1,6 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFormIngredient } from "@/contexts/FormIngredientContext";
 import { useFormRecipe } from "@/contexts/FormRecipeContext";
 import { searchIngredient } from "@/services/ingredient";
@@ -13,10 +14,19 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
+  const { session } = useAuth();
   const { index, name, quantity, unit } = useLocalSearchParams<{
     index?: string;
     name?: string;
@@ -31,7 +41,10 @@ export default function RecipeEditIngredientScreen() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const handleAddNewIngredient = () => {
-    setFormIngredient(createIngredient({ name }));
+    if (!session) {
+      return;
+    }
+    setFormIngredient(createIngredient(session.user.id, { name }));
     router.push({ pathname: "./ingredients/edit", params: { index, quantity, unit } });
   };
 
@@ -48,7 +61,7 @@ export default function RecipeEditIngredientScreen() {
 
   useEffect(() => {
     const performSearch = async (query: string) => {
-      if (query.length === 0) {
+      if (query.length === 0 || !session) {
         setResults([]);
         setIsLoading(false);
         return;
@@ -56,7 +69,7 @@ export default function RecipeEditIngredientScreen() {
 
       setIsLoading(true);
       try {
-        const searchResults = await searchIngredient(query);
+        const searchResults = await searchIngredient(session.user.id, query);
         setResults(searchResults);
       } finally {
         setIsLoading(false);
@@ -64,7 +77,7 @@ export default function RecipeEditIngredientScreen() {
     };
 
     performSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, session]);
 
   const displaySearchResults = () => {
     if (isLoading) {
@@ -75,7 +88,9 @@ export default function RecipeEditIngredientScreen() {
       return (
         <View style={styles.centerContainer}>
           <Image source={require("@/assets/images/groceries.png")} style={styles.image} />
-          <Text style={[typography.body, styles.imageText]}>Rechercher un ingrédient</Text>
+          <Text style={[typography.body, styles.imageText]}>
+            Rechercher un ingrédient
+          </Text>
         </View>
       );
     }
@@ -83,7 +98,10 @@ export default function RecipeEditIngredientScreen() {
     if (results.length === 0) {
       return (
         <View style={styles.centerContainer}>
-          <Image source={require("@/assets/images/empty-cart.png")} style={styles.image} />
+          <Image
+            source={require("@/assets/images/empty-cart.png")}
+            style={styles.image}
+          />
           <Text style={[typography.body, styles.imageText]}>Aucun ingrédient trouvé</Text>
         </View>
       );
@@ -120,7 +138,10 @@ export default function RecipeEditIngredientScreen() {
         }}
       />
       <SearchBar query={{ value: searchTerm, set: setSearchTerm }} autoFocus />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.content}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.content}
+      >
         {displaySearchResults()}
       </KeyboardAvoidingView>
     </SafeAreaView>

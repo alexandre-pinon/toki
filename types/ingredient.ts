@@ -14,6 +14,13 @@ export type Ingredient = {
   readonly nameNormalized: string;
   category: ShoppingItemCategory;
   tag: IngredientTag | null;
+  userId: string | null;
+  baseIngredientId: string | null;
+};
+
+export type OverrideIngredient = Ingredient & {
+  userId: string;
+  baseIngredientId: string;
 };
 
 export type IngredientListSection = {
@@ -21,15 +28,30 @@ export type IngredientListSection = {
   data: Ingredient[];
 };
 
-export const createIngredient = (override?: Partial<Ingredient>): Ingredient => {
+export const createIngredient = (
+  userId: string,
+  override?: Partial<Omit<Ingredient, "userId">>,
+): Ingredient => {
   return {
     id: uuid.v4(),
     name: "",
     nameNormalized: "",
     category: "other",
     tag: null,
+    baseIngredientId: null,
     ...override,
+    userId,
   };
+};
+
+export const isBaseIngredient = (ingredient: Ingredient): boolean => {
+  return ingredient.userId === null;
+};
+
+export const isOverrideIngredient = (
+  ingredient: Ingredient,
+): ingredient is OverrideIngredient => {
+  return ingredient.userId !== null && ingredient.baseIngredientId !== null;
 };
 
 export const isIngredientTag = (value: string): value is IngredientTag => {
@@ -55,4 +77,11 @@ export const mapIngredientTagToName = (tag: IngredientTag): string => {
     default:
       return tag;
   }
+};
+
+/**
+ * Sort ingredients by name (normalized) in ascending order.
+ */
+export const byName = (a: Ingredient, b: Ingredient): number => {
+  return a.nameNormalized.localeCompare(b.nameNormalized);
 };

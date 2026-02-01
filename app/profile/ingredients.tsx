@@ -1,6 +1,7 @@
 import { SearchBar } from "@/components/SearchBar";
 import { ShoppingItemCategorySectionHeader } from "@/components/ShoppingItemCategorySectionHeader";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFormIngredient } from "@/contexts/FormIngredientContext";
 import { useIngredientList } from "@/contexts/IngredientListContext";
 import { colors, typography } from "@/theme";
@@ -13,6 +14,7 @@ import { RefreshControl, SectionList, StyleSheet, TouchableOpacity } from "react
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileIngredientsScreen() {
+  const { session } = useAuth();
   const { isLoading, refetchIngredients, ingredientSections } = useIngredientList();
   const { setFormIngredient } = useFormIngredient();
   const [filteredIngredientSections, setFilteredIngredientSections] =
@@ -32,7 +34,11 @@ export default function ProfileIngredientsScreen() {
   };
 
   const handleAdd = () => {
-    setFormIngredient(createIngredient());
+    if (!session) {
+      return;
+    }
+
+    setFormIngredient(createIngredient(session.user.id));
     router.push({
       pathname: "/ingredient/edit",
     });
@@ -64,15 +70,27 @@ export default function ProfileIngredientsScreen() {
     return (
       <SectionList
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={refetchIngredients} tintColor={colors.primary200} />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={refetchIngredients}
+            tintColor={colors.primary200}
+          />
         }
         sections={filteredIngredientSections}
         renderItem={({ item, section, index }) => (
-          <TouchableOpacity onPress={() => handlePressIngredient(item)} style={styles.ingredientItemContainer}>
-            <UnderlinedListItem title={item.name} isLastItem={index === section.data.length - 1} />
+          <TouchableOpacity
+            onPress={() => handlePressIngredient(item)}
+            style={styles.ingredientItemContainer}
+          >
+            <UnderlinedListItem
+              title={item.name}
+              isLastItem={index === section.data.length - 1}
+            />
           </TouchableOpacity>
         )}
-        renderSectionHeader={({ section: { title } }) => <ShoppingItemCategorySectionHeader category={title} />}
+        renderSectionHeader={({ section: { title } }) => (
+          <ShoppingItemCategorySectionHeader category={title} />
+        )}
         keyExtractor={(item) => item.id}
         stickySectionHeadersEnabled
       />
@@ -89,7 +107,11 @@ export default function ProfileIngredientsScreen() {
           headerBackButtonDisplayMode: "minimal",
           headerTintColor: colors.black,
           headerLeft: () => (
-            <TouchableOpacity onPress={handleCancel} disabled={isLoading} style={styles.headerButton}>
+            <TouchableOpacity
+              onPress={handleCancel}
+              disabled={isLoading}
+              style={styles.headerButton}
+            >
               <Ionicons name="chevron-back" size={28} />
             </TouchableOpacity>
           ),

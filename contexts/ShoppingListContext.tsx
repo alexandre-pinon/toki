@@ -8,7 +8,15 @@ import {
 import type { ShoppingItem } from "@/types/shopping/shopping-item";
 import type { ShoppingListSection } from "@/types/shopping/shopping-list";
 import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
-import { type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useAuth } from "./AuthContext";
 
 type ShoppingListContextType = {
@@ -38,7 +46,10 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     } else {
       setShowedSections(
         sections
-          .map((section) => ({ title: section.title, data: section.data.filter((item) => !item.checked) }))
+          .map((section) => ({
+            title: section.title,
+            data: section.data.filter((item) => !item.checked),
+          }))
           .filter((section) => section.data.length > 0),
       );
     }
@@ -50,7 +61,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
 
   const loadShoppingList = useCallback(
     async (options?: { skipLoading: boolean }) => {
-      if (!session?.user.id) {
+      if (!session) {
         setSections([]);
         return;
       }
@@ -68,7 +79,7 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     },
-    [session?.user.id],
+    [session],
   );
 
   useEffect(() => {
@@ -168,7 +179,11 @@ export function ShoppingListProvider({ children }: { children: ReactNode }) {
     toggleCheckedItemsSwitch,
   ]);
 
-  return <ShoppingListContext.Provider value={contextValue}>{children}</ShoppingListContext.Provider>;
+  return (
+    <ShoppingListContext.Provider value={contextValue}>
+      {children}
+    </ShoppingListContext.Provider>
+  );
 }
 
 export function useShoppingList() {

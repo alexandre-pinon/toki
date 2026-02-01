@@ -1,5 +1,6 @@
-import { upsertIngredient } from "@/services/ingredient";
-import { Ingredient } from "@/types/ingredient";
+import { useAuth } from "@/contexts/AuthContext";
+import { createIngredientOverride, upsertIngredient } from "@/services/ingredient";
+import { Ingredient, isBaseIngredient } from "@/types/ingredient";
 import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import { PostgrestError } from "@supabase/supabase-js";
 import {
@@ -26,17 +27,32 @@ const FormIngredientContext = createContext<FormIngredientContextType | null>(nu
 
 type FormIngredientProviderProps = PropsWithChildren;
 export const FormIngredientProvider = ({ children }: FormIngredientProviderProps) => {
+  const { session } = useAuth();
   const { refetchIngredients } = useIngredientList();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formIngredient, setFormIngredient] = useState<Ingredient | null>(null);
 
   const upsertFormIngredient = useCallback(async () => {
-    if (!formIngredient) return null;
+    if (!formIngredient || !session) {
+      return null;
+    }
 
     try {
       setIsLoading(true);
-      const upserted = await upsertIngredient({ ...formIngredient, name: formIngredient.name.trim().toLowerCase() });
+
+      const toUpsert: Ingredient = {
+        ...formIngredient,
+        name: formIngredient.name.trim().toLowerCase(),
+      };
+
+      let upserted: Ingredient;
+      if (isBaseIngredient(toUpsert)) {
+        upserted = await createIngredientOverride(session.user.id, toUpsert);
+      } else {
+        upserted = await upsertIngredient(toUpsert);
+      }
+
       await refetchIngredients();
       setIsLoading(false);
 
@@ -53,7 +69,7 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
       }
       throw error;
     }
-  }, [formIngredient, refetchIngredients]);
+  }, [formIngredient, session, refetchIngredients]);
 
   const contextValue = useMemo(
     () => ({
@@ -65,7 +81,11 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
     [formIngredient, isLoading, upsertFormIngredient],
   );
 
-  return <FormIngredientContext.Provider value={contextValue}>{children}</FormIngredientContext.Provider>;
+  return (
+    <FormIngredientContext.Provider value={contextValue}>
+      {children}
+    </FormIngredientContext.Provider>
+  );
 };
 
 export const useFormIngredient = () => {

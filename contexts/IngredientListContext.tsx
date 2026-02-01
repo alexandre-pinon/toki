@@ -1,7 +1,16 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { getIngredientSections } from "@/services/ingredient";
 import { IngredientListSection } from "@/types/ingredient";
 import { isNetworkError } from "@/utils/network-error";
-import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type IngredientListContextType = {
   ingredientSections: IngredientListSection[];
@@ -12,13 +21,21 @@ type IngredientListContextType = {
 const IngredientListContext = createContext<IngredientListContextType | null>(null);
 
 export const IngredientListProvider = ({ children }: PropsWithChildren) => {
+  const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [ingredientSections, setIngredientSections] = useState<IngredientListSection[]>([]);
+  const [ingredientSections, setIngredientSections] = useState<IngredientListSection[]>(
+    [],
+  );
 
   const getIngredientListSections = useCallback(async () => {
+    if (!session) {
+      setIngredientSections([]);
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const ingredientSections = await getIngredientSections();
+      const ingredientSections = await getIngredientSections(session.user.id);
       setIngredientSections(ingredientSections);
     } catch (error) {
       if (!isNetworkError(error)) {
@@ -28,7 +45,7 @@ export const IngredientListProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     getIngredientListSections();
@@ -43,7 +60,11 @@ export const IngredientListProvider = ({ children }: PropsWithChildren) => {
     [ingredientSections, isLoading, getIngredientListSections],
   );
 
-  return <IngredientListContext.Provider value={contextValue}>{children}</IngredientListContext.Provider>;
+  return (
+    <IngredientListContext.Provider value={contextValue}>
+      {children}
+    </IngredientListContext.Provider>
+  );
 };
 
 export const useIngredientList = () => {
