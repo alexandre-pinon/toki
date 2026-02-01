@@ -11,7 +11,7 @@ type DBOverrideIngredient = Omit<DBIngredient, "user_id" | "base_ingredient_id">
   base_ingredient_id: string;
 };
 
-const isOverrideIngredient = (
+const isDBOverrideIngredient = (
   ingredient: DBIngredient,
 ): ingredient is DBOverrideIngredient => {
   return ingredient.user_id !== null && ingredient.base_ingredient_id !== null;
@@ -47,7 +47,7 @@ const getUserActiveIngredients = async (userId: string): Promise<Ingredient[]> =
   const ingredients = getDbResponseDataOrThrow(dbResponse);
 
   const baseIngredientIdsOverriden = new Set(
-    ingredients.filter((i) => isOverrideIngredient(i)).map((i) => i.base_ingredient_id),
+    ingredients.filter((i) => isDBOverrideIngredient(i)).map((i) => i.base_ingredient_id),
   );
 
   return ingredients

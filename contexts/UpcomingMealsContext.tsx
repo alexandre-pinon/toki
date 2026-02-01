@@ -2,7 +2,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { deleteMeal, getUpcomingMeals, updateDate } from "@/services/meal";
 import { MealWithRecipe } from "@/types/weekly-meals/meal";
 import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
-import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useShoppingList } from "./ShoppingListContext";
 
 type UpcomingMealsContextType = {
@@ -23,7 +31,7 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
 
   const getUserUpcomingMeals = useCallback(
     async (options?: { skipLoading: boolean }) => {
-      if (!session?.user.id) {
+      if (!session) {
         setUpcomingMeals([]);
         return;
       }
@@ -41,14 +49,17 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
         setIsLoading(false);
       }
     },
-    [session?.user.id],
+    [session],
   );
 
   const updateMealDate = useCallback(
     async (id: string, date: Temporal.PlainDate) => {
       try {
         await updateDate(id, date);
-        await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+        await Promise.all([
+          getUserUpcomingMeals({ skipLoading: true }),
+          refetchShoppingList(),
+        ]);
       } catch (error) {
         if (!isNetworkError(error)) {
           throw error;
@@ -63,7 +74,10 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
     async (id: string) => {
       try {
         await deleteMeal(id);
-        await Promise.all([getUserUpcomingMeals({ skipLoading: true }), refetchShoppingList()]);
+        await Promise.all([
+          getUserUpcomingMeals({ skipLoading: true }),
+          refetchShoppingList(),
+        ]);
       } catch (error) {
         if (!isNetworkError(error)) {
           throw error;
@@ -89,7 +103,11 @@ export const UpcomingMealsProvider = ({ children }: PropsWithChildren) => {
     [upcomingMeals, isLoading, getUserUpcomingMeals, updateMealDate, deleteUpcomingMeal],
   );
 
-  return <UpcomingMealsContext.Provider value={contextValue}>{children}</UpcomingMealsContext.Provider>;
+  return (
+    <UpcomingMealsContext.Provider value={contextValue}>
+      {children}
+    </UpcomingMealsContext.Provider>
+  );
 };
 
 export const useUpcomingMeals = () => {

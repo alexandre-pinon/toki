@@ -61,7 +61,7 @@ export default function RecipeEditIngredientScreen() {
 
   useEffect(() => {
     const performSearch = async (query: string) => {
-      if (query.length === 0 || !session?.user.id) {
+      if (query.length === 0 || !session) {
         setResults([]);
         setIsLoading(false);
         return;
@@ -77,7 +77,7 @@ export default function RecipeEditIngredientScreen() {
     };
 
     performSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm, session?.user.id]);
+  }, [debouncedSearchTerm, session]);
 
   const displaySearchResults = () => {
     if (isLoading) {
