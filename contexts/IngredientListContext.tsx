@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { getIngredientSections } from "@/services/ingredient";
 import { IngredientListSection } from "@/types/ingredient";
 import { isNetworkError } from "@/utils/network-error";
@@ -13,19 +12,13 @@ type IngredientListContextType = {
 const IngredientListContext = createContext<IngredientListContextType | null>(null);
 
 export const IngredientListProvider = ({ children }: PropsWithChildren) => {
-  const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [ingredientSections, setIngredientSections] = useState<IngredientListSection[]>([]);
 
   const getIngredientListSections = useCallback(async () => {
-    if (!session?.user.id) {
-      setIngredientSections([]);
-      return;
-    }
-
     try {
       setIsLoading(true);
-      const ingredientSections = await getIngredientSections(session.user.id);
+      const ingredientSections = await getIngredientSections();
       setIngredientSections(ingredientSections);
     } catch (error) {
       if (!isNetworkError(error)) {
@@ -35,7 +28,7 @@ export const IngredientListProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user.id]);
+  }, []);
 
   useEffect(() => {
     getIngredientListSections();

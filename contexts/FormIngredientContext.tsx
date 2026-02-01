@@ -1,6 +1,5 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { createIngredientOverride, upsertIngredient } from "@/services/ingredient";
-import { Ingredient, isBaseIngredient } from "@/types/ingredient";
+import { upsertIngredient } from "@/services/ingredient";
+import { Ingredient } from "@/types/ingredient";
 import { isNetworkError, showNetworkErrorAlert } from "@/utils/network-error";
 import { PostgrestError } from "@supabase/supabase-js";
 import {
@@ -27,36 +26,17 @@ const FormIngredientContext = createContext<FormIngredientContextType | null>(nu
 
 type FormIngredientProviderProps = PropsWithChildren;
 export const FormIngredientProvider = ({ children }: FormIngredientProviderProps) => {
-  const { session } = useAuth();
   const { refetchIngredients } = useIngredientList();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formIngredient, setFormIngredient] = useState<Ingredient | null>(null);
 
   const upsertFormIngredient = useCallback(async () => {
-    if (!formIngredient || !session?.user.id) return null;
+    if (!formIngredient) return null;
 
     try {
       setIsLoading(true);
-
-      let upserted: Ingredient;
-
-      // If editing a base ingredient, create an override instead
-      if (isBaseIngredient(formIngredient)) {
-        upserted = await createIngredientOverride(session.user.id, formIngredient, {
-          name: formIngredient.name.trim().toLowerCase(),
-          category: formIngredient.category,
-          tag: formIngredient.tag,
-        });
-      } else {
-        // User's own ingredient - upsert directly
-        upserted = await upsertIngredient({
-          ...formIngredient,
-          name: formIngredient.name.trim().toLowerCase(),
-          userId: session.user.id,
-        });
-      }
-
+      const upserted = await upsertIngredient({ ...formIngredient, name: formIngredient.name.trim().toLowerCase() });
       await refetchIngredients();
       setIsLoading(false);
 
@@ -73,7 +53,7 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
       }
       throw error;
     }
-  }, [formIngredient, session?.user.id, refetchIngredients]);
+  }, [formIngredient, refetchIngredients]);
 
   const contextValue = useMemo(
     () => ({

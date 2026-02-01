@@ -14,8 +14,6 @@ export type Ingredient = {
   readonly nameNormalized: string;
   category: ShoppingItemCategory;
   tag: IngredientTag | null;
-  userId: string | null; // null = base ingredient, uuid = user's ingredient
-  baseIngredientId: string | null; // null = own ingredient, uuid = override of base
 };
 
 export type IngredientListSection = {
@@ -30,24 +28,8 @@ export const createIngredient = (override?: Partial<Ingredient>): Ingredient => 
     nameNormalized: "",
     category: "other",
     tag: null,
-    userId: null,
-    baseIngredientId: null,
     ...override,
   };
-};
-
-/**
- * Check if an ingredient is a base ingredient (shared, read-only)
- */
-export const isBaseIngredient = (ingredient: Ingredient): boolean => {
-  return ingredient.userId === null;
-};
-
-/**
- * Check if an ingredient is a user's override of a base ingredient
- */
-export const isOverrideIngredient = (ingredient: Ingredient): boolean => {
-  return ingredient.userId !== null && ingredient.baseIngredientId !== null;
 };
 
 export const isIngredientTag = (value: string): value is IngredientTag => {

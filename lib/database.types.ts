@@ -36,54 +36,37 @@ export type Database = {
     Tables: {
       ingredients: {
         Row: {
-          base_ingredient_id: string | null
           category: Database["public"]["Enums"]["shopping_item_category"] | null
           created_at: string
           id: string
-          is_deleted: boolean
           name: string
           name_normalized: string
           tag: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at: string
-          user_id: string | null
         }
         Insert: {
-          base_ingredient_id?: string | null
           category?:
             | Database["public"]["Enums"]["shopping_item_category"]
             | null
           created_at?: string
           id?: string
-          is_deleted?: boolean
           name: string
           name_normalized: string
           tag?: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at: string
-          user_id?: string | null
         }
         Update: {
-          base_ingredient_id?: string | null
           category?:
             | Database["public"]["Enums"]["shopping_item_category"]
             | null
           created_at?: string
           id?: string
-          is_deleted?: boolean
           name?: string
           name_normalized?: string
           tag?: Database["public"]["Enums"]["ingredient_tag"] | null
           updated_at?: string
-          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "ingredients_base_ingredient_id_fkey"
-            columns: ["base_ingredient_id"]
-            isOneToOne: false
-            referencedRelation: "ingredients"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       meals: {
         Row: {
@@ -303,43 +286,7 @@ export type Database = {
       }
     }
     Functions: {
-      find_effective_ingredient_by_name: {
-        Args: { p_name: string; p_user_id: string }
-        Returns: {
-          base_ingredient_id: string
-          category: Database["public"]["Enums"]["shopping_item_category"]
-          id: string
-          name: string
-          name_normalized: string
-          tag: Database["public"]["Enums"]["ingredient_tag"]
-          user_id: string
-        }[]
-      }
-      get_effective_ingredients: {
-        Args: { p_user_id: string }
-        Returns: {
-          base_ingredient_id: string
-          category: Database["public"]["Enums"]["shopping_item_category"]
-          id: string
-          is_deleted: boolean
-          name: string
-          name_normalized: string
-          tag: Database["public"]["Enums"]["ingredient_tag"]
-          user_id: string
-        }[]
-      }
-      search_effective_ingredients: {
-        Args: { p_search_term: string; p_user_id: string }
-        Returns: {
-          base_ingredient_id: string
-          category: Database["public"]["Enums"]["shopping_item_category"]
-          id: string
-          name: string
-          name_normalized: string
-          tag: Database["public"]["Enums"]["ingredient_tag"]
-          user_id: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       cuisine_type:
