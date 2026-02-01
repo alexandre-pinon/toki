@@ -1,4 +1,5 @@
 import { RecipeTabName } from "@/components/RecipeTabs";
+import { useAuth } from "@/contexts/AuthContext";
 import { upsertRecipe } from "@/services/recipe";
 import { parseMarmitonRecipe } from "@/services/recipe-parser";
 import {
@@ -52,6 +53,7 @@ type FormRecipeProviderProps = PropsWithChildren & {
   recipeId: string;
 };
 export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: FormRecipeProviderProps) => {
+  const { session } = useAuth();
   const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
@@ -75,13 +77,13 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
   }, [formIngredients]);
 
   const importRecipe = useCallback(async () => {
-    if (!importUrl) return;
+    if (!importUrl || !session?.user.id) return;
 
     try {
       setIsLoading(true);
       const res = await fetch(importUrl);
       const html = await res.text();
-      const { recipe, ingredients, instructions } = await parseMarmitonRecipe(formRecipe.id, html);
+      const { recipe, ingredients, instructions } = await parseMarmitonRecipe(formRecipe.id, html, session.user.id);
       setFormRecipe(recipe);
       setFormIngredients(ingredients);
       setFormInstructions(instructions);
@@ -93,7 +95,7 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
     } finally {
       setIsLoading(false);
     }
-  }, [formRecipe.id, importUrl]);
+  }, [formRecipe.id, importUrl, session?.user.id]);
 
   const upsertFormRecipe = useCallback(async () => {
     const ingredientsWithId = formIngredients.filter((i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId);

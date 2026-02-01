@@ -8,13 +8,14 @@ import { findIngredientByName } from "./ingredient";
 export async function parseMarmitonRecipe(
   recipeId: string,
   html: string,
+  userId: string,
 ): Promise<{
   recipe: RecipeUpsertData["recipe"];
   ingredients: FormRecipeIngredient[];
   instructions: RecipeUpsertData["instructions"];
 }> {
   const $ = load(html);
-  const ingredients = await matchRawIngredientsWithDb(parseIngredients($));
+  const ingredients = await matchRawIngredientsWithDb(userId, parseIngredients($));
 
   return {
     recipe: {
@@ -143,10 +144,13 @@ function parseFrenchUnitType(unitType?: string): UnitType | undefined {
   }
 }
 
-async function matchRawIngredientsWithDb(rawIngredients: FormRecipeIngredient[]): Promise<FormRecipeIngredient[]> {
+async function matchRawIngredientsWithDb(
+  userId: string,
+  rawIngredients: FormRecipeIngredient[],
+): Promise<FormRecipeIngredient[]> {
   return await Promise.all(
     rawIngredients.map(async (rawIngredient) => {
-      const maybeMatchingIngredient = await findIngredientByName(rawIngredient.name);
+      const maybeMatchingIngredient = await findIngredientByName(userId, rawIngredient.name);
       if (!maybeMatchingIngredient) {
         return rawIngredient;
       }

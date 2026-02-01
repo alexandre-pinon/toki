@@ -1,6 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { SearchBar } from "@/components/SearchBar";
 import { UnderlinedListItem } from "@/components/UnderlinedListItem";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFormIngredient } from "@/contexts/FormIngredientContext";
 import { useFormRecipe } from "@/contexts/FormRecipeContext";
 import { searchIngredient } from "@/services/ingredient";
@@ -17,6 +18,7 @@ import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOp
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
+  const { session } = useAuth();
   const { index, name, quantity, unit } = useLocalSearchParams<{
     index?: string;
     name?: string;
@@ -48,7 +50,7 @@ export default function RecipeEditIngredientScreen() {
 
   useEffect(() => {
     const performSearch = async (query: string) => {
-      if (query.length === 0) {
+      if (query.length === 0 || !session?.user.id) {
         setResults([]);
         setIsLoading(false);
         return;
@@ -56,7 +58,7 @@ export default function RecipeEditIngredientScreen() {
 
       setIsLoading(true);
       try {
-        const searchResults = await searchIngredient(query);
+        const searchResults = await searchIngredient(session.user.id, query);
         setResults(searchResults);
       } finally {
         setIsLoading(false);
@@ -64,7 +66,7 @@ export default function RecipeEditIngredientScreen() {
     };
 
     performSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, session?.user.id]);
 
   const displaySearchResults = () => {
     if (isLoading) {
