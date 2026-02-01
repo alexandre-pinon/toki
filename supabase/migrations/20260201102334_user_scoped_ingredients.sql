@@ -7,7 +7,7 @@
 -- ============================================
 ALTER TABLE public.ingredients
   ADD COLUMN user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
-  ADD COLUMN base_ingredient_id uuid REFERENCES public.ingredients(id) ON DELETE CASCADE,
+  ADD COLUMN base_ingredient_id uuid REFERENCES public.ingredients(id) ON DELETE RESTRICT,
   ADD COLUMN is_deleted boolean NOT NULL DEFAULT false;
 
 -- 2. Migrate existing ingredients to the existing user
@@ -39,7 +39,6 @@ CREATE UNIQUE INDEX ingredients_user_override_unique
 -- 4. Add index for user_id queries
 -- ============================================
 CREATE INDEX ingredients_user_id_idx ON public.ingredients(user_id);
-CREATE INDEX ingredients_base_ingredient_id_idx ON public.ingredients(base_ingredient_id);
 
 -- 5. Update RLS policies
 -- ============================================

@@ -14,7 +14,15 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecipeEditIngredientScreen() {
@@ -33,7 +41,10 @@ export default function RecipeEditIngredientScreen() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const handleAddNewIngredient = () => {
-    setFormIngredient(createIngredient({ name }));
+    if (!session) {
+      return;
+    }
+    setFormIngredient(createIngredient(session.user.id, { name }));
     router.push({ pathname: "./ingredients/edit", params: { index, quantity, unit } });
   };
 
@@ -77,7 +88,9 @@ export default function RecipeEditIngredientScreen() {
       return (
         <View style={styles.centerContainer}>
           <Image source={require("@/assets/images/groceries.png")} style={styles.image} />
-          <Text style={[typography.body, styles.imageText]}>Rechercher un ingrédient</Text>
+          <Text style={[typography.body, styles.imageText]}>
+            Rechercher un ingrédient
+          </Text>
         </View>
       );
     }
@@ -85,7 +98,10 @@ export default function RecipeEditIngredientScreen() {
     if (results.length === 0) {
       return (
         <View style={styles.centerContainer}>
-          <Image source={require("@/assets/images/empty-cart.png")} style={styles.image} />
+          <Image
+            source={require("@/assets/images/empty-cart.png")}
+            style={styles.image}
+          />
           <Text style={[typography.body, styles.imageText]}>Aucun ingrédient trouvé</Text>
         </View>
       );
@@ -122,7 +138,10 @@ export default function RecipeEditIngredientScreen() {
         }}
       />
       <SearchBar query={{ value: searchTerm, set: setSearchTerm }} autoFocus />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.content}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.content}
+      >
         {displaySearchResults()}
       </KeyboardAvoidingView>
     </SafeAreaView>

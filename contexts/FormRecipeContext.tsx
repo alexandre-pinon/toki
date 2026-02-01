@@ -31,11 +31,17 @@ type FormRecipeContextType = {
   formIngredients: FormRecipeIngredient[];
   setFormIngredients: Dispatch<SetStateAction<FormRecipeContextType["formIngredients"]>>;
   formInstructions: RecipeUpsertData["instructions"];
-  setFormInstructions: Dispatch<SetStateAction<FormRecipeContextType["formInstructions"]>>;
+  setFormInstructions: Dispatch<
+    SetStateAction<FormRecipeContextType["formInstructions"]>
+  >;
   formCurrentIngredient: Omit<RecipeIngredient, "recipeId"> | null;
-  setFormCurrentIngredient: Dispatch<SetStateAction<FormRecipeContextType["formCurrentIngredient"]>>;
+  setFormCurrentIngredient: Dispatch<
+    SetStateAction<FormRecipeContextType["formCurrentIngredient"]>
+  >;
   formCurrentInstruction: { value: string; index: number } | null;
-  setFormCurrentInstruction: Dispatch<SetStateAction<FormRecipeContextType["formCurrentInstruction"]>>;
+  setFormCurrentInstruction: Dispatch<
+    SetStateAction<FormRecipeContextType["formCurrentInstruction"]>
+  >;
   activeTab: RecipeTabName;
   setActiveTab: Dispatch<SetStateAction<FormRecipeContextType["activeTab"]>>;
   isLoading: boolean;
@@ -52,17 +58,24 @@ type FormRecipeProviderProps = PropsWithChildren & {
   initialRecipeValues: RecipeDetails | null;
   recipeId: string;
 };
-export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: FormRecipeProviderProps) => {
+export const FormRecipeProvider = ({
+  initialRecipeValues,
+  recipeId,
+  children,
+}: FormRecipeProviderProps) => {
   const { session } = useAuth();
   const { refetchShoppingList } = useShoppingList();
   const { refetchUpcomingMeals } = useUpcomingMeals();
   const { refetchRecipes } = useRecipeList();
   const { refetchCurrentRecipe } = useCurrentRecipe();
-  const { recipe, ingredients, instructions } = initialRecipeValues ?? createEmptyRecipeData(recipeId);
+  const { recipe, ingredients, instructions } =
+    initialRecipeValues ?? createEmptyRecipeData(recipeId);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [formRecipe, setFormRecipe] = useState<FormRecipeContextType["formRecipe"]>(recipe);
-  const [formIngredients, setFormIngredients] = useState<FormRecipeContextType["formIngredients"]>(ingredients);
+  const [formRecipe, setFormRecipe] =
+    useState<FormRecipeContextType["formRecipe"]>(recipe);
+  const [formIngredients, setFormIngredients] =
+    useState<FormRecipeContextType["formIngredients"]>(ingredients);
   const [formInstructions, setFormInstructions] = useState(instructions);
   const [formCurrentIngredient, setFormCurrentIngredient] =
     useState<FormRecipeContextType["formCurrentIngredient"]>(null);
@@ -72,18 +85,26 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
   const [importUrl, setImportUrl] = useState("");
 
   const areAllIngredientsValid = useMemo(() => {
-    const ingredientsWithId = formIngredients.filter((i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId);
+    const ingredientsWithId = formIngredients.filter(
+      (i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId,
+    );
     return ingredientsWithId.length === formIngredients.length;
   }, [formIngredients]);
 
   const importRecipe = useCallback(async () => {
-    if (!importUrl || !session?.user.id) return;
+    if (!importUrl || !session) {
+      return;
+    }
 
     try {
       setIsLoading(true);
       const res = await fetch(importUrl);
       const html = await res.text();
-      const { recipe, ingredients, instructions } = await parseMarmitonRecipe(formRecipe.id, html, session.user.id);
+      const { recipe, ingredients, instructions } = await parseMarmitonRecipe(
+        formRecipe.id,
+        html,
+        session.user.id,
+      );
       setFormRecipe(recipe);
       setFormIngredients(ingredients);
       setFormInstructions(instructions);
@@ -95,10 +116,12 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
     } finally {
       setIsLoading(false);
     }
-  }, [formRecipe.id, importUrl, session?.user.id]);
+  }, [formRecipe.id, importUrl, session]);
 
   const upsertFormRecipe = useCallback(async () => {
-    const ingredientsWithId = formIngredients.filter((i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId);
+    const ingredientsWithId = formIngredients.filter(
+      (i): i is Omit<RecipeIngredient, "recipeId"> => !!i.ingredientId,
+    );
     if (ingredientsWithId.length !== formIngredients.length) {
       return;
     }
@@ -110,7 +133,12 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
         ingredients: ingredientsWithId,
         instructions: formInstructions,
       });
-      await Promise.all([refetchCurrentRecipe(), refetchRecipes(), refetchUpcomingMeals(), refetchShoppingList()]);
+      await Promise.all([
+        refetchCurrentRecipe(),
+        refetchRecipes(),
+        refetchUpcomingMeals(),
+        refetchShoppingList(),
+      ]);
     } catch (error) {
       if (!isNetworkError(error)) {
         throw error;
@@ -165,7 +193,11 @@ export const FormRecipeProvider = ({ initialRecipeValues, recipeId, children }: 
     ],
   );
 
-  return <FormRecipeContext.Provider value={contextValue}>{children}</FormRecipeContext.Provider>;
+  return (
+    <FormRecipeContext.Provider value={contextValue}>
+      {children}
+    </FormRecipeContext.Provider>
+  );
 };
 
 export const useFormRecipe = () => {

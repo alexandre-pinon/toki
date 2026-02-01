@@ -34,27 +34,23 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
   const [formIngredient, setFormIngredient] = useState<Ingredient | null>(null);
 
   const upsertFormIngredient = useCallback(async () => {
-    if (!formIngredient || !session?.user.id) return null;
+    if (!formIngredient || !session) {
+      return null;
+    }
 
     try {
       setIsLoading(true);
 
-      let upserted: Ingredient;
+      const toUpsert: Ingredient = {
+        ...formIngredient,
+        name: formIngredient.name.trim().toLowerCase(),
+      };
 
-      // If editing a base ingredient, create an override instead
-      if (isBaseIngredient(formIngredient)) {
-        upserted = await createIngredientOverride(session.user.id, formIngredient, {
-          name: formIngredient.name.trim().toLowerCase(),
-          category: formIngredient.category,
-          tag: formIngredient.tag,
-        });
+      let upserted: Ingredient;
+      if (isBaseIngredient(toUpsert)) {
+        upserted = await createIngredientOverride(session.user.id, toUpsert);
       } else {
-        // User's own ingredient - upsert directly
-        upserted = await upsertIngredient({
-          ...formIngredient,
-          name: formIngredient.name.trim().toLowerCase(),
-          userId: session.user.id,
-        });
+        upserted = await upsertIngredient(toUpsert);
       }
 
       await refetchIngredients();
@@ -73,7 +69,7 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
       }
       throw error;
     }
-  }, [formIngredient, session?.user.id, refetchIngredients]);
+  }, [formIngredient, session, refetchIngredients]);
 
   const contextValue = useMemo(
     () => ({
@@ -85,7 +81,11 @@ export const FormIngredientProvider = ({ children }: FormIngredientProviderProps
     [formIngredient, isLoading, upsertFormIngredient],
   );
 
-  return <FormIngredientContext.Provider value={contextValue}>{children}</FormIngredientContext.Provider>;
+  return (
+    <FormIngredientContext.Provider value={contextValue}>
+      {children}
+    </FormIngredientContext.Provider>
+  );
 };
 
 export const useFormIngredient = () => {
