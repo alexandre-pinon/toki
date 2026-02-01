@@ -1,5 +1,5 @@
 export default ({ config }) => {
-  const profile = process.env.APP_PROFILE || "dev";
+  const profile = process.env.APP_PROFILE || "prod";
 
   return {
     ...config,

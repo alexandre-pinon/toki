@@ -31,6 +31,10 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "language": "fr-FR"
+      }
+    }
   }
 }
