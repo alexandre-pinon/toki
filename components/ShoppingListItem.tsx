@@ -2,7 +2,7 @@ import { useShoppingList } from "@/contexts/ShoppingListContext";
 import { colors } from "@/theme";
 import type { AggregatedShoppingItem } from "@/types/shopping/shopping-item";
 import { formatQuantityAndUnit } from "@/types/unit-type";
-import { mapPlainDateToDayName } from "@/utils/date";
+import { mapPlainDateToDayName, mapPlainDateToNumericDate } from "@/utils/date";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -58,6 +58,10 @@ export function ShoppingListItem({
     setIsCheckLoading(false);
   };
 
+  const tag = earliestMealDate
+    ? `${mapPlainDateToDayName(earliestMealDate)} - ${mapPlainDateToNumericDate(earliestMealDate)}`
+    : undefined;
+
   return (
     <SwipeableItem onEdit={onEdit} onDelete={onDelete} disabled={!!earliestMealDate}>
       <View style={styles.item}>
@@ -66,7 +70,12 @@ export function ShoppingListItem({
             <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : (
-          <Checkbox style={styles.checkbox} value={checked} onValueChange={handleCheck} color={colors.primary300} />
+          <Checkbox
+            style={styles.checkbox}
+            value={checked}
+            onValueChange={handleCheck}
+            color={colors.primary300}
+          />
         )}
 
         <UnderlinedListItem
@@ -74,7 +83,7 @@ export function ShoppingListItem({
           subTitle={formatQuantityAndUnit(quantity, unit)}
           isLastItem={isLastItem}
           checked={checked}
-          tag={earliestMealDate ? mapPlainDateToDayName(earliestMealDate) : undefined}
+          tag={tag}
         />
       </View>
     </SwipeableItem>

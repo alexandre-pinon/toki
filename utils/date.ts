@@ -13,6 +13,13 @@ export const mapPlainDateToDayName = (date: Temporal.PlainDate) => {
   });
 };
 
+export const mapPlainDateToNumericDate = (date: Temporal.PlainDate) => {
+  return date.toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "numeric",
+  });
+};
+
 export const formatLastTimeDone = (date?: Temporal.PlainDate) => {
   if (!date) return "Jamais faite";
 
