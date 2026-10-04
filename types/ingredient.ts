@@ -1,7 +1,7 @@
 import { uuid } from "expo-modules-core";
 import { ShoppingItemCategory } from "./shopping/shopping-item-category";
 
-export const proteinTags = ["chicken", "pork", "beef", "fish"] as const;
+export const proteinTags = ["chicken", "pork", "beef", "veau", "fish"] as const;
 export const cerealTags = ["pasta", "rice", "potato"] as const;
 export const ingredientTags = [...proteinTags, ...cerealTags];
 export type CerealTag = (typeof cerealTags)[number];
@@ -44,6 +44,8 @@ export const mapIngredientTagToName = (tag: IngredientTag): string => {
       return "porc";
     case "beef":
       return "bœuf";
+    case "veau":
+      return "veau";
     case "fish":
       return "poisson";
     case "pasta":
