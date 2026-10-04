@@ -358,6 +358,7 @@ export type Database = {
         | "pasta"
         | "rice"
         | "potato"
+        | "veau"
       meal_type: "breakfast" | "lunch" | "dinner" | "snack"
       recipe_type: "starter" | "main" | "side" | "dessert" | "sauce" | "drink"
       shopping_item_category:
@@ -587,6 +588,7 @@ export const Constants = {
         "pasta",
         "rice",
         "potato",
+        "veau",
       ],
       meal_type: ["breakfast", "lunch", "dinner", "snack"],
       recipe_type: ["starter", "main", "side", "dessert", "sauce", "drink"],
