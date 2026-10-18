@@ -5,6 +5,7 @@ import { getRecipeIngredients } from "@/services/recipe";
 import { colors, commonStyles, typography } from "@/theme";
 import { Ingredient, IngredientTag } from "@/types/ingredient";
 import type { Recipe, RecipeIngredient } from "@/types/recipe/recipe";
+import { sortRecipesByLeastRecentlyDone } from "@/types/recipe/recipe-filter";
 import { router } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, Text, View } from "react-native";
@@ -123,7 +124,7 @@ export function RecipeList({ onPressRecipe }: RecipeListProps) {
       }
     }
 
-    setFilteredRecipes(filtered);
+    setFilteredRecipes(sortRecipesByLeastRecentlyDone(filtered));
   }, [recipes, searchQuery, filters, recipeHasIngredientTag]);
 
   const handleDeleteRecipe = useCallback(

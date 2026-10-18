@@ -1,4 +1,5 @@
 import { CerealTag, ProteinTag } from "../ingredient";
+import type { Recipe } from "./recipe";
 import type { RecipeType } from "./recipe-type";
 
 export const lastDoneFilters = ["more_than_3_months", "more_than_1_month", "less_than_1_month"] as const;
@@ -30,6 +31,15 @@ export const mapLastDoneFilterToName = (filter: LastDoneFilter): string => {
     default:
       return filter;
   }
+};
+
+export const sortRecipesByLeastRecentlyDone = (recipes: Recipe[]): Recipe[] => {
+  return [...recipes].sort((a, b) => {
+    if (!a.lastTimeDone && !b.lastTimeDone) return a.name.localeCompare(b.name);
+    if (!a.lastTimeDone) return -1;
+    if (!b.lastTimeDone) return 1;
+    return Temporal.PlainDate.compare(a.lastTimeDone, b.lastTimeDone) || a.name.localeCompare(b.name);
+  });
 };
 
 export const hasActiveFilters = (filters: RecipeFilters): boolean => {
